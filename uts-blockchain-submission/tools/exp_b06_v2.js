@@ -66,8 +66,7 @@ async function main() {
     };
   }
 
-  // Run A
-  const runA = await executeRevoke(demoBatchIdStr, demoLeaf, demoReason);
+    const runA = await executeRevoke(demoBatchIdStr, demoLeaf, demoReason);
   console.log("--- RUN A (Identik Demo) ---");
   console.log(`Batch ID          : "${runA.batchIdStr}" (Bytes: ${runA.batchIdBytes}, Non-zero: ${runA.batchIdNonZero})`);
   console.log(`Reason            : "${runA.reasonStr}" (Bytes: ${runA.reasonBytes})`);
@@ -75,8 +74,7 @@ async function main() {
   console.log(`Gas Receipt       : ${runA.gasUsed} unit`);
   console.log(`Status Nilai Demo : ${runA.gasUsed === 56359 ? "COCOK 56.359" : "BEDA"}\n`);
 
-  // Helper printer
-  function printRunComparison(label, run) {
+    function printRunComparison(label, run) {
     const deltaGas = run.gasUsed - runA.gasUsed;
     const deltaCd = run.calldataCost - runA.calldataCost;
     const sisa = deltaGas - deltaCd;
@@ -91,15 +89,15 @@ async function main() {
     return { deltaGas, deltaCd, sisa };
   }
 
-  // Run B: hanya batchId diganti ke BATCH-6-ITER-1
+  // Isolasi variabel calldata batchId
   const runB = await executeRevoke("BATCH-6-ITER-1", demoLeaf, demoReason);
   printRunComparison("RUN B (Hanya BatchId Berubah ke BATCH-6-ITER-1)", runB);
 
-  // Run C: hanya reason diganti ke Sidang Etik (11 karakter)
+  // Isolasi variabel calldata reason
   const runC = await executeRevoke(demoBatchIdStr, demoLeaf, "Sidang Etik");
   printRunComparison("RUN C (Hanya Reason Berubah ke 'Sidang Etik')", runC);
 
-  // Run D: Variasi panjang reason (11, 31, 32, 33, 60 karakter)
+  // Pengujian batas word 32 byte pada event log data
   console.log("=== RUN D: UJI LOMPATAN BATAS WORD 32 BYTE EVENT LOG DATA ===");
   const testReasons = [
     { len: 11, str: "Sidang Etik" },
@@ -118,7 +116,7 @@ async function main() {
   }
   console.log("");
 
-  // Run E: Benchmark Batch IDs dengan reason "Sidang Etik"
+  // Verifikasi konsistensi calldata pada variasi batchId benchmark
   console.log("=== RUN E: BENCHMARK BATCH-ID (N=6, 100, 1000) DENGAN REASON 'Sidang Etik' ===");
   const benchBatches = ["BATCH-6-ITER-1", "BATCH-100-ITER-1", "BATCH-1000-ITER-1"];
   for (const bStr of benchBatches) {

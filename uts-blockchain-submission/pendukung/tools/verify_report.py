@@ -1,32 +1,5 @@
 #!/usr/bin/env python3
-"""
-verify_report.py
-Skrip verifikasi independen (di luar prototype/) untuk mencocokkan seluruh
-angka, hash, dan metrik di dokumen laporan PDF dan DOCX final terhadap berkas log aktual
-di prototype/results/* dan uts-blockchain-submission/tools/*.
-
-Fitur Utama v7.4:
-1. Cakupan Penuh 121 Item (>= 99 item) mencakup:
-   - Tabel 2: Catatan Pelaksanaan Mini-Project (5 item)
-   - Tabel 5: Record Daun Merkle G-01 s.d. G-06 (18 item)
-   - Tabel 7: Field Transaksi EVM Penjangkaran (8 item)
-   - Tabel 8: Komposisi Gas Transaksi issueBatch (13 item)
-   - Tabel Unit Test: ID T-01 s.d. T-08 (8 item)
-   - Lampiran B: Keluaran Eksekusi Prototipe B-05 (8 item)
-   - Lampiran D: Matriks Evaluasi Kriteria Luaran OBE (10 item)
-   - Lampiran E: Rekapitulasi Lengkap Metrik 30 Run Terukur (30 item: N=6, 100, 1000)
-   - Lampiran F: Eksperimen Isolasi Variabel Selisih Gas B-06 (21 item: Run A s.d. E)
-2. Pengecekan Dua Sisi:
-   (a) Di sisi dokumen: nilai/string dicocokkan di sel tabel docx dan teks PDF pada halaman yang benar.
-   (b) Di sisi log: nilai/string dicocokkan di baris log yang bersangkutan.
-   Untuk alamat dan hash 0x: diperiksa eksistensinya secara eksak pada teks PDF.
-3. Reverse Check Angka Bertitik:
-   - 82 angka bertitik pada teks PDF diverifikasi sumber lognya atau konteks teoretisnya.
-4. Reverse Check Hash 0x...:
-   - 16 string hash 0x... diverifikasi eksistensinya di log aktual melalui hash_check.py.
-5. Exit code 0 bila 100% lulus, exit code 1 bila ada kegagalan.
-"""
-
+"""Verifikasi mandiri angka, hash, dan metrik pada laporan PDF dan DOCX terhadap berkas log aktual."""
 import subprocess
 import sys
 import os
@@ -98,9 +71,7 @@ def main():
 
     mismatches = 0
 
-    # =========================================================================
     # 1. TABEL 2: Catatan Pelaksanaan (B-01, B-03, B-04, B-06, B-07) - Hal 3
-    # =========================================================================
     tabel_2_items = [
         ("B-01 Gas Deploy Kontrak", "1.039.368", 3, "demo-output.txt", 15, "1039368"),
         ("B-03 Tx Hash Issue Batch", "0x1737c359...", 3, "demo-output.txt", 29, "0x1737c359"),
@@ -109,9 +80,7 @@ def main():
         ("B-07 Gas Pause Circuit Breaker", "48.214", 3, "demo-output.txt", 68, "48214"),
     ]
 
-    # =========================================================================
     # 2. TABEL 5: Data Daun Merkle (Record / Daun G-01 s.d. G-06) - Hal 5-6
-    # =========================================================================
     tabel_5_items = [
         ("G-01 NIM", "237006801", (5, 6), "demo-output.txt", 19, "237006801"),
         ("G-01 IPK", "3.82", (5, 6), "demo-output.txt", 19, "3.82"),
@@ -133,9 +102,7 @@ def main():
         ("G-06 Leaf Hash", "0x108e53ac2b7a5439...", (5, 6), "demo-output.txt", 24, "0x108e53ac2b7a5439"),
     ]
 
-    # =========================================================================
     # 3. TABEL 7: Field Transaksi EVM (Penerbitan Batch #2) - Hal 8
-    # =========================================================================
     tabel_7_items = [
         ("Chain ID", "31337", 8, "perf-output.txt", 2, "31337"),
         ("Sender (from) ISSUER_ROLE", "0x70997970C5...", 8, "demo-output.txt", 5, "0x70997970C5"),
@@ -147,9 +114,7 @@ def main():
         ("Gas Limit Blok Hardhat", "60.000.000", 8, "gaslimit_output.txt", 5, "60000000"),
     ]
 
-    # =========================================================================
     # 4. TABEL 8: Komposisi Gas Transaksi issueBatch (N=6, 100, 1000) - Hal 8
-    # =========================================================================
     tabel_8_items = [
         ("Total gasUsed N=6 (Receipt)", "187.874", 8, "perf-output.txt", 36, "187874"),
         ("Total gasUsed N=100 (Receipt)", "187.922", 8, "perf-output.txt", 36, "187922"),
@@ -166,9 +131,7 @@ def main():
         ("Deviasi Relatif Gas", "0,00%", 8, "perf-output.txt", 27, "0.0000%"),
     ]
 
-    # =========================================================================
     # 5. TABEL UNIT TEST (T-01 s.d. T-08 / Tabel 10 Naskah) - Hal 10
-    # =========================================================================
     tbl_10_doc = find_docx_table(doc, "ID Tes") if doc else None
     tabel_10_items = []
     if tbl_10_doc:
@@ -185,9 +148,7 @@ def main():
                 tid
             ))
 
-    # =========================================================================
     # 6. LAMPIRAN B: Keluaran Eksekusi B-05 - Hal 14
-    # =========================================================================
     lampiran_b_items = [
         ("Skenario 5A IPK Manipulasi", "Skenario 5A: Pelamar mengubah IPK 3.82 menjadi 4.00 pada berkas lokal", "demo-output.txt", 49, "IPK 3.82 menjadi 4.00"),
         ("Leaf Asli 64-char Hex", "Leaf Asli            : 0x7b5f7365dffd18a87fb7b5471e7843da27e53b4ec53e8e1ef064b78ab3b0645c", "demo-output.txt", 50, "0x7b5f7365dffd18a87fb7b5471e7843da27e53b4ec53e8e1ef064b78ab3b0645c"),
@@ -199,9 +160,7 @@ def main():
         ("Custom Error Kontrak", "Eksepsi Kontrak      : VM Exception while processing transaction: reverted with custom error 'AccessControlUnauthorizedAccount", "demo-output.txt", 57, "AccessControlUnauthorizedAccount"),
     ]
 
-    # =========================================================================
     # 7. LAMPIRAN D: Matriks Evaluasi OBE (T-01 s.d. T-08) - Hal 15-18
-    # =========================================================================
     tbl_d_doc = find_docx_table(doc, "Kelompok Uji") if doc else None
     lampiran_d_items = []
     expected_d_tokens = [
@@ -223,9 +182,7 @@ def main():
             status_cell = tbl_d_doc.rows[r_idx].cells[6].text.strip()
             lampiran_d_items.append((label, token1, token2, status_cell, row_text, log_f, log_l, exp_log))
 
-    # =========================================================================
     # 8. LAMPIRAN E: Parameter Pengujian 30 Run Terukur (30 item) - Hal 18-20
-    # =========================================================================
     tbl_e_doc = find_docx_table(doc, "Parameter Pengujian") if doc else None
     lampiran_e_items = []
     # (Label, N6_val, N100_val, N1000_val, log_file, line_num, exp_log_substr)
@@ -247,9 +204,7 @@ def main():
             label, t1, t2, t3, log_f, log_l, exp_logs = expected_e_rows[r_idx - 1]
             lampiran_e_items.append((label, t1, t2, t3, row_cells, log_f, log_l, exp_logs))
 
-    # =========================================================================
     # 9. LAMPIRAN F: Eksperimen Selisih Gas B-06 (21 item) - Hal 20-21
-    # =========================================================================
     tbl_f_doc = find_docx_table(doc, "Skenario Uji") if doc else None
     lampiran_f_items = [
         ("Run A Calldata Gas", "2.212 gas", (20, 21), "exp_b06_output.txt", 11, "2212"),
@@ -288,11 +243,8 @@ def main():
     total_items = (count_tabel_2 + count_tabel_5 + count_tabel_7 + count_tabel_8 +
                    count_tabel_10 + count_lampiran_b + count_lampiran_d + count_lampiran_e + count_lampiran_f)
 
-    print("=" * 115)
-    print("BAGIAN 1: VERIFIKASI FORWARD PER-BARIS TABEL DAN LOG AKTUAL (POIN 2a & D1)")
-    print("=" * 115)
+    print("Verifikasi forward tabel dan log:")
     print(f"{'Kategori Tabel / Bagian Dokumen':<45} | {'Jumlah Item':<12} | {'Halaman Target':<18} | {'Sumber Log Acuan':<25}")
-    print("-" * 115)
     print(f"{'1. Tabel 2 (Catatan Pelaksanaan Mini-Project)':<45} | {count_tabel_2:<12} | {'Halaman 3':<18} | {'demo-output.txt':<25}")
     print(f"{'2. Tabel 5 (Struktur Data Record Daun G-01..G-06)':<45} | {count_tabel_5:<12} | {'Halaman 5-6':<18} | {'demo-output.txt':<25}")
     print(f"{'3. Tabel 7 (Field Transaksi EVM Penjangkaran)':<45} | {count_tabel_7:<12} | {'Halaman 8':<18} | {'perf / demo / gaslimit':<25}")
@@ -302,9 +254,7 @@ def main():
     print(f"{'7. Lampiran D (Matriks Luaran OBE T-01..T-08)':<45} | {count_lampiran_d:<12} | {'Halaman 15-18':<18} | {'demo / perf log':<25}")
     print(f"{'8. Lampiran E (Rekapitulasi 30 Run: N=6/100/1000)':<45} | {count_lampiran_e:<12} | {'Halaman 18-20':<18} | {'perf-output.txt':<25}")
     print(f"{'9. Lampiran F (Eksperimen Selisih Gas B-06)':<45} | {count_lampiran_f:<12} | {'Halaman 20-21':<18} | {'exp_b06_output.txt':<25}")
-    print("-" * 115)
     print(f"{'TOTAL ITEM DIVERIFIKASI':<45} | {total_items:<12} | {'Seluruh Dokumen':<18} | {'(Syarat: >= 99 item)'}")
-    print("=" * 115)
 
     # 1. Tabel 2, 5, 7, 8
     standard_tables = [
@@ -316,7 +266,6 @@ def main():
     for cat_name, items in standard_tables:
         print(f"\n--- {cat_name.upper()} ({len(items)} item) ---")
         print(f"{'Hal':<5} | {'Elemen / Metrik':<35} | {'Nilai di PDF':<26} | {'Target Log:Baris':<25} | {'Cocok?':<8}")
-        print("-" * 115)
         for elem_name, val_pdf, page, log_file, line_num, expected_in_log in items:
             if isinstance(page, tuple):
                 pdf_text = " ".join(pdf_pages[p] for p in range(page[0], page[1] + 1))
@@ -348,7 +297,6 @@ def main():
     # 2. Tabel Unit Test (Tabel 10): Per-Baris DOCX
     print(f"\n--- TABEL UNIT TEST (T-01 s.d. T-08 / TABEL 10 DOCX) ({len(tabel_10_items)} item) ---")
     print(f"{'Baris':<15} | {'ID Tes':<8} | {'Skenario Uji di Tabel':<40} | {'Status Cell':<12} | {'Log Ref:Baris':<22} | {'Cocok?':<8}")
-    print("-" * 115)
     for label, tid, scenario, status_cell, log_file, line_num, exp_log in tabel_10_items:
         log_line = test_lines[line_num - 1] if line_num <= len(test_lines) else ""
         match_table = (tid in label) and (len(scenario) > 5)
@@ -361,7 +309,6 @@ def main():
     # 3. Lampiran D: Per-Baris DOCX
     print(f"\n--- LAMPIRAN D (MATRIKS OBE LENGKAP - TABEL 12 DOCX) ({len(lampiran_d_items)} item) ---")
     print(f"{'Baris':<25} | {'Token 1 (Wajib)':<32} | {'Token 2 (Unloosened)':<20} | {'Status Cell':<12} | {'Cocok?':<8}")
-    print("-" * 115)
     for label, t1, t2, status_cell, row_text, log_file, line_num, exp_log in lampiran_d_items:
         log_line = ""
         if log_file == "demo-output.txt":
@@ -380,7 +327,6 @@ def main():
     # 4. Lampiran E: Per-Baris DOCX (30 item checked)
     print(f"\n--- LAMPIRAN E (REKAPITULASI 30 RUN - TABEL 13 DOCX) ({count_lampiran_e} item) ---")
     print(f"{'Baris':<30} | {'N=6':<18} | {'N=100':<18} | {'N=1000':<18} | {'Log Ref:Baris':<18} | {'Cocok?':<8}")
-    print("-" * 115)
     for label, t1, t2, t3, cells, log_file, line_num, exp_logs in lampiran_e_items:
         log_line = perf_lines[line_num - 1] if line_num <= len(perf_lines) else ""
         cell_str = " ".join(cells)
@@ -399,7 +345,6 @@ def main():
     # 5. Lampiran B: Per-Baris Log
     print(f"\n--- LAMPIRAN B (KELUARAN EKSEKUSI B-05 - PER BARIS LOG DEMO) ({len(lampiran_b_items)} item) ---")
     print(f"{'Item Bukti':<28} | {'Baris Cuplikan di PDF / DOCX':<45} | {'Target Log:Baris':<22} | {'Cocok?':<8}")
-    print("-" * 115)
     lamp_b_text = full_pdf_text
     for item_name, exp_text, log_file, line_num, exp_log in lampiran_b_items:
         log_line = demo_lines[line_num - 1] if line_num <= len(demo_lines) else ""
@@ -414,7 +359,6 @@ def main():
     # 6. Lampiran F: Per-Baris Tabel Run A s.d. E (21 item)
     print(f"\n--- LAMPIRAN F (EKSPERIMEN ISOLASI VARIABEL B-06 - TABEL 14 DOCX) ({len(lampiran_f_items)} item) ---")
     print(f"{'Skenario & Metrik':<28} | {'Nilai di Tabel / PDF':<25} | {'Target Log:Baris':<25} | {'Cocok?':<8}")
-    print("-" * 115)
     lamp_f_text = full_pdf_text
     for item_name, val_str, page, log_file, line_num, exp_log in lampiran_f_items:
         log_line = exp_b06_lines[line_num - 1] if line_num <= len(exp_b06_lines) else ""
@@ -425,16 +369,12 @@ def main():
             mismatches += 1
         print(f"{item_name:<28} | {val_str:<25} | {log_file}:{line_num:<17} | {status:<8}")
 
-    print("\n" + "=" * 115)
+    print("")
     print(f"REKAPITULASI FORWARD CHECK: {total_items - mismatches}/{total_items} baris & sel terverifikasi cocok secara eksak.")
-    print("=" * 115)
 
-    # =========================================================================
     # BAGIAN 2: AUDIT KEBALIKAN ANGKA BERTITIK UTUH (POIN 2b)
-    # =========================================================================
-    print("\n" + "=" * 115)
-    print("BAGIAN 2: AUDIT KEBALIKAN (REVERSE CHECK) ANGKA BERTITIK UTUH PADA PDF (POIN 2b)")
-    print("=" * 115)
+    print("")
+    print("Audit reverse angka bertitik pada teks PDF:")
 
     source_files = [
         ("prototype/results/demo-output.txt", "demo-output.txt"),
@@ -472,7 +412,6 @@ def main():
 
     print(f"Total Angka Bertitik Ditemukan pada PDF: {len(pdf_dotted)} angka\n")
     print(f"{'No':<3} | {'Angka Bertitik':<15} | {'Status':<16} | {'Sumber Log Spesifik / Konteks Dokumen':<65}")
-    print("-" * 115)
 
     known_non_log_dotted = {
         "0.005": "Teoretis/Config | Ilustrasi biaya transaksi OP_RETURN UTXO Bitcoin tanpa smart contract [Hal 7]",
@@ -503,27 +442,21 @@ def main():
 
         print(f"{idx:<3} | {d:<15} | {status_str:<16} | {desc_str:<65}")
 
-    # =========================================================================
     # BAGIAN 3: AUDIT KEBALIKAN INTEGRITAS HASH 0x... (POIN 1b & 2d)
-    # =========================================================================
-    print("\n" + "=" * 115)
-    print("BAGIAN 3: AUDIT INTEGRITAS STRING HASH 0x... (POIN 1b & 2d)")
-    print("=" * 115)
+    print("")
+    print("Audit integritas string hash 0x:")
 
     cmd_hash = ["python3", "uts-blockchain-submission/tools/hash_check.py", "--pdf", PDF_FILE]
     res_hash = subprocess.run(cmd_hash, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     print(res_hash.stdout)
     hash_check_passed = (res_hash.returncode == 0)
 
-    # =========================================================================
     # STATUS AKHIR
-    # =========================================================================
-    print("=" * 115)
     if mismatches > 0 or unexplained_dotted > 0 or not hash_check_passed:
-        print(f"STATUS AKHIR: GAGAL ({mismatches} mismatch forward, {unexplained_dotted} dotted tak dikenal, hash_check={hash_check_passed})")
+        print(f"Status: GAGAL ({mismatches} mismatch forward, {unexplained_dotted} dotted tak dikenal, hash check={hash_check_passed})")
         sys.exit(1)
     else:
-        print(f"STATUS AKHIR: BERHASIL LULUS 100% (Semua {total_items} forward check cocok, reverse dotted tervalidasi, hash_check lulus).")
+        print(f"Status: LULUS 100% ({total_items} forward check cocok, reverse dotted tervalidasi, hash check lulus).")
         sys.exit(0)
 
 if __name__ == "__main__":

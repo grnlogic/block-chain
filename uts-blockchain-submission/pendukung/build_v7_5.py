@@ -1,25 +1,5 @@
 #!/usr/bin/env python3
-"""
-build_v7_4.py
-Master build script to generate Laporan_UTS_Blockchain_237006079_v7.5.docx and .pdf
-directly and reproducibly from the base docx:
-uts-blockchain-submission/Laporan_UTS_Blockchain_237006079.docx.
-
-Contains ALL changes (v7, v7.1, v7.2, v7.5) end-to-end without manual docx editing:
-- v7: Table 11/13 move to Lampiran D/E, renumbering body tables 1-10, UTXO compression,
-      Diagram 2 scaling (80%), soft-pedaling claims.
-- v7.1: BlockGasLimit 60.000.000 (0x3938700), hardware specs 12th Gen Intel(R) Core(TM)
-        i5-12450H 12 thread logis, RAM total 15 GiB, Table 2/7 ellipsis formatting,
-        UU PDP separate articles (Pasal 4 ayat 3, Pasal 8, Pasal 9, Pasal 43 ayat 1).
-- v7.2: Body strictly <= 12 pages (Cara i), blank lines remaining on page 12,
-        Lampiran F for B-06 (exp_b06_output.txt & Run A-E table), Lampiran D & E raised to 9 pt,
-        body tables untouched, short hex notation restored (0x03e8, 0x06, 0x3938700),
-        Lampiran A AI disclosure updated, PDF metadata set.
-- v7.5: Dynamic hash ingestion & assertions from demo-output.txt (Tabel 2, 5, 7, Lampiran B),
-        Subbab 4.7 claim updated to strictly measured O(1) gas 164.911 for N=6, 100, 1000,
-        Lampiran F caller updated to revoker (REVOKER_ROLE) & EVM snapshot/revert preserved,
-        Appendix physical order strictly A -> B -> C -> D -> E -> F with Lampiran C on own page.
-"""
+"""Skrip otomatisasi untuk mereproduksi dokumen laporan naskah akhir v7.5 (.docx dan .pdf)."""
 
 import docx
 from docx.shared import Pt, RGBColor, Inches
@@ -40,9 +20,7 @@ doc = docx.Document(SRC_DOCX)
 doc.core_properties.author = "Fajar Geran Arifin"
 doc.core_properties.title = "UTS Blockchain - Rancangan Sistem Verifikasi Kredensial Akademik"
 
-# =============================================================================
-# 0. PARSE DEMO OUTPUT FOR DYNAMIC HASH INGESTION & ASSERTIONS (POIN 1d)
-# =============================================================================
+# PARSE DEMO OUTPUT FOR DYNAMIC HASH INGESTION & ASSERTIONS 
 def parse_demo_log(filepath="prototype/results/demo-output.txt"):
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"Berkas log demo {filepath} tidak ditemukan!")
@@ -141,18 +119,14 @@ def replace_in_p(p, old, new, preserve_format=True):
                 r.font.color.rgb = color
             r.font.bold = bold
     return True
-# =============================================================================
-# 1. FOOTER UPDATE
-# =============================================================================
+# FOOTER UPDATE
 for sec in doc.sections:
     footer = sec.footer
     for p in footer.paragraphs:
         if "Template Laporan Kegiatan Blockchain" in p.text:
             p.text = "Laporan UTS Blockchain | TA 2026/2027"
 
-# =============================================================================
-# 2. CLEAR CANTSPLIT ON ALL TABLE ROWS FOR NATURAL PAGE FLOW
-# =============================================================================
+# CLEAR CANTSPLIT ON ALL TABLE ROWS FOR NATURAL PAGE FLOW
 for t in doc.tables:
     for r in t.rows:
         trPr = r._tr.get_or_add_trPr()
@@ -160,9 +134,7 @@ for t in doc.tables:
         if cs is not None:
             trPr.remove(cs)
 
-# =============================================================================
-# 3. HEADING FIXES (REMOVE "Case n")
-# =============================================================================
+# HEADING FIXES (REMOVE "Case n")
 heading_fixes = {
     "4.1 Analisis Kelayakan, Pemangku Kepentingan, dan Arsitektur Jaringan (P1, P2 / Case 1)":
         "4.1 Analisis Kelayakan, Pemangku Kepentingan, dan Arsitektur Jaringan (P1, P2)",
@@ -184,9 +156,7 @@ for p in doc.paragraphs:
     if t in heading_fixes:
         p.text = heading_fixes[t]
 
-# =============================================================================
-# 4. COMPRESS SUBCHAPTER 4.4 (UTXO) INTO 4.3 AND REMOVE TABLE 7
-# =============================================================================
+# COMPRESS SUBCHAPTER 4.4 (UTXO) INTO 4.3 AND REMOVE TABLE 7
 p_utxo_heading = None
 p_utxo_p1 = None
 p_utxo_p2 = None
@@ -223,9 +193,7 @@ if p_utxo_p2 is not None and "Komparasi Model Akun vs UTXO:" in p_utxo_p2.text:
 tbl7_utxo = doc.tables[7]
 tbl7_utxo._element.getparent().remove(tbl7_utxo._element)
 
-# =============================================================================
-# 5. DETACH TABLE 11 (CRITERIA) & TABLE 13 (BENCHMARK) TO BE PLACED IN APPENDICES
-# =============================================================================
+# DETACH TABLE 11 (CRITERIA) & TABLE 13 (BENCHMARK) TO BE PLACED IN APPENDICES
 tbl_criteria = None
 tbl_unittest = None
 tbl_bench = None
@@ -271,17 +239,13 @@ for r in p_lamp_e.runs:
 p_lamp_d._element.getparent().remove(p_lamp_d._element)
 p_lamp_e._element.getparent().remove(p_lamp_e._element)
 
-# =============================================================================
-# 6. HARDWARE SPECS (12th Gen Intel(R) Core(TM) i5-12450H, 12 thread logis, RAM total 15 GiB)
-# =============================================================================
+# HARDWARE SPECS (12th Gen Intel(R) Core(TM) i5-12450H, 12 thread logis, RAM total 15 GiB)
 t1 = doc.tables[1]
 for r in t1.rows:
     if "Perangkat Keras Node" in r.cells[0].text:
         r.cells[1].text = "12th Gen Intel(R) Core(TM) i5-12450H (8 fisik / 12 thread logis), RAM total 15 GiB (15.700.320 kB), OS Linux x86_64 Kernel 6.6"
 
-# =============================================================================
-# 7. UPDATE TABLE 2 (CATATAN PELAKSANAAN) WITH PARSED HASHES (POIN 1d)
-# =============================================================================
+# UPDATE TABLE 2 (CATATAN PELAKSANAAN) WITH PARSED HASHES 
 t2 = doc.tables[2]
 # Row 2: Deployment
 t2.rows[2].cells[2].text = (
@@ -304,9 +268,7 @@ t2.rows[5].cells[2].text = (
     "Rujukan: B-08, Tabel 8, Lampiran D, Lampiran E (results/perf-output.txt)"
 )
 
-# =============================================================================
-# 8. UPDATE TABLE 5 (RECORD DAUN MERKLE) & ASSERT HASHES (POIN 1d)
-# =============================================================================
+# UPDATE TABLE 5 (RECORD DAUN MERKLE) & ASSERT HASHES 
 t5 = None
 for t in doc.tables:
     if "Record / Daun" in t.rows[0].cells[0].text:
@@ -323,9 +285,7 @@ if t5 is not None:
         # Set formatted text with parsed hash
         t5.rows[idx].cells[3].text = f"{expected_leaf[:18]}... (32 byte)"
 
-# =============================================================================
-# 9. UPDATE TABLE 7 (FIELD TRANSAKSI EVM) WITH PARSED HASHES & 60M GAS (POIN 1d)
-# =============================================================================
+# UPDATE TABLE 7 (FIELD TRANSAKSI EVM) WITH PARSED HASHES & 60M GAS 
 for t in doc.tables:
     if "Field Transaksi EVM" in t.rows[0].cells[0].text:
         t.rows[3].cells[0].text = "Gas Limit / Gas Used / Status"
@@ -340,9 +300,7 @@ for t in doc.tables:
                         r.font.size = Pt(7.5)
         break
 
-# =============================================================================
-# 10. TEXT LEVEL REPLACEMENTS (UU PDP, SHORT HEX, MEASURED O(1) CLAIMS)
-# =============================================================================
+# TEXT LEVEL REPLACEMENTS (UU PDP, SHORT HEX, MEASURED O(1) CLAIMS)
 for p in doc.paragraphs:
     # UU PDP separate articles
     replace_in_p(p, "Pasal 8 dan 43 ayat (1)", "Pasal 8 dan 43 ayat (1)")
@@ -497,9 +455,7 @@ for p in doc.paragraphs:
             "memerlukan 211.084 gas (< 0,36% dari batas blok 60 juta gas)."
         )
 
-# =============================================================================
-# 11. SUBCHAPTER 4.6 OBE MATRIKS SUMMARY TABLE INTRO
-# =============================================================================
+# SUBCHAPTER 4.6 OBE MATRIKS SUMMARY TABLE INTRO
 for p in doc.paragraphs:
     if "Berikut adalah ringkasan matriks pemenuhan luaran OBE berdasarkan hasil pengujian:" in p.text:
         p.text = (
@@ -515,9 +471,7 @@ for p in doc.paragraphs:
             r.font.name = 'Arial'
             r.font.size = Pt(9.0)
 
-# =============================================================================
-# 12. INSERT B-06 SUMMARY IN SUBCHAPTER 4.7 (MAX 3 SENTENCES + LAMPIRAN F)
-# =============================================================================
+# INSERT B-06 SUMMARY IN SUBCHAPTER 4.7 (MAX 3 SENTENCES + LAMPIRAN F)
 for p in doc.paragraphs:
     if "• 7. Efek Pembulatan Calldata" in p.text:
         # Check if already inserted
@@ -550,13 +504,49 @@ for p in doc.paragraphs:
         for r in p_b09.runs:
             r.font.name = "Arial"
             r.font.size = Pt(9.0)
+        p_b10 = doc.add_paragraph()
+        p_b10.text = (
+            "• 10. Pengungkapan Dokumen Penuh: Prototipe menghitung satu daun Merkle dari seluruh isi kredensial "
+            "(computeCredentialLeaf), sehingga verifikator menerima seluruh isi dokumen dan salt. Selective disclosure "
+            "per field (daun dan salt per field) dirancang sebagai pengembangan lanjutan dan belum diimplementasikan."
+        )
+        p_b10.paragraph_format.space_before = Pt(3)
+        p_b10.paragraph_format.space_after = Pt(2)
+        for r in p_b10.runs:
+            r.font.name = "Arial"
+            r.font.size = Pt(9.0)
+
+        p_b11 = doc.add_paragraph()
+        p_b11.text = (
+            "• 11. Pembuktian Kepemilikan: Prototipe memverifikasi integritas dan penerbit, belum memverifikasi bahwa "
+            "penyaji adalah pemegang sah. Tanda tangan pemegang dengan challenge dari verifikator (mis. Verifiable "
+            "Presentation) baru berupa rancangan."
+        )
+        p_b11.paragraph_format.space_before = Pt(3)
+        p_b11.paragraph_format.space_after = Pt(2)
+        for r in p_b11.runs:
+            r.font.name = "Arial"
+            r.font.size = Pt(9.0)
+
+        p_b12 = doc.add_paragraph()
+        p_b12.text = (
+            "• 12. Cakupan Jenis Kredensial: Prototipe menguji data ijazah. Sertifikat kompetensi dan transkrip dirancang "
+            "memakai mekanisme yang sama dengan atribut berbeda (properti type pada W3C VC) dan belum diuji."
+        )
+        p_b12.paragraph_format.space_before = Pt(3)
+        p_b12.paragraph_format.space_after = Pt(2)
+        for r in p_b12.runs:
+            r.font.name = "Arial"
+            r.font.size = Pt(9.0)
+
         p._element.addnext(p_b06._element)
         p_b06._element.addnext(p_b09._element)
+        p_b09._element.addnext(p_b10._element)
+        p_b10._element.addnext(p_b11._element)
+        p_b11._element.addnext(p_b12._element)
         break
 
-# =============================================================================
-# 13. REFERENCES 10, 11, 12, 13 FORMATTING
-# =============================================================================
+# REFERENCES 10, 11, 12, 13 FORMATTING
 for p in doc.paragraphs:
     if p.text.startswith("[10]"):
         p.text = (
@@ -598,9 +588,7 @@ if not has_ref13:
             r.font.size = Pt(8.5)
         doc.paragraphs[p_last_ref_idx]._element.addnext(p13._element)
 
-# =============================================================================
-# 14. UPDATE LAMPIRAN A (PENGUNGKAPAN AI TRANSPARAN HINGGA v7.5)
-# =============================================================================
+# UPDATE LAMPIRAN A (PENGUNGKAPAN AI TRANSPARAN HINGGA v7.5)
 for i, p in enumerate(doc.paragraphs):
     if "Lampiran A: Pengungkapan Penggunaan Alat Bantu AI" in p.text:
         for j in range(i + 1, min(i + 10, len(doc.paragraphs))):
@@ -626,9 +614,7 @@ for i, p in enumerate(doc.paragraphs):
                     r.font.size = Pt(8.5)
         break
 
-# =============================================================================
-# 15. INSERT NUMBERED CAPTIONS FOR BODY TABLES 1 THROUGH 10
-# =============================================================================
+# INSERT NUMBERED CAPTIONS FOR BODY TABLES 1 THROUGH 10
 body_captions = [
     ("Komponen", "Tabel 1. Komponen Lingkungan Pengujian dan Reproduksibilitas Sistem"),
     ("Tahap", "Tabel 2. Catatan Pelaksanaan Mini-Project Perancangan Sistem Blockchain"),
@@ -661,9 +647,7 @@ for identifier, cap_text in body_captions:
             r.font.color.rgb = RGBColor(0x1F, 0x29, 0x37)
         target_tbl._element.addprevious(p_cap._element)
 
-# =============================================================================
-# 16. SCALE DIAGRAM 2 (80%)
-# =============================================================================
+# SCALE DIAGRAM 2 (80%)
 scale = 0.80
 for p in doc.paragraphs:
     for r in p.runs:
@@ -675,9 +659,7 @@ for p in doc.paragraphs:
                 ext.attrib["cx"] = str(int(cx * scale))
                 ext.attrib["cy"] = str(int(cy * scale))
 
-# =============================================================================
-# 17. RAISE FONT SIZE FOR LAMPIRAN D AND E TO MINIMAL 9 PT
-# =============================================================================
+# RAISE FONT SIZE FOR LAMPIRAN D AND E TO MINIMAL 9 PT
 for t in [tbl_criteria, tbl_bench]:
     for r in t.rows:
         for c in r.cells:
@@ -688,9 +670,7 @@ for t in [tbl_criteria, tbl_bench]:
                     if "30M gas" in run.text:
                         run.text = run.text.replace("30M gas", "60M gas node lokal / 30M gas contoh hipotetis konsorsium")
 
-# =============================================================================
-# 18. LAMPIRAN B ASSERTION & VERIFICATION (POIN 1d)
-# =============================================================================
+# LAMPIRAN B ASSERTION & VERIFICATION 
 for p in doc.paragraphs:
     if "Leaf Asli" in p.text and "Leaf Hasil Manipulasi" in p.text:
         assert demo_data["leaf_original"] in p.text, "Lampiran B does not contain exact Leaf Asli"
@@ -706,18 +686,14 @@ assert replacement_counts.get("guna menjamin hak penghapusan data pribadi (Right
 assert replacement_counts.get("• 1. Instant Finality: Ketuntasan Mutlak Seketika (Deterministic Instant Finality): Sekali blok di-commit oleh 2F + 1 validator, blok tersebut mustahil mengalami reorg atau percabangan, memberikan kepastian hukum langsung bagi ijazah yang diterbitkan.", 0) == 1, f"Expected 1 replacement for Subbab 4.3 P[46], got {replacement_counts.get('• 1. Instant Finality: Ketuntasan Mutlak Seketika (Deterministic Instant Finality): Sekali blok di-commit oleh 2F + 1 validator, blok tersebut mustahil mengalami reorg atau percabangan, memberikan kepastian hukum langsung bagi ijazah yang diterbitkan.', 0)}"
 print("All replacement assertions passed (each exactly 1 replacement)!")
 
-# =============================================================================
-# 19. LAMPIRAN C START ON OWN PAGE (POIN 7c)
-# =============================================================================
+# LAMPIRAN C START ON OWN PAGE 
 for p in doc.paragraphs:
     if "Lampiran C: Pernyataan Orisinalitas" in p.text:
         p.paragraph_format.page_break_before = True
         print("Lampiran C configured to start on its own page (page_break_before = True).")
         break
 
-# =============================================================================
-# 20. CONSTRUCT LAMPIRAN F (EKSPERIMEN B-06) - POIN 7b
-# =============================================================================
+# CONSTRUCT LAMPIRAN F (EKSPERIMEN B-06) - POIN 7b
 p_lamp_f_heading = doc.add_paragraph()
 p_lamp_f_heading.text = "Lampiran F: Eksperimen Isolasi Variabel Selisih Gas revokeCredential (B-06)"
 p_lamp_f_heading.paragraph_format.space_before = Pt(16)
@@ -846,9 +822,7 @@ p_lamp_f_analysis._element.getparent().remove(p_lamp_f_analysis._element)
 p_lamp_f_log_hdr._element.getparent().remove(p_lamp_f_log_hdr._element)
 p_lamp_f_log._element.getparent().remove(p_lamp_f_log._element)
 
-# =============================================================================
-# 21. ASSEMBLE APPENDICES IN EXACT PHYSICAL SEQUENCE: A -> B -> C -> D -> E -> F (POIN 7c)
-# =============================================================================
+# ASSEMBLE APPENDICES IN EXACT PHYSICAL SEQUENCE: A -> B -> C -> D -> E -> F 
 sectPr = doc.element.body.find("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}sectPr")
 
 # Elements to append in exact sequence before sectPr:
@@ -870,9 +844,7 @@ sectPr.addprevious(p_lamp_f_log._element)
 
 print("Appendices successfully assembled in order: A -> B -> C -> D -> E -> F")
 
-# =============================================================================
-# 22. REMOVE REDUNDANT PARAGRAPHS & TIGHTEN HEADING SPACING
-# =============================================================================
+# REMOVE REDUNDANT PARAGRAPHS & TIGHTEN HEADING SPACING
 to_remove = []
 for p in doc.paragraphs:
     if "Seluruh rangkaian unit test otomatis (T-01 s.d. T-08)" in p.text:
@@ -889,9 +861,7 @@ for p in doc.paragraphs:
     if p.paragraph_format.space_after and p.paragraph_format.space_after.pt > 3:
         p.paragraph_format.space_after = Pt(2)
 
-# =============================================================================
-# 23. SAVE DOCX AND CONVERT TO PDF
-# =============================================================================
+# SAVE DOCX AND CONVERT TO PDF
 doc.save(OUT_DOCX)
 print(f"v7.5 DOCX saved successfully to {OUT_DOCX}")
 

@@ -1,5 +1,32 @@
 #!/usr/bin/env python3
-"""Verifikasi mandiri angka, hash, dan metrik pada laporan PDF dan DOCX terhadap berkas log aktual."""
+"""
+verify_report.py
+Skrip verifikasi independen (di luar prototype/) untuk mencocokkan seluruh
+angka, hash, dan metrik di dokumen laporan PDF dan DOCX final terhadap berkas log aktual
+di prototype/results/* dan uts-blockchain-submission/tools/*.
+
+Fitur Utama v7.4:
+1. Cakupan Penuh 121 Item (>= 99 item) mencakup:
+   - Tabel 2: Catatan Pelaksanaan Mini-Project (5 item)
+   - Tabel 5: Record Daun Merkle G-01 s.d. G-06 (18 item)
+   - Tabel 7: Field Transaksi EVM Penjangkaran (8 item)
+   - Tabel 8: Komposisi Gas Transaksi issueBatch (13 item)
+   - Tabel Unit Test: ID T-01 s.d. T-08 (8 item)
+   - Lampiran B: Keluaran Eksekusi Prototipe B-05 (8 item)
+   - Lampiran D: Matriks Evaluasi Kriteria Luaran OBE (10 item)
+   - Lampiran E: Rekapitulasi Lengkap Metrik 30 Run Terukur (30 item: N=6, 100, 1000)
+   - Lampiran F: Eksperimen Isolasi Variabel Selisih Gas B-06 (21 item: Run A s.d. E)
+2. Pengecekan Dua Sisi:
+   (a) Di sisi dokumen: nilai/string dicocokkan di sel tabel docx dan teks PDF pada halaman yang benar.
+   (b) Di sisi log: nilai/string dicocokkan di baris log yang bersangkutan.
+   Untuk alamat dan hash 0x: diperiksa eksistensinya secara eksak pada teks PDF.
+3. Reverse Check Angka Bertitik:
+   - 82 angka bertitik pada teks PDF diverifikasi sumber lognya atau konteks teoretisnya.
+4. Reverse Check Hash 0x...:
+   - 16 string hash 0x... diverifikasi eksistensinya di log aktual melalui hash_check.py.
+5. Exit code 0 bila 100% lulus, exit code 1 bila ada kegagalan.
+"""
+
 import subprocess
 import sys
 import os
@@ -243,7 +270,7 @@ def main():
     total_items = (count_tabel_2 + count_tabel_5 + count_tabel_7 + count_tabel_8 +
                    count_tabel_10 + count_lampiran_b + count_lampiran_d + count_lampiran_e + count_lampiran_f)
 
-    print("Verifikasi forward tabel dan log:")
+    print("BAGIAN 1: VERIFIKASI FORWARD PER-BARIS TABEL DAN LOG AKTUAL (POIN 2a & D1)")
     print(f"{'Kategori Tabel / Bagian Dokumen':<45} | {'Jumlah Item':<12} | {'Halaman Target':<18} | {'Sumber Log Acuan':<25}")
     print(f"{'1. Tabel 2 (Catatan Pelaksanaan Mini-Project)':<45} | {count_tabel_2:<12} | {'Halaman 3':<18} | {'demo-output.txt':<25}")
     print(f"{'2. Tabel 5 (Struktur Data Record Daun G-01..G-06)':<45} | {count_tabel_5:<12} | {'Halaman 5-6':<18} | {'demo-output.txt':<25}")
@@ -369,12 +396,12 @@ def main():
             mismatches += 1
         print(f"{item_name:<28} | {val_str:<25} | {log_file}:{line_num:<17} | {status:<8}")
 
-    print("")
+    print("\n" + "=" * 115)
     print(f"REKAPITULASI FORWARD CHECK: {total_items - mismatches}/{total_items} baris & sel terverifikasi cocok secara eksak.")
 
     # BAGIAN 2: AUDIT KEBALIKAN ANGKA BERTITIK UTUH (POIN 2b)
-    print("")
-    print("Audit reverse angka bertitik pada teks PDF:")
+    print("\n" + "=" * 115)
+    print("BAGIAN 2: AUDIT KEBALIKAN (REVERSE CHECK) ANGKA BERTITIK UTUH PADA PDF (POIN 2b)")
 
     source_files = [
         ("prototype/results/demo-output.txt", "demo-output.txt"),
@@ -443,8 +470,8 @@ def main():
         print(f"{idx:<3} | {d:<15} | {status_str:<16} | {desc_str:<65}")
 
     # BAGIAN 3: AUDIT KEBALIKAN INTEGRITAS HASH 0x... (POIN 1b & 2d)
-    print("")
-    print("Audit integritas string hash 0x:")
+    print("\n" + "=" * 115)
+    print("BAGIAN 3: AUDIT INTEGRITAS STRING HASH 0x... (POIN 1b & 2d)")
 
     cmd_hash = ["python3", "uts-blockchain-submission/tools/hash_check.py", "--pdf", PDF_FILE]
     res_hash = subprocess.run(cmd_hash, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -453,10 +480,10 @@ def main():
 
     # STATUS AKHIR
     if mismatches > 0 or unexplained_dotted > 0 or not hash_check_passed:
-        print(f"Status: GAGAL ({mismatches} mismatch forward, {unexplained_dotted} dotted tak dikenal, hash check={hash_check_passed})")
+        print(f"STATUS AKHIR: GAGAL ({mismatches} mismatch forward, {unexplained_dotted} dotted tak dikenal, hash_check={hash_check_passed})")
         sys.exit(1)
     else:
-        print(f"Status: LULUS 100% ({total_items} forward check cocok, reverse dotted tervalidasi, hash check lulus).")
+        print(f"STATUS AKHIR: BERHASIL LULUS 100% (Semua {total_items} forward check cocok, reverse dotted tervalidasi, hash_check lulus).")
         sys.exit(0)
 
 if __name__ == "__main__":
