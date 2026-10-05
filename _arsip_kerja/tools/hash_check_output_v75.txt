@@ -1,0 +1,24 @@
+=== HASH CHECKER AUDIT INTEGRITAS HASH 0x... ===
+Memeriksa Dokumen: v7_workspace/Laporan_UTS_Blockchain_237006079_v7.5.pdf
+Total String 0x... Unik Ditemukan pada PDF: 16 string
+
+No  | String 0x... di PDF                                                    | Jenis            | Target Log:Baris          | Status    
+------------------------------------------------------------------------------------------------------------------------------------
+1   | 0x03e8                                                                 | Short-hex (4h)   | perf-output.txt:49        | ADA       
+2   | 0x06                                                                   | Short-hex (2h)   | perf-output.txt:49        | ADA       
+3   | 0x0b097c59bcd2b3d0b5cba350b03cea87b34b4294eba79c5d5cf2f0a548d04f97     | Full 64-hex      | demo-output.txt:51        | ADA       
+4   | 0x108e53ac2b7a5439...                                                  | Prefix (16h)     | demo-output.txt:24        | ADA       
+5   | 0x145b5523...                                                          | Prefix (8h)      | demo-output.txt:13        | ADA       
+6   | 0x1737c359...                                                          | Prefix (8h)      | demo-output.txt:29        | ADA       
+7   | 0x3938700                                                              | Short-hex (7h)   | gaslimit_output.txt:4     | ADA       
+8   | 0x46ca2e83...                                                          | Prefix (8h)      | demo-output.txt:25        | ADA       
+9   | 0x5FbDB23156...                                                        | Prefix (10h)     | demo-output.txt:12        | ADA       
+10  | 0x5c97927280c16ef9...                                                  | Prefix (16h)     | demo-output.txt:22        | ADA       
+11  | 0x70997970C5...                                                        | Prefix (10h)     | demo-output.txt:5         | ADA       
+12  | 0x7b5f7365dffd18a8...                                                  | Prefix (16h)     | demo-output.txt:19        | ADA       
+13  | 0x7b5f7365dffd18a87fb7b5471e7843da27e53b4ec53e8e1ef064b78ab3b0645c     | Full 64-hex      | demo-output.txt:36        | ADA       
+14  | 0xca7c3acd32fa82a2...                                                  | Prefix (16h)     | demo-output.txt:21        | ADA       
+15  | 0xcc0d8357be021242...                                                  | Prefix (16h)     | demo-output.txt:23        | ADA       
+16  | 0xf3695a1ce4a97902...                                                  | Prefix (16h)     | demo-output.txt:20        | ADA       
+------------------------------------------------------------------------------------------------------------------------------------
+HASIL AKHIR: BERHASIL LULUS 100% (Semua 16 string 0x... terverifikasi ADA di log aktual).

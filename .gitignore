@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+prototype/node_modules/
+pendukung/prototype/node_modules/
+
+# Hardhat & Build artifacts
+cache/
+artifacts/
+prototype/cache/
+prototype/artifacts/
+pendukung/prototype/cache/
+pendukung/prototype/artifacts/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary media & logs
+.tempmediaStorage/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,1892 @@
+UNIVERSITAS SILIWANGI
+FAKULTAS TEKNIK , PROGRAM STUDI INFORMATIKA
+
+LAPORAN KEGIATAN UJIAN TENGAH SEMESTER (UTS)
+ASESMEN BERBASIS KASUS DAN PROYEK (OBE)
+Tahun Akademik 2026/2027 Semester Ganjil
+Identitas
+
+Rincian Isian
+
+Jenis laporan
+
+UTS Individu (Mini-Project Bagian B)
+
+Judul kasus atau proyek
+
+Rancang Bangun Sistem Verifikasi Kredensial Akademik Berbasis
+Blockchain Konsorsium, Merkle Tree, dan Arsitektur Privasi Zero-PII
+
+Nama dan NPM
+
+Fajar Geran Arifin / NPM 237006079
+
+Anggota dan peran (UAS)
+
+- (Tugas Individual UTS Bagian B)
+
+Kelas / semester
+
+C / 7 (Tujuh)
+
+Mata kuliah / kode
+
+Blockchain / KP70067008 (S1 Informatika)
+
+Dosen pengampu
+
+Dr. Ir. Nur Widiyasono, M.Kom.
+
+Tanggal kegiatan
+
+2 Oktober 2026
+
+Ringkasan Kegiatan
+Kredensial akademik fisik konvensional (ijazah, transkrip, dan sertifikat kompetensi) menghadapi tantangan serius berupa kerentanan
+pemalsuan dokumen, inefisiensi proses verifikasi manual lintas institusi yang memakan waktu 2 hingga 14 hari kerja, ketergantungan pada
+server tunggal universitas (Single Point of Failure), serta risiko kebocoran data pribadi mahasiswa yang diatur secara ketat dalam UU No. 27
+Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP) [10]. Penelitian dan proyek ini merancang sistem penjangkaran dan verifikasi
+kredensial akademik terdesentralisasi menggunakan jaringan blockchain konsorsium permissioned (EVM-compatible / Hyperledger Besu)
+yang mengintegrasikan standar W3C Verifiable Credentials Data Model v2.0 [1], kanonikalisasi JSON yang mengacu pada RFC 8785 [9],
+komitmen kriptografis bergaram (salted cryptographic commitment 256-bit), dan pohon Merkle [4]. Sistem dirancang dengan arsitektur
+Zero-PII On-Chain, di mana tidak ada data pribadi (Personally Identifiable Information) yang disimpan pada buku besar terdistribusi guna
+menjamin hak penghapusan data pribadi (Right to Erasure, Pasal 8 dan Pasal 43 UU PDP) [10], melainkan hanya Merkle Root per batch
+kelulusan yang dijangkarkan secara on-chain.
+Prototipe smart contract registri (AcademicCredentialRegistry.sol) diimplementasikan menggunakan Solidity 0.8.28 dan OpenZeppelin
+Contracts v5.6.1 [3], dilengkapi dengan kontrol akses berbasis peran (RBAC) [3], sirkuit pemutus darurat (Pausable) [3], dan verifikasi jalur
+Merkle [4]. Pengujian performa bertingkat pada batch sintetis N=6, 100, dan 1.000 lulusan membuktikan bahwa konsumsi gas eksekusi
+murni smart contract untuk penjangkaran batch adalah konstan secara eksak sebesar 164.911 gas (deviasi 0,0000%, true O(1)), di mana
+selisih gas receipt 84 gas antara N=6 dan N=1.000 terbukti secara matematis berasal dari akumulasi parameter calldata EIP-2028 [11]
+(Word 0: batchId +36 gas, Word 2: graduateCount +12 gas, Word 6: metadataURI +36 gas). Verifikasi kredensial oleh publik/industri
+dipanggil tanpa biaya gas (0 gas via eth_call) [2] dengan latensi sub-milidetik (~0,60-0,86 ms) dan ukuran bukti pembuktian logaritmik O(log
+N) [4]. Seluruh 8 skenario pengujian otomatis (T-01 s.d. T-08) dan 10 kriteria kelayakan performa dan keamanan terbukti berhasil dipenuhi,
+membuktikan kelayakan implementasi blockchain konsorsium untuk ekosistem perguruan tinggi nasional.
+
+1 Pendahuluan
+1.1 Latar Belakang dan Tujuan
+Konteks Masalah: Ijazah dan transkrip akademik merupakan instrumen bukti kompetensi formal tertinggi yang
+diterbitkan oleh perguruan tinggi bagi para lulusannya. Namun, dalam ekosistem ketenagakerjaan modern, proses
+verifikasi keabsahan dokumen akademik masih menghadapi friksi birokrasi yang substansial. Pemalsuan ijazah cetak
+menggunakan teknologi percetakan presisi tinggi terus menjadi ancaman reputasi institusi pendidikan tinggi. Di sisi
+lain, mekanisme verifikasi konvensional yang mengandalkan legalisir fisik cap basah atau layanan verifikasi surat
+menyurat membutuhkan waktu 2 hingga 14 hari kerja, membebani staf administrasi akademik, dan menimbulkan
+biaya logistik bagi alumni.
+Kebutuhan Trust: Pendekatan digitalisasi terpusat saat ini, seperti portal verifikasi pangkalan data internal kampus
+atau PDDikti, meskipun telah membantu, memiliki keterbatasan fundamental: ketergantungan mutlak pada server
+tunggal (Single Point of Failure / SPOF). Apabila server universitas mengalami downtime, insiden bencana alam, atau
+kebangkrutan institusi, pihak ketiga kehilangan akses untuk memverifikasi dokumen alumni. Selain itu, basis data
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+terpusat rentan terhadap manipulasi internal (insider threat) oleh pihak yang memiliki hak akses superadmin
+(Database Administrator). Oleh karena itu, dibutuhkan sistem verifikasi terdesentralisasi di mana kepercayaan (trust)
+tidak diletakkan pada satu institusi pengelola basis data, melainkan dijangkar pada bukti matematika kriptografi yang
+kekal (immutable) dan dapat diaudit secara independen oleh pihak mana pun tanpa perantara.
+Tujuan Kegiatan: Tujuan utama dari proyek ini adalah merancang, mengimplementasikan, dan menguji arsitektur sistem
+verifikasi kredensial akademik berbasis blockchain konsorsium yang memenuhi lima pilar utama: (1) Integritas & AntiPemalsuan melalui pohon Merkle [4] dan hash bergaram [6]; (2) Perlindungan Privasi & Kepatuhan Hukum sesuai mandat
+UU PDP No. 27 Tahun 2022 [10] melalui prinsip Zero-PII On-Chain; (3) Skalabilitas Komputasi On-Chain dengan efisiensi gas
+penjangkaran O(1) [11]; (4) Kemudahan Akses Publik dengan verifikasi berbiaya nol (0 gas via eth_call) [2]; dan (5) Tata
+Kelola & Keamanan Berlapis melalui pemisahan peran RBAC dan jeda darurat sirkuit pemutus (circuit breaker) [3].
+
+1.2 Ruang Lingkup
+Ruang lingkup kegiatan perancangan dan pengujian dibatasi pada koridor teknis sebagai berikut:
+• Dataset Pengujian: Dataset Kredensial: Menggunakan data sintetis fiktif lulusan program sarjana (N=6, N=100,
+dan N=1.000 record) yang memuat atribut akademis standar (NIM, Nama, Program Studi, Jenjang, Nomor Seri
+Ijazah, Tanggal Kelulusan, IPK) tanpa menggunakan data pribadi mahasiswa riil guna menjaga privasi mutlak.
+• Infrastruktur Jaringan: Lingkungan Jaringan: Pengujian deterministik diimplementasikan pada Hardhat Local
+Network (Chain ID: 31337) yang merepresentasikan mesin virtual EVM, dengan target arsitektur produksi
+dirancang untuk konsorsium Hyperledger Besu menggunakan mekanisme konsensus Quorum Byzantine Fault
+Tolerance (QBFT).
+• Fitur Utama Kontrak: Fitur Fungsional Smart Contract: Registri penjangkaran Merkle root batch (issueBatch) [4],
+pembatalan/pencabutan kredensial perorangan (revokeCredential), verifikasi keabsahan dokumen off-chain/on-chain
+(verifyCredential) [2], pembekuan sistem darurat (pause/unpause) [3], serta kontrol peran (AccessControl) [3] untuk
+Admin, Issuer, dan Revoker.
+
+• Batasan Pengembangan: Batasan Kegiatan: Kegiatan ini berfokus pada pengujian backend smart contract,
+algoritma kriptografi off-chain, dan pengukuran skalabilitas gas/latensi. Pengembangan antarmuka mobile/web
+pengguna akhir (frontend UI) dan integrasi sistem identitas terdesentralisasi lanjutan (DID) disajikan dalam bentuk
+spesifikasi arsitektural dan skrip simulasi deterministik.
+
+2 Data, Alat, dan Reproduksibilitas
+Untuk menjamin bahwa seluruh hasil observasi, angka konsumsi gas, dan waktu komputasi yang dilaporkan dalam
+dokumen ini dapat diuji ulang secara independen oleh dosen penguji maupun peneliti lain, seluruh konfigurasi
+perangkat keras, perangkat lunak, pustaka dependensi, dan perintah eksekusi dirangkum secara transparan dalam
+Tabel 1.
+Komponen
+
+Keterangan / Rujukan Teknis
+
+Dataset atau use case
+
+Data sintetis kredensial sarjana (N=6, 100, 1.000 mahasiswa fiktif),
+skema W3C Verifiable Credentials Data Model v2.0, representasi
+atribut akademik (NIM, Nama, Prodi, IPK, Salt 256-bit).
+
+Lingkungan Uji
+
+Host: Ubuntu Linux 24.04 LTS (Kernel 6.17.0-40-generic x86_64),
+Prosesor Intel Core i5-12450H (12 vCPU), 16 GB DDR4 RAM. Target
+EVM: Paris. Node Lokal: Hardhat Network (Chain ID 31337).
+
+Alat dan Versi
+
+Node.js v24.14.0, npm 11.9.0, Hardhat v2.29.1, Solidity Compiler (solc)
+v0.8.28 (optimizer enabled, 200 runs), @openzeppelin/contracts
+v5.6.1, merkletreejs v0.4.0, keccak256 v1.0.6, Python 3.12.3.
+
+Repositori / Direktori
+
+Direktori lokal proyek: /prototype (memuat contracts/, scripts/, test/,
+package.json, hardhat.config.js, demo-output.txt, perf-output.txt, testoutput.txt, README.md).
+
+Artefak Awal
+
+Skema JSON-LD W3C VC, modul kanonikalisasi mengacu pada RFC
+8785, utilitas pembangkit salt acak crypto.randomBytes(32),
+implementasi pohon Merkle keccak256 berurutan terurut.
+
+Langkah Reproduksi
+
+1. cd prototype; 2. npm install; 3. npx hardhat compile; 4. npx hardhat
+test (T-01 s.d. T-08); 5. npx hardhat run scripts/run-demo.js; 6. npx
+hardhat run scripts/perf-bench.js.
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+3 Catatan Pelaksanaan
+Tahap
+
+Kegiatan yang Dilakukan
+
+Hasil dan Rujukan Bukti
+
+Tahap 1: Analisis dan Desain
+
+Identifikasi 4 pemangku kepentingan (universitas,
+alumni, verifikator industri, regulator Dikti), evaluasi
+kelemahan dan inefisiensi verifikasi ijazah
+konvensional, pemodelan 6 ancaman STRIDE, serta
+perumusan arsitektur jaringan konsorsium
+permissioned (EVM / Hyperledger Besu) dan skema
+Zero-PII on-chain.
+
+Dokumen design-decisions.md, Diagram 1 (Arsitektur
+Jaringan Konsorsium), Tabel 3 (Komparasi DB vs
+Blockchain), dan Tabel 10 (Matriks Ancaman STRIDE).
+
+Tahap 2: Lingkungan dan Kontrak
+
+Inisialisasi proyek Hardhat lokal (Chain ID 31337),
+implementasi smart contract
+AcademicCredentialRegistry.sol dengan pustaka
+OpenZeppelin v5 (AccessControl, Pausable,
+MerkleProof), kompilasi bytecode Solidity 0.8.28, dan
+deployment kontrak.
+
+Kontrak aktif di alamat
+0x5FbDB2315678afecb367f032d93F642f64180aa3,
+Tx: 0x145b5523..., Gas: 1.039.368 unit [B-01].
+(Eksekusi: 4 Oktober 2026, 19:16:58 WIB,
+results/demo-output.txt).
+
+Tahap 3: Data dan Kriptografi
+
+Penyusunan dataset 6 lulusan sintetis, kanonikalisasi
+JSON yang mengacu pada RFC 8785, injeksi salt 256bit acak CSPRNG (crypto.randomBytes), kalkulasi
+komitmen daun Keccak-256, dan pembentukan
+Merkle tree off-chain.
+
+6 Daun bergaram terhitung, Merkle Root:
+0x46ca2e8399d6be8a489c375dcd355319d7eaa4a92
+a132afdc3a00220c1faccd3 [B-02], Tabel 5, Diagram
+3. (Eksekusi: 4 Oktober 2026, 19:16:58 WIB,
+results/demo-output.txt).
+
+Tahap 4: Eksekusi dan Pengujian
+
+Eksekusi penjangkaran batch wisuda on-chain oleh
+ISSUER_ROLE, verifikasi ijazah sah via eth_call, uji
+tamper klaim IPK, uji kontrol akses penyerang,
+pencabutan kredensial oleh REVOKER_ROLE, dan
+audit jeda darurat (pause/unpause).
+
+Root terdaftar Block #2 tx 0x1737c359... [B-03];
+verifikasi valid 0 gas [B-04]; manipulasi ditolak [B05A]; peretas dicegat [B-05B] (kutipan log mentah
+lengkap dicantumkan pada Lampiran B); pencabutan
+[B-06]; pause [B-07]. 8 dari 8 test lulus (T-01 s.d. T08). Log: results/demo-output.txt dan results/testoutput.txt (4 Oktober 2026).
+
+Tahap 5: Pengukuran Performa
+
+Automated benchmarking 30 iterasi terukur (+ 2
+warm-up) pada batch N=6, 100, dan 1.000 lulusan
+sintetis: waktu build pohon off-chain, gas issueBatch,
+gas revokeCredential, biaya calldata EIP-2028, dan
+estimasi gas eksekusi murni verifikasi.
+
+Gas eksekusi murni issueBatch konstan 164.911 gas
+(O(1)), bukti selisih calldata deterministik tepat 84
+gas, model anggaran verifikasi linier [B-08], Tabel 9,
+Tabel 11, Tabel 13. Log: results/perf-output.txt
+(Eksekusi: 4 Oktober 2026, 19:17:06 WIB).
+
+Tahap 6: Penyusunan Laporan
+
+Pengisian template laporan teknis resmi, sinkronisasi
+metrik B-01 s.d. B-08 terhadap log aktual, render
+diagram monokrom Graphviz 300 DPI,
+penandatanganan orisinalitas, ekspor PDF, dan
+pemeriksaan tampilan visual.
+
+Dokumen laporan teknis
+Laporan_UTS_Blockchain_237006079.docx dan
+berkas PDF final (4 Oktober 2026).
+
+Setiap artefak bukti pelaksanaan diberi kode referensi unik B-01 sampai B-08 dan merujuk langsung ke berkas log
+keluaran eksekusi nyata pada repositori prototipe (results/demo-output.txt, results/test-output.txt, dan results/perfoutput.txt). Seluruh proses perancangan, implementasi prototipe, dan penyusunan laporan ini dibantu oleh agen
+kecerdasan artifisial (AI) sebagaimana diungkapkan secara jujur dan transparan pada Lampiran A.
+Aspek Keamanan dan Kerahasiaan Lingkungan Uji: Seluruh pengujian menggunakan data kelulusan sintetis fiktif sehingga tidak ada data
+pribadi riil yang terekspos; pengujian tidak menggunakan kunci privat bernilai nyata, melainkan memanfaatkan akun pengembang bawaan
+node Hardhat lokal; serta nilai salt 256-bit dibangkitkan secara acak murni menggunakan CSPRNG Node.js (crypto.randomBytes) pada
+setiap sesi eksekusi guna menjamin sifat unik daun komitmen tanpa kebocoran entropi.
+
+4 Bagian Khusus UTS: Perancangan Sistem Verifikasi Kredensial Akademik
+4.1 Analisis Kelayakan, Pemangku Kepentingan, dan Arsitektur Jaringan (P1, P2 / Case 1)
+Identifikasi Pemangku Kepentingan: Perancangan sistem dimulai dari identifikasi menyeluruh terhadap empat
+kelompok pemangku kepentingan (stakeholders) utama dalam ekosistem ijazah perguruan tinggi:
+• 1. Perguruan Tinggi: Institusi Pendidikan Tinggi (Penerbit / Issuer / Biro Akademik): Bertanggung jawab atas
+penerbitan kredensial sah, berkepentingan menjaga reputasi akademik institusi dari ancaman ijazah palsu, serta
+memerlukan efisiensi biaya operasional legalisir.
+• 2. Mahasiswa / Alumni: Mahasiswa & Alumni (Pemegang / Holder): Memiliki hak kepemilikan mutlak atas dokumen
+akademiknya, membutuhkan kemudahan portabilitas dokumen digital [1], serta dilindungi hak privasinya atas data
+pribadi (Pasal 8 UU PDP No. 27/2022) [10].
+
+• 3. DUDI / Industri: Dunia Usaha dan Industri / Instansi Kerja (Pemverifikasi / Verifier / HRD): Membutuhkan
+layanan verifikasi yang instan (< 1 detik), akurat secara matematis, tidak berbayar (bebas gas fee), dan tidak
+memerlukan surat konfirmasi manual.
+• 4. Regulator Pemerintah: Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi / LLDIKTI / BAN-PT
+(Regulator): Memerlukan jejak audit nasional yang tak terbantahkan (tamper-evident audit trail) untuk memantau
+kepatuhan kuota kelulusan dan penomoran ijazah nasional (PIN).
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Permasalahan & Trust: Kelemahan sistem saat ini mencakup lima masalah kritis: (1) kerentanan pemalsuan blanko
+fisik; (2) durasi verifikasi manual yang lambat (2-14 hari kerja); (3) risiko downtime server tunggal universitas (Single
+Point of Failure); (4) ancaman manipulasi basis data oleh oknum internal administrator (insider threat); dan (5)
+inefisiensi logistik legalisir fisik. Kebutuhan trust pada sistem ini menuntut agar verifikasi dokumen tidak bergantung
+pada itikad baik satu entitas server, melainkan dijamin oleh konsensus kriptografis terdistribusi.
+Aspek Evaluasi
+
+Basis Data Tradisional (RDBMS)
+
+Sistem Blockchain Konsorsium
+
+Alasan & Justifikasi Keputusan
+
+Integritas dan Verifikasi
+
+Dapat diubah/dihapus oleh akun
+DBA (root); audit trail berupa log
+internal yang rawan dimanipulasi.
+
+Kekal secara kriptografis
+(immutable); perubahan state wajib
+melalui konsensus validator.
+
+Kredensial akademik adalah aset
+permanen seumur hidup yang tidak
+boleh dimanipulasi sepihak pascayudisium.
+
+Tata Kelola dan Akses
+
+Tersentralisasi penuh pada satu unit
+IT kampus; rentan runtuh jika
+institusi tutup.
+
+Terdesentralisasi secara federasi
+antar-kampus dan regulator; tata
+kelola berbasis multi-sig.
+
+Mencegah single point of failure dan
+menjamin ketersediaan verifikasi
+dokumen lintas generasi.
+
+Biaya dan Performa
+
+Throughput sangat tinggi (> 10.000
+TPS), latensi rendah (< 5 ms), biaya
+operasional murah.
+
+Throughput terbatas (100-1.000
+TPS), membutuhkan konsumsi
+komputasi/gas.
+
+Volume kelulusan bersifat periodik
+musiman (wisuda 2-4 kali per
+tahun), sehingga throughput
+blockchain memadai.
+
+Kepatuhan Privasi
+
+Mendukung penghapusan data
+secara langsung (hard delete SQL).
+
+Data yang tertulis di ledger tidak dapat
+dihapus (kontradiksi dengan hak hapus
+data pribadi Pasal 8 UU PDP [10]).
+
+Solusi hibrida: Data pribadi disimpan
+off-chain, hanya Merkle root [4] yang
+dijangkarkan ke blockchain
+publik/konsorsium.
+
+Kapan Basis Data Konvensional Lebih Tepat: Meskipun blockchain unggul dalam hal kekekalan data dan audit
+terdistribusi, basis data relasional konvensional (seperti PostgreSQL) terbukti jauh lebih tepat untuk mengelola data
+transaksional operasional kampus yang bersifat privat, bervolume tinggi, dan dinamis, seperti proses pengisian Kartu
+Rencana Studi (KRS), pencatatan presensi kuliah harian, draf penilaian tugas, dan revisi nilai sebelum sidang yudisium.
+Mengunggah data transaksional yang belum final ke blockchain merupakan pemborosan komputasi dan melanggar
+prinsip kerahasiaan. Oleh sebab itu, diputuskan arsitektur hibrida: PostgreSQL menangani operasional harian SIAKAD
+kampus, sedangkan blockchain konsorsium secara eksklusif menjadi jangkar pembuktian integritas dokumen final
+kelulusan.
+Pemilihan Model Jaringan: Pilihan arsitektur jatuh pada Konsorsium Permissioned Blockchain (Hyperledger Besu /
+EVM compatible). Dibandingkan Public Blockchain (Ethereum Mainnet) yang membebankan biaya gas volatil tinggi
+dalam mata uang kripto dan memiliki risiko keterbukaan metadata, konsorsium menawarkan lingkungan stabil tanpa
+biaya gas eksternal, kontrol identitas validator yang jelas, dan throughput tinggi. Dibandingkan Private Blockchain
+tunggal yang tidak memberikan nilai tambah trust publik, konsorsium menyatukan Kemendikbudristek, Universitas
+Siliwangi, Asosiasi Perguruan Tinggi, dan Perwakilan Industri ke dalam tata kelola federasi yang saling mengawasi.
+
+Diagram 1: Arsitektur Sistem Kredensial Akademik Konsorsium Berbasis Zero-PII dan Merkle Tree
+Komponen Data / Fungsi
+
+Klasifikasi Penempatan
+
+Aktor & Hak Akses
+
+Alasan Teknis & Kepatuhan
+Regulasi
+
+Data Pribadi Lulusan (Nama, NIK,
+NIM, Nilai)
+
+Off-Chain (Dompet Mahasiswa &
+Arsip Kampus)
+
+Pemegang Dokumen (Mahasiswa) &
+Biro Akademik
+
+Kepatuhan terhadap Pasal 8 dan Pasal
+43 UU PDP [10] (Right to Erasure);
+mencegah doxxing dan kebocoran
+identitas publik.
+
+Nilai Salt Kriptografi (256-bit
+Random)
+
+Off-Chain (Disimpan dalam file JSON
+kredensial)
+
+Mahasiswa & Verifikator saat
+presentasi klaim
+
+Mencegah serangan kamus (rainbow
+table attack) pada data akademik
+berentropi rendah (IPK rentang 2.04.0).
+
+Dokumen Lengkap W3C VC (JSON-
+
+Off-Chain (Penyimpanan
+
+Mahasiswa (Holder) secara
+
+Format standar global
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+LD)
+
+terenkripsi / IPFS privat)
+
+berdaulat
+
+interoperabel; ukuran berkas relatif
+besar (2-5 KB) tidak efisien di onchain.
+
+Merkle Root Batch Kelulusan (32
+byte)
+
+On-Chain (Smart Contract Storage)
+
+Publik (Read) / ISSUER_ROLE (Write)
+
+Mengompresi ribuan ijazah ke
+dalam 1 hash 32-byte; menjamin
+biaya penjangkaran O(1) konstan.
+
+Daftar Pembatalan Ijazah
+(Revocation List)
+
+On-Chain (Smart Contract Storage
+Mapping)
+
+Publik (Read) / REVOKER_ROLE
+(Write)
+
+Memungkinkan pembatalan status
+sah ijazah secara seketika dan dapat
+diaudit publik tanpa membongkar
+batch.
+
+4.2 Kriptografi, W3C Verifiable Credentials, dan Integritas Daun Bergaram (P3 / Case 2)
+Prinsip Kriptografi & Komitmen Bergaram: Sistem menerapkan fungsi hash kriptografis Keccak-256 (spesifikasi asli Ethereum
+dengan aturan multi-rate padding 10*1 [6], yang berbeda dengan standar NIST FIPS 202 SHA3-256 yang menambahkan
+domain separator 01 [12]). Perlu ditekankan prinsip dasar keamanan informasi bahwa fungsi hash satu arah tidak
+menyembunyikan isi data apabila ruang input memiliki entropi rendah. Nilai IPK sarjana (rentang 2.00 s.d. 4.00 dengan dua
+desimal hanya memuat 201 kemungkinan nilai) dan format Nomor Induk Mahasiswa sangat rentan terhadap serangan
+penelusuran kamus (dictionary / brute-force attack) dan tabel pelangi (rainbow table). Untuk mengatasi kerentanan ini,
+setiap klaim akademik diwajibkan di-hash bersama nilai salt kriptografis berentropi tinggi (256-bit acak murni yang
+dibangkitkan dari CSPRNG) sebelum diproses ke pohon Merkle [4]:
+
+Formula Daun Merkle: Daun_Kredensial = Keccak256( Canonicalize_Acuan_RFC8785(Klaim_Akademik) ||
+Salt_256bit )
+Standar W3C VC & Kepatuhan Hak Hapus: Kanonikalisasi JSON yang mengacu pada RFC 8785 [9] menjamin bahwa susunan
+kunci atribut kamus selalu deterministik secara byte-level di seluruh platform sistem operasi. Standar W3C Verifiable
+Credentials Data Model v2.0 [1] mendefinisikan mekanisme credentialStatus untuk memeriksa keabsahan dokumen;
+penjangkaran status melalui Merkle Root on-chain [4] merupakan pilihan desain arsitektur pada prototipe ini. Dengan desain
+ini, kepatuhan mutlak terhadap hak penghapusan data pribadi pada Pasal 8 serta kewajiban penghapusan pada Pasal 43 dan
+Pasal 44 UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP) [10] terpenuhi: jika alumni mengajukan hak
+penghapusan data, universitas dan alumni cukup memusnahkan dokumen lokal dan nilai salt, sehingga daun hash pada
+blockchain menjadi artefak komputasi acak semu yang mustahil direkonstruksi kembali (cryptographic erasure).
+Record / Daun
+
+Klaim Identitas & Nilai
+
+Salt Kriptografi (256-bit)
+
+Hash Daun (Keccak-256)
+
+Status Validasi On-Chain
+
+Daun L1 (G-01)
+
+NIM: 237006801 | Ahmad
+Dahlan | IPK: 3.82
+
+0x25a7dcb10e... (32 byte)
+
+0x7b5f7365dffd18a8... (32
+byte)
+
+Valid Terverifikasi (Bukti B04)
+
+Daun L2 (G-02)
+
+NIM: 237006802 | Bunga
+Citra | IPK: 3.65
+
+0xef67d9830c... (32 byte)
+
+0xf3695a1ce4a97902... (32
+byte)
+
+Tercabut Resmi (Bukti B-06)
+
+Daun L3 (G-03)
+
+NIM: 237006803 | Cahyo
+Rizki | IPK: 3.91
+
+0x98bcefa401... (32 byte)
+
+0xca7c3acd32fa82a2... (32
+byte)
+
+Valid dalam Root Batch
+
+Daun L4 (G-04)
+
+NIM: 237006804 | Dewi
+Sekar | IPK: 3.45
+
+0x12dcf678aa... (32 byte)
+
+0x5c97927280c16ef9... (32
+byte)
+
+Valid dalam Root Batch
+
+Daun L5 (G-05)
+
+NIM: 237006805 | Eko
+Prasetyo | IPK: 3.55
+
+0xab6790ef43... (32 byte)
+
+0xcc0d8357be021242... (32
+byte)
+
+Valid dalam Root Batch
+
+Daun L6 (G-06)
+
+NIM: 237006806 | Farhan
+M. | IPK: 3.78
+
+0x45a9012cdb... (32 byte)
+
+0x108e53ac2b7a5439... (32
+byte)
+
+Valid dalam Root Batch
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Diagram 3: Struktur Pohon Merkle Batch Wisuda dan Jalur Pembuktian (Merkle Proof Path) Daun L1
+
+4.3 Jaringan P2P, Siklus Transaksi, dan Mekanisme Konsensus (P2, P3 / Case 3)
+Siklus Transaksi Konsensus: Alur siklus transaksi penjangkaran kredensial berjalan melalui tahapan deterministik: (1)
+Biro Akademik menandatangani transaksi issueBatch menggunakan private key ISSUER_ROLE; (2) Transaksi disiarkan
+ke node P2P validator lokal dan masuk ke transaction mempool; (3) Proposer node terpilih pada ronde QBFT
+merangkum transaksi ke dalam blok usulan; (4) Seluruh validator aktif menjalankan fase konsensus tiga babak (Preprepare, Prepare, dan Commit); (5) Begitu ambang batas 2F + 1 tanda tangan validator tercapai, blok dinyatakan final
+(instant finality) dan dieksekusi oleh EVM state transition.
+
+Diagram 2: Alur Transaksi End-to-End (Penerbitan, Penyimpanan, Presentasi, dan Verifikasi Dokumen)
+
+Analisis Fork & Pemilihan Konsensus: Pada jaringan publik berbasis Proof-of-Work (PoW) atau Proof-of-Stake (PoS)
+standar Nakamoto, potensi terjadinya percabangan rantai (fork / chain reorganization) mengharuskan pengguna
+menunggu beberapa blok konfirmasi (probabilistic finality). Hal ini tidak dapat diterima pada sistem hukum kredensial
+akademik resmi. Mekanisme konsensus Quorum Byzantine Fault Tolerance (QBFT) dipilih dengan empat justifikasi
+ilmiah:
+• 1. Instant Finality: Ketuntasan Mutlak Seketika (Deterministic Instant Finality): Sekali blok di-commit oleh 2F + 1
+validator, blok tersebut mustahil mengalami reorg atau percabangan, memberikan kepastian hukum langsung bagi
+ijazah yang diterbitkan.
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+• 2. Byzantine Fault Tolerance: Ketahanan Toleransi Kesalahan Byzantine: Sistem tetap beroperasi normal dan
+aman meskipun terdapat F = floor((N-1)/3) node validator yang mengalami mati jaringan, crash, atau bertindak
+jahat.
+• 3. Efisiensi Sumber Daya: Efisiensi Energi dan Nol Emisi Karbon: Menghilangkan proses hashing penambangan
+matematis yang sia-sia, sangat ramah lingkungan dan sejalan dengan standar institusi pendidikan hijau.
+• 4. Tata Kelola Hukum: Kesesuaian Regulasi Identitas: Seluruh node validator diketahui identitas institusinya
+secara hukum (sybil-resistant), menghilangkan ketergantungan pada insentif mata uang kripto finansial.
+Mekanisme Konsensus
+
+Keamanan & Model Trust
+
+Throughput Transaksi
+
+Konsumsi Energi
+
+Kesesuaian Kasus
+Kredensial Akademik
+
+Proof of Work (PoW)
+
+Sangat tinggi (toleransi 50%
+hashrate); trustless publik;
+rentan 51% attack pada
+hashrate kecil.
+
+Sangat rendah (7-15 TPS);
+finalitas probabilistik (butuh
+6 konfirmasi).
+
+Ekstrem masif (terawatthour); pemborosan
+komputasi listrik.
+
+Sangat Tidak Sesuai: Biaya
+transaksi tinggi, tidak ramah
+lingkungan, finalitas lambat.
+
+Proof of Stake (PoS)
+
+Tinggi (toleransi 33%-50%
+stake modal); rentan
+sentralisasi pemegang koin
+terbesar.
+
+Sedang s.d. Tinggi (15-60
+TPS); finalitas memerlukan
+epoch.
+
+Rendah (tanpa
+penambangan); bergantung
+pada likuiditas pasar modal.
+
+Kurang Sesuai: Kampus
+harus membeli token kripto
+volatil untuk
+mempertahankan node.
+
+QBFT / PoA (Konsorsium)
+
+Tinggi (toleransi 33%
+Byzantine node); berbasis
+reputasi hukum entitas
+institusi.
+
+Tinggi (400-1.000 TPS);
+deterministik instan (1-2
+detik blok).
+
+Sangat Rendah (sebanding
+server web standar).
+
+Sangat Ideal: Sesuai tata
+kelola perguruan tinggi,
+finalitas instan, biaya
+operasional terprediksi.
+
+4.4 Evaluasi Model UTXO Bitcoin vs Account-Based State Registry (Case 4)
+Analisis Model UTXO: Model transaksi Unspent Transaction Output (UTXO) pada arsitektur Bitcoin beroperasi atas
+dasar perpindahan kepemilikan nilai diskrit (Input -> Transaksi -> Output + Change). Pencegahan double spending
+pada UTXO dijamin oleh aturan bahwa suatu koin output hanya dapat dikonsumsi tepat satu kali sebagai input
+transaksi baru. Meskipun sangat kuat untuk transfer mata uang kripto, model UTXO memiliki keterbatasan struktural
+apabila diterapkan pada sistem registri status kredensial akademik publik.
+Tx ID dan Status
+
+Simulasi Tx UTXO
+(OP_RETURN Anchor)
+
+State Model EVM
+(issueBatch On-Chain)
+
+Input / UTXO Dipakai
+
+Output dan Change
+
+Fee dan Mekanisme
+
+Bukti & Evaluasi
+Keterbatasan
+
+1 UTXO Kampus (0.005 BTC)
+
+Output 1: OP_RETURN
+Merkle Root (0 BTC); Output
+2: Change Address (0.0048
+BTC)
+
+Biaya penambang: 0.0002
+BTC (~$12)
+
+[Kasus 4] Tidak efisien: Biaya
+konstan per batch, data
+OP_RETURN dibatasi 80
+byte, tidak mendukung
+smart logic.
+
+Account EOA Issuer (Nonce
+N, Gas balance)
+
+State Mutation: Contract
+Storage Slot Updated (Root
+tersimpan), Event Emitted
+
+Gas konsorsium internal
+(164.911 gas murni)
+
+[B-03] Sangat Unggul:
+Mendukung pembaruan
+status revocable kredensial
+O(1) via mapping
+boolean/bitstring.
+
+Komparasi Model Akun vs UTXO: Kelemahan fatal model UTXO untuk kasus ijazah adalah ketiadaan status
+penyimpanan global dinamis (stateful storage). Untuk membatalkan sebuah ijazah pada UTXO, kampus harus
+membuat rantai transaksi pembelanjaan baru yang kompleks. Sebaliknya, model berbasis akun (Account Model EVM)
+menyediakan mesin status terprogram (stateful Turing-complete virtual machine) yang memungkinkan penyimpanan
+status pencabutan ijazah individual secara langsung dalam slot mapping storage (_revokedCredentials[leafHash])
+dengan kompleksitas akses O(1) dan biaya komputasi yang deterministik.
+
+4.5 Model Akun EVM, Analisis Ketat Komponen Gas, dan Model Regresi (P3, P5 / Case 5)
+EVM mengkategorikan akun ke dalam dua entitas: Externally Owned Account (EOA) yang dikendalikan oleh pasangan
+kunci privat/publik kurva secp256k1, dan Contract Account yang dikendalikan oleh kode bytecode tersimpan.
+Komposisi field transaksi transaksi issueBatch dan kueri verifikasi dirangkum dalam Tabel 7.
+Field Transaksi EVM
+
+Nilai Aktual Pengujian & Interpretasi Sistem
+
+Sender (from) / Receiver (to)
+
+Sender: 0x70997970C5... (Biro Akademik / ISSUER_ROLE); Receiver:
+0x5FbDB23156... (AcademicCredentialRegistry.sol).
+
+Value / Nonce / Chain ID
+
+Value: 0 ETH (transaksi murni pemanggilan fungsi registri); Nonce: 1; Chain
+ID: 31337 (Local Hardhat).
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Gas Limit / Gas Used / Status
+
+Gas Limit: 30.000.000; Gas Used: 211.084 gas (penjangkaran batch); Status:
+1 (Success)
+
+Event Logs & Transaction Hash
+
+Event: BatchIssued(WISUDA-2026-PERIODE-1, 0x46ca2e83..., timestamp);
+Tx Hash:
+0x1737c3595a7ffab660d99cb81bd14dc04b8c21f9fb399ad5b2aa454998a88
+321; Block: #2 [B-03]
+
+Perhitungan Ketat Komponen Gas issueBatch: Sesuai prinsip eksekusi EVM, konsumsi gas transaksi tidak boleh dilaporkan
+secara mentah tanpa pemisahan komponen. Gas eksekusi murni internal kontrak dihitung dengan formula baku:
+Gas_Eksekusi = gasUsed (Receipt) - 21.000 (Intrinsic Tx) - Biaya_Calldata. Biaya calldata dihitung langsung dari payload
+tx.data aktual sesuai aturan EIP-2028 [11] (16 gas per byte non-nol dan 4 gas per byte nol):
+Komponen Gas Transaksi
+issueBatch
+
+Batch N = 6 Lulusan
+
+Batch N = 100 Lulusan
+
+Batch N = 1.000 Lulusan
+
+Analisis & Justifikasi
+Karakteristik
+
+Total gasUsed (Receipt)
+(mean)
+
+187.874 gas
+
+187.922 gas
+
+187.958 gas
+
+Total gas yang dipotong
+pada transaksi on-chain.
+
+- Biaya Dasar Transaksi
+(Intrinsic)
+
+21.000 gas
+
+21.000 gas
+
+21.000 gas
+
+Biaya standar pemrosesan
+transaksi EVM (konstan).
+
+- Biaya Calldata tx.data (EIP2028)
+
+1.963 gas
+
+2.011 gas
+
+2.047 gas
+
+Dihitung dari payload aktual
+(140.4 byte nol, 87.6 byte
+non-nol pada N=6).
+
+= Gas Eksekusi Kontrak
+Murni
+
+164.911 gas
+
+164.911 gas
+
+164.911 gas
+
+Eksak Identik O(1): Logika
+eksekusi smart contract
+100% konstan.
+
+0,00% (Baseline)
+
+0,0000%
+
+0,0000%
+
+Membuktikan skalabilitas
+penjangkaran tanpa batas
+volume lulusan.
+
+Deviasi Relatif Gas Eksekusi
+vs N=6
+
+Pembuktian Sumber Selisih Calldata 84 Gas: Pengukuran empiris membuktikan bahwa selisih gas sebesar 84 gas
+antara batch N=6 dan N=1.000 sama sekali bukan berasal dari eksekusi smart contract, melainkan murni dari
+akumulasi tiga parameter calldata ABI transaksi: (1) Parameter batchId (Word 0): penambahan string 'BATCH-1000' vs
+'BATCH-6' mengubah 3 byte nol menjadi byte non-nol (+36 gas); (2) Parameter graduateCount (Word 2): nilai
+heksadesimal N=1000 (0x03e8) memuat 2 byte non-nol vs N=6 (0x06) yang hanya memuat 1 byte non-nol (+12 gas);
+(3) Parameter metadataURI (Word 6): segmen URL '1000.json' memuat 3 karakter tambahan dibandingkan '6.json'
+(+36 gas). Total selisih: 36 + 12 + 36 = 84 gas eksak. Variasi kecil antar-iterasi (SD ≈ 6 gas) berasal dari nomor iterasi
+batchId (iterasi 1-9 memiliki 1 digit, iterasi 10-30 memiliki 2 digit / +12 gas).
+Model Kelayakan Gas Verifikasi (verifyCredential): Seluruh ambang batas pada pengujian performa ditetapkan atau
+direvisi setelah pengukuran awal, sehingga berfungsi sebagai baseline kelayakan sistem (feasibility baseline), bukan uji
+hipotesis statistik independen. Model matematis dibangun pasca-pengukuran (post-measurement) melalui regresi
+linier sederhana atas 3 titik data terukur: N=6 (k=3), N=100 (k=7), dan N=1.000 (k=10). Karena regresi ini hanya
+memakai 3 titik data, nilai R^2 = 1,0000 tidak dijadikan bukti klaim statistik kuat, melainkan konfirmasi atas linearitas
+deterministik EVM pada loop MerkleProof.verify:
+Persamaan Regresi Linier: pureVerifyGas(k) = 7.800,04 + 251,26 * k (di mana k = jumlah sibling hash =
+ceil(log2 N))
+• 1. Intercept Model: Biaya Tetap (Intercept) ≈ 7.800 gas: Berasal dari 2 kali pembacaan state storage via SLOAD
+(pemeriksaan batch dan status pembatalan ~4.200 gas), pemanggilan eksternal, dekoding calldata ke memori, dan
+pembungkusan return string. Batas kelayakan ditetapkan <= 10.000 gas (memberikan safety margin ~28% di atas
+hasil ukur).
+• 2. Slope Model: Kemiringan (Slope) ≈ 251,3 gas/sibling: Merefleksikan perkiraan kasar opcode loop
+MerkleProof.verify [3], [4] per iterasi: KECCAK256 [6] (64 byte input: 42 gas) + MLOAD/MSTORE (6 gas) +
+percabangan & stack LT/JUMP/DUP/SWAP (~15 gas). Batas kelayakan ditetapkan <= 350 gas/sibling
+(memberikan safety margin ~39% di atas hasil ukur 251,3 gas/sibling).
+• 3. Kriteria Evaluasi: Batas Kelayakan Performa: pureVerifyGas(k) <= 10.000 + (k * 350) gas. Untuk N=1.000
+(k=10), batasnya adalah <= 13.500 gas; hasil nyata terukur adalah 10.313 gas (LULUS baseline kelayakan).
+• 4. Gas Nol Pemverifikasi: Biaya Verifikasi bagi Publik / HRD: 0 gas (eksekusi kueri view melalui pemanggilan eth_call
+pada node JSON-RPC tanpa pembuatan transaksi, sehingga 100% bebas biaya bagi masyarakat sesuai dokumentasi resmi
+Ethereum [2]).
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+4.6 Analisis Keamanan, Model Ancaman STRIDE, dan Respons Insiden 24 Jam (P4)
+Keamanan arsitektur dianalisis secara komprehensif menggunakan metodologi STRIDE (Spoofing, Tampering,
+Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege) untuk mengidentifikasi potensi ancaman
+dan kontrol mitigasi yang dirancang pada smart contract dan sistem off-chain, sebagaimana dirangkum dalam Matriks
+Ancaman STRIDE.
+Kategori Ancaman
+
+Deskripsi Risiko Ancaman
+
+Komponen Sasaran
+
+Kontrol Mitigasi Sistem
+
+Tingkat Risiko & Dampak
+
+TH-01: Spoofing
+(Penyamaran)
+
+Peretas menyamar sebagai
+Biro Akademik untuk
+menerbitkan batch ijazah
+palsu.
+
+Fungsi issueBatch() pada
+Smart Contract
+
+OpenZeppelin AccessControl
+RBAC; hanya alamat dengan
+ISSUER_ROLE yang lolos;
+proteksi Multi-sig Safe (3-of5).
+
+Risiko: Tinggi | Dampak:
+Kritis (Ditolak oleh kontrak)
+
+TH-02: Tampering
+(Manipulasi)
+
+Mahasiswa mengubah nilai
+IPK (misal 3.82 menjadi 4.00)
+pada berkas lokal.
+
+Integritas Daun Merkle &
+Dokumen VC
+
+Daun bergaram Keccak-256;
+perubahan 1 karakter
+mengubah daun 100%;
+ditolak seketika oleh
+verifyCredential().
+
+Risiko: Kritis | Dampak: Nol
+(Gagal verifikasi)
+
+TH-03: Repudiation
+(Penyangkalan)
+
+Kampus menyangkal pernah
+menerbitkan ijazah alumni
+tertentu.
+
+Pencatatan Sejarah
+Transaksi
+
+Emisi event on-chain
+BatchIssued mencatat
+address penerbit, batchId,
+root, dan timestamp blok
+secara permanen.
+
+Risiko: Rendah | Dampak:
+Ringan (Bukti tak
+terbantahkan)
+
+TH-04: Information
+Disclosure
+
+Data pribadi alumni (Nama,
+NIK, IPK) bocor ke publik
+melalui blockchain explorer.
+
+Buku Besar Transaksi
+Blockchain
+
+Arsitektur Zero-PII On-Chain;
+data pribadi disimpan offchain ber-salt; blockchain
+hanya menyimpan root 32byte.
+
+Risiko: Kritis | Dampak: Nol
+(Patuh UU PDP [10])
+
+TH-05: Denial of Service
+(DoS)
+
+Pembanjiran transaksi
+penjangkaran palsu untuk
+menghabiskan gas blok
+konsorsium.
+
+Jaringan Validator &
+Mempool Node
+
+Whitelist node validator
+konsorsium permissioned,
+rate-limiting JSON-RPC
+proxy, dan kuota penerbitan
+terikat peran.
+
+Risiko: Sedang | Dampak:
+Sedang (Terkendali)
+
+TH-06: Elevation of Privilege
+
+Pihak luar meretas private
+key biro akademik untuk
+mengangkat diri menjadi
+admin.
+
+Fungsi grantRole() & Kontrak
+Registri
+
+Pemisahan hak
+DEFAULT_ADMIN_ROLE
+khusus pada kontrak Multisig Governance; sirkuit
+darurat Pausable
+membekukan sistem.
+
+Risiko: Kritis | Dampak:
+Tinggi (Dapat dibekukan)
+
+Protokol Respons Insiden 24 Jam Pertama: Apabila terjadi insiden keamanan siber (misalnya kecurigaan kompromi
+private key biro akademik atau komite etik), tim tanggap darurat konsorsium menerapkan protokol baku 24 jam
+pertama tanpa merusak integritas bukti forensik digital:
+• Fase 1 (0-2 Jam): Jam 0 s.d. 2 (Penahanan & Pembekuan Seketika): Admin Multi-sig (3-of-5) mengeksekusi fungsi
+pause() pada kontrak registri. Dalam satu transaksi (Gas: 48.214 unit [B-07]), seluruh operasi penulisan (issueBatch
+dan revokeCredential) dibekukan seketika melalui modifier whenNotPaused, mencegah penyerang menyisipkan
+ijazah ilegal sementara fungsi verifikasi publik tetap melayani kueri.
+• Fase 2 (2-6 Jam): Jam 2 s.d. 6 (Forensik Digital & Isolasi): Tim keamanan mengisolasi node jaringan yang dicurigai
+bocor, mengamankan snapshot log RPC, merekonstruksi transaction hash, dan memastikan tidak ada data pribadi
+off-chain yang terpapar.
+• Fase 3 (6-12 Jam): Jam 6 s.d. 12 (Remediasi & Rotasi Kunci Kriptografi): Admin Multi-sig memanggil fungsi
+revokeRole(ISSUER_ROLE, compromised_address) dan menerbitkan grantRole() ke keypair cold-wallet baru
+berbasis hardware token (HSM).
+• Fase 4 (12-24 Jam): Jam 12 s.d. 24 (Pemulihan & Transparansi Publik): Audit rekonsiliasi state memastikan tidak
+ada root palsu yang terdaftar; Admin mengeksekusi unpause(); sistem beroperasi normal kembali; serta
+menerbitkan laporan insiden transparan kepada konsorsium.
+
+4.7 Implementasi Prototipe, Kriteria Penerimaan, dan Pengujian Performa (P5)
+Kriteria penerimaan (acceptance criteria) disusun dengan merujuk pada standar ilmiah, spesifikasi formal, dan model
+kelayakan performa empiris, sebagaimana dirangkum dalam Tabel Kriteria Penerimaan.
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Kelompok Uji
+
+Fungsional
+
+Fungsional
+
+Fungsional
+
+Keamanan
+
+Kriteria
+Penerimaan
+(Acceptance
+Criteria)
+
+ID Uji
+
+T-01: menerbitkan
+batch ijazah oleh akun
+berwenang
+ISSUER_ROLE / B-03
+
+T-02: memverifikasi
+kredensial sah
+menggunakan valid
+Merkle proof / B-04
+
+T-05: mencabut status
+keabsahan ijazah oleh
+REVOKER_ROLE secara
+spesifik / B-06
+
+T-03: menolak
+manipulasi klaim data
+IPK dan salt palsu / B05A
+
+Penjangkaran root
+batch sukses
+menyimpan root dan
+memancarkan event
+BatchIssued.
+
+Verifikasi ijazah sah
+mengembalikan status
+valid tanpa
+memodifikasi storage
+state.
+
+Pencabutan kredensial
+oleh REVOKER_ROLE
+langsung membatalkan
+keabsahan target
+(O(1)).
+
+Manipulasi klaim data
+(IPK, nama) atau salt
+wajib terdeteksi dan
+ditolak oleh kontrak.
+
+Ambang Batas
+Teoretis
+
+Justifikasi Ilmiah &
+Landasan Referensi
+
+Hasil Pengujian
+Nyata
+
+Transaksi sukses
+(status=1),
+exists==true.
+
+W3C VC Data Model
+v2.0, Bagian 4.10
+(Status) [1] [URL:
+https://www.w3.org/T
+R/vc-data-model-2.0/#s
+tatus]: Konsisten
+dengan mekanisme
+Root terdaftar di Block
+penemuan status
+#2; event BatchIssued
+kredensial
+terpancar sah.
+(credentialStatus)
+untuk memeriksa
+keabsahan dokumen
+via rujukan status
+eksternal (W3C
+Recommendation, 15
+Mei 2025).
+
+LULUS
+
+isValid==true, status
+'VALID', gas
+pemverifikasi = 0.
+
+Dokumentasi Resmi
+Ethereum JSON-RPC
+API, metode eth_call
+[2] [URL:
+https://ethereum.org/e
+n/developers/docs/apis
+/json-rpc/#eth_call]:
+Eksekusi pesan
+panggilan simulasi lokal
+pada node tanpa
+Mengembalikan true,
+transaksi on-chain
+status 'VALID', 0 gas
+(executes a new
+verifikator publik.
+message call
+immediately without
+creating a transaction
+on the blockchain),
+tidak memodifikasi
+status (state), dan
+bebas biaya gas bagi
+publik (eth_call
+consumes zero gas).
+
+LULUS
+
+Status verifikasi pascacabut berubah menjadi
+false
+('CREDENTIAL_REVOKE
+D').
+
+Pembanding Desain vs
+W3C Bitstring Status
+List v1.0 [8]: Berbeda
+dari pendekatan
+bitstring terkompresi
+off-chain (W3C
+Recommendation, 15
+Mei 2025), prototipe
+mengadopsi
+pencabutan on-chain
+berbasis mapping hash
+(mapping(bytes32 =>
+bool)) untuk status
+pembatalan
+deterministik O(1)
+seketika di smart
+contract.
+
+Status tercabut
+seketika; ijazah lain
+tetap valid.
+
+LULUS
+
+isValid==false, pesan
+'INVALID_PROOF_OR_T
+AMPERED'.
+
+Konsisten dengan
+spesifikasi Keccak asli
+(Bertoni et al., 2011
+[6]) dan NIST FIPS 202
+[12]: Resistensi
+benturan dan preimage varian asli
+Ditolak seketika oleh
+Keccak-256 (padding
+verifikasi Merkle on10*1, berbeda dari FIPS
+chain.
+202 SHA3-256 berdomain separator 01 /
+0x06) menjamin daun
+termutasi
+menghasilkan hash
+berbeda sehingga gagal
+verifikasi root.
+
+LULUS
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Status
+
+Kelompok Uji
+
+Keamanan
+
+Keamanan
+
+Performa
+
+Performa
+
+Performa
+
+ID Uji
+
+T-04 & T-06:
+membatalkan upaya
+tanpa peran
+berwenang / B-05B
+
+T-07: menghentikan
+mutasi state saat jeda
+darurat pause aktif / B07
+
+T-08: mengevaluasi
+efisiensi gas konstan
+O(1) / B-08
+
+T-08: mengevaluasi
+panjang proof
+logaritmik O(log N) / B08
+
+T-08: evaluasi estimasi
+komputasi murni
+verifikasi / B-08
+
+Kriteria
+Penerimaan
+(Acceptance
+Criteria)
+
+Ambang Batas
+Teoretis
+
+Pemanggilan fungsi
+istimewa oleh akun tak
+berwenang wajib
+dibatalkan (revert).
+
+Konsisten secara umum
+dengan prinsip Least
+Privilege (Saltzer &
+Schroeder, 1975 [5],
+Bagian I.A.1.f): Setiap
+Revert dengan
+Transaksi penyerang
+entitas hanya diberikan
+AccessControlUnauthor
+dibatalkan (revert)
+hak akses minimum
+izedAccount.
+secara deterministik.
+yang esensial,
+diimplementasikan via
+pustaka OpenZeppelin
+Contracts v5
+AccessControl [3].
+
+LULUS
+
+Aktivasi jeda darurat
+(pause()) membekukan
+operasi penulisan saat
+insiden keamanan.
+
+Penulisan revert
+EnforcedPause;
+pemulihan via
+unpause().
+
+Dokumentasi
+OpenZeppelin
+Contracts v5 Pausable
+[3] & ConsenSys Circuit
+Breaker Pattern [URL:
+https://docs.openzepp
+elin.com/contracts/5.x/ Penulisan dicegat saat
+api/utils#Pausable]:
+pause, normal pascaMenghentikan
+unpause.
+sementara seluruh
+mutasi state saat kunci
+privat diduga
+terkompromi atau
+terdeteksi anomali
+operasional.
+
+LULUS
+
+Konsumsi gas
+issueBatch independen
+dari jumlah lulusan
+(O(1) gas scalability).
+
+Deviasi relatif gas
+eksekusi murni antarskala <= 1.0%; total gas
+<= 1.0% Block Gas Limit
+(30M gas).
+
+Konsep Kompresi
+Pohon Autentikasi
+(Merkle, U.S. Patent
+4,309,569, 1982) [4] &
+Pengukuran Empiris
+EVM: Paten Merkle
+(1982)
+memformulasikan tree
+authentication dan
+kompresi N daun
+menjadi satu root 32byte. Klaim bahwa
+biaya penulisan
+penyimpanan konstan
+O(1) (SSTORE)
+merupakan sifat teknis
+penyimpanan 32 byte
+di EVM dan hasil ukur
+prototipe (B-08); selisih
+gas transaksi riil
+terbukti murni berasal
+dari payload calldata
+ABI (EIP-2028 [11]).
+
+LULUS
+
+Panjang pembuktian
+Merkle Proof terikat
+batas logaritmik
+ceil(log2 N).
+
+Sifat Struktural Pohon
+Biner Lengkap
+(Complete Binary Tree,
+Merkle 1982 [4]): Pada
+pohon biner lengkap
+beranggotakan N daun,
+Panjang proof <=
+jalur verifikasi (audit
+Tepat 3, 7, dan 10
+ceil(log2 N) (3 untuk
+path) dari daun ke root sibling hash (100%
+N=6, 7 untuk N=100, 10
+secara matematis
+presisi matematis).
+untuk N=1.000).
+memiliki panjang tepat
+k = ceil(log2 N) simpul
+saudara (sibling
+hashes), meminimalkan
+ukuran transmisi data
+payload verifikasi.
+
+LULUS
+
+Estimasi komputasi
+murni eksekusi internal
+EVM verifikasi berada
+di ambang batas linier.
+
+Model Anggaran Linier
+Pasca-Pengukuran:
+Pertumbuhan terukur
+~252 gas/sibling
+konsisten dengan O(log
+Ambang anggaran
+N) dan perkiraan
+(budget) turunan dari
+analitis biaya opcode
+pengukuran:
+loop
+pureGas(k) <= 10.000 + MerkleProof.verify [3],
+(k * 350) gas (<= 13.500 [4] (KECCAK256 [6] 42
+gas untuk k=10).
+gas, MLOAD/MSTORE 6
+gas, stack/jump ~200
+gas; catatan: rincian
+opcode adalah
+perkiraan analitis,
+bukan profil langsung).
+
+LULUS
+
+Justifikasi Ilmiah &
+Landasan Referensi
+
+Hasil Pengujian
+Nyata
+
+Gas Eksekusi Murni
+N=6: 164.911 gas vs
+N=1000: 164.911 gas
+(Delta = 0 gas =
+0,0000%).
+
+8.554 gas (N=6) hingga
+10.313 gas (N=1000).
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Status
+
+Kelompok Uji
+
+ID Uji
+
+T-08: evaluasi waktu
+pembuatan Merkle
+tree off-chain / B-08
+
+Performa
+
+Kriteria
+Penerimaan
+(Acceptance
+Criteria)
+
+Ambang Batas
+Teoretis
+
+Pembuatan Merkle
+Tree off-chain 1.000
+ijazah tuntas di bawah
+1 detik (< 1.000 ms).
+
+Konsisten dengan
+pedoman batas
+responsivitas interaksi
+manusia-komputer
+(Nielsen, 1993,
+'Response Times: The 3
+Durasi rata-rata < 1.000
+Rata-rata 129,44 ms
+Important Limits',
+ms pada perangkat
+(rentang 121,10 sampai LULUS
+Nielsen Norman Group)
+keras standar.
+146,35 ms).
+[7]: Eksekusi komputasi
+sub-detik (< 1.000 ms)
+menjaga alur kognitif
+pengguna tetap terjaga
+tanpa distraksi jeda
+antarmuka.
+
+Justifikasi Ilmiah &
+Landasan Referensi
+
+Hasil Pengujian
+Nyata
+
+Status
+
+Seluruh rangkaian unit test otomatis (T-01 s.d. T-08) pada test/AcademicCredentialRegistry.test.js dieksekusi
+menggunakan Hardhat Test Runner dengan hasil kelulusan lengkap sebagaimana dirangkum pada Tabel 9.
+ID Tes
+
+Skenario Uji (Positif /
+Negatif / Batas / Akses)
+
+Ekspektasi Hasil Kontrak
+
+Hasil Nyata
+
+Rujukan Bukti
+
+T-01
+
+T-01: menerbitkan batch
+ijazah oleh akun berwenang
+ISSUER_ROLE
+
+Batch tersimpan; emisi
+event BatchIssued; exists ==
+true.
+
+Lulus (100%)
+
+[B-03] / Block #2
+(results/demo-output.txt)
+
+T-02
+
+T-02: memverifikasi
+kredensial sah menggunakan
+valid Merkle proof
+
+Mengembalikan isValid ==
+true dan pesan status
+'VALID'.
+
+Lulus (100%)
+
+[B-04] / Gas: 0
+(results/demo-output.txt)
+
+T-03
+
+T-03: menolak manipulasi
+klaim data IPK dan salt palsu
+
+Mengembalikan isValid ==
+false
+('INVALID_PROOF_OR_TAM
+PERED').
+
+Lulus (100%)
+
+[B-05A] (results/demooutput.txt & Lampiran B)
+
+T-04
+
+T-04: membatalkan upaya
+penerbitan batch oleh pihak
+tanpa peran ISSUER_ROLE
+
+Transaksi dibatalkan revert
+AccessControlUnauthorized
+Account.
+
+Lulus (100%)
+
+[B-05B] (results/demooutput.txt & Lampiran B)
+
+T-05
+
+T-05: mencabut status
+keabsahan ijazah oleh
+REVOKER_ROLE secara
+spesifik
+
+Status ijazah berubah
+seketika menjadi false
+('CREDENTIAL_REVOKED').
+
+Lulus (100%)
+
+[B-06] (results/demooutput.txt)
+
+T-06
+
+T-06: membatalkan upaya
+pencabutan ijazah oleh
+pihak tanpa peran
+REVOKER_ROLE
+
+Transaksi dibatalkan revert
+AccessControlUnauthorized
+Account.
+
+Lulus (100%)
+
+[results/test-output.txt]
+
+T-07
+
+T-07: menghentikan mutasi
+state saat jeda darurat
+pause aktif dan pulih pascaunpause
+
+Penulisan ditolak revert
+EnforcedPause; normal
+pasca-unpause.
+
+Lulus (100%)
+
+[B-07] (results/demooutput.txt)
+
+T-08
+
+T-08: mengevaluasi efisiensi
+gas konstan O(1) dan
+panjang proof logaritmik
+O(log N)
+
+Gas eksekusi konstan;
+panjang proof <= ceil(log2
+N).
+
+Lulus (100%)
+
+[B-08] (results/perfoutput.txt)
+
+Hasil pengujian performa mendalam melalui 30 run terukur (+ 2 run warm-up) pada skrip scripts/perf-bench.js
+dirangkum pada Tabel B-08.
+Parameter Pengujian (30
+Run)
+
+Batch N = 6 Lulusan
+
+Batch N = 100 Lulusan
+
+Batch N = 1.000 Lulusan
+
+Karakteristik Skalabilitas
+
+Waktu Build Tree Off-Chain
+(ms)
+
+1.43 ms (SD: 0.43) [0.87 2.48]
+
+14.01 ms (SD: 2.92) [11.29 26.39]
+
+129.44 ms (SD: 6.49) [121.10
+- 146.35]
+
+Linier O(N), tuntas sub-detik
+(< 1 detik).
+
+Panjang Merkle Proof
+(Siblings)
+
+3 sibling hash (SD: 0)
+
+7 sibling hash (SD: 0)
+
+10 sibling hash (SD: 0)
+
+Logaritmik O(log N), presisi
+teoretis.
+
+Gas Transaksi issueBatch
+(Total)
+
+187.874 gas (SD: 8) [187.855
+- 187.879]
+
+187.922 gas (SD: 6) [187.915
+- 187.927]
+
+187.958 gas (SD: 6) [187.951
+- 187.963]
+
+Selisih minor murni dari
+calldata EIP-2028.
+
+164.911 gas (SD: 0)
+
+164.911 gas (SD: 0)
+
+164.911 gas (SD: 0)
+
+Konstan Eksak O(1) (Deviasi
+0,0000%).
+
+55.303 gas (SD: 7) [55.285 -
+
+55.328 gas (SD: 6) [55.321 -
+
+55.340 gas (SD: 7) [55.321 -
+
+Konstan O(1) (Pembaruan
+
+Gas Eksekusi Murni
+issueBatch
+Gas Transaksi
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+revokeCredential
+
+55.309]
+
+55.333]
+
+55.345]
+
+Raw estimateGas
+verifyCredential
+
+32.242 gas (SD: 13) [32.211 32.267]
+
+35.311 gas (SD: 20) [35.269 35.347]
+
+37.611 gas (SD: 25) [37.566 37.666]
+
+Simulasi EVM termasuk
+21.000 gas transaksi.
+
+Biaya Intrinsik Calldata verify
+
+2.687 gas (SD: 11) [2.664 2.700]
+
+4.753 gas (SD: 14) [4.724 4.772]
+
+6.298 gas (SD: 16) [6.260 6.320]
+
+Calldata proof membesar
+secara logaritmik.
+
+Estimasi Gas Eksekusi Murni
+verify
+
+8.554 gas (SD: 8) [8.537 8.567]
+
+9.558 gas (SD: 13) [9.535 9.585]
+
+10.313 gas (SD: 17) [10.266 10.346]
+
+Model Linier: 7.800 + 251,3
+* k.
+
+0 gas (Bebas biaya)
+
+0 gas (Bebas biaya)
+
+0 gas (Bebas biaya)
+
+Kueri lokal JSON-RPC
+eth_call (read-only).
+
+0.89 ms (SD: 0.58) [0.48 3.24]
+
+0.87 ms (SD: 0.77) [0.38 3.72]
+
+0.82 ms (SD: 0.26) [0.55 1.46]
+
+Sangat cepat (< 1 ms),
+responsif instan.
+
+Biaya Gas Pemverifikasi
+Publik
+Latensi Kueri View Call (ms)
+
+mapping storage).
+
+4.8 Keputusan Desain, Batasan Teknis, Pertimbangan Etika, dan Refleksi (P6)
+Keputusan Desain & Trade-Off: Tiga keputusan arsitektural utama yang ditetapkan dalam proyek ini melibatkan
+pertimbangan trade-off yang matang: (1) Penjangkaran Merkle Batching vs Penyimpanan Daun Individual On-Chain:
+Menyimpan setiap ijazah secara individual pada blockchain memerlukan operasi SSTORE terpisah (~20.000 gas per ijazah),
+yang akan menghabiskan lebih dari 20 juta gas untuk 1.000 lulusan. Pendekatan Merkle batching mengompresi ribuan
+lulusan ke dalam 1 Merkle Root 32-byte [4] dengan gas konstan 164.911 gas (hemat > 98%), dengan konsekuensi
+pemverifikasi harus menyertakan bukti jalur Merkle berukuran O(log N) [4]; (2) Arsitektur Zero-PII Off-Chain vs On-Chain
+Metadata: Melindungi privasi alumni sesuai Pasal 8 UU PDP [10], dengan konsekuensi kampus dan alumni bertanggung
+jawab menjaga ketersediaan file dokumen off-chain; (3) Konsorsium Permissioned vs Public Mainnet: Menghilangkan
+volatilitas gas fee dan risiko regulasi data terbuka, dengan komitmen pembentukan konsorsium legal antar-institusi.
+
+Keterbatasan Teknis Pengujian: Laporan ini secara jujur menguraikan batasan-batasan teknis dari lingkungan
+pengujian:
+• 1. Lingkungan Node: Lingkungan Single-Node In-Process: Pengujian benchmark dijalankan pada node lokal
+Hardhat in-process (Chain ID: 31337). Pengujian ini tidak mencakup latensi propagasi fisik jaringan internet (roundtrip network latency), jitter paket data, maupun voting ronde konsensus multi-node antar-kampus.
+• 2. Data Uji: Data Sintetis Fiktif: Seluruh data mahasiswa (N=6, 100, 1.000) adalah data simulasi sintetis guna
+menjamin tidak adanya data pribadi riil yang terpapar selama proses riset.
+• 3. Perangkat Keras: Karakteristik Mesin Uji Tunggal: Durasi waktu pembangunan pohon off-chain diukur pada
+workstation pengembang (Intel Core i5-12450H, 16 GB RAM). Variasi spesifikasi perangkat keras dapat
+menghasilkan variasi wall-clock time, meskipun konsumsi gas EVM deterministik 100%.
+• 4. Simulasi Gas: Hakikat Nilai estimateGas: Nilai estimateGas fungsi verifikasi adalah hasil simulasi eksekusi dry-run
+internal EVM yang mencakup 21.000 gas transaksi dan biaya calldata. Nilai ini bukan gas riil yang dibayar pemverifikasi
+karena kueri verifikasi dipanggil tanpa biaya melalui eth_call [2].
+
+• 5. Slot Storage URI: Alokasi Slot Storage metadataURI: Gas eksekusi transaksi issueBatch terbukti konstan
+(164.911 gas) juga disebabkan oleh panjang string metadataURI pada ketiga skenario yang berada dalam jumlah
+slot storage yang sama (2 slot dynamic string EVM). Apabila URI bertambah panjang melintasi kelipatan 32 byte
+baru, gas eksekusi akan meningkat karena operasi SSTORE tambahan (~20.000 gas/slot).
+• 6. Batas Gas Blok: Asumsi Block Gas Limit Konsorsium: Batas gas per blok sebesar 30 juta gas (30.000.000 unit)
+merupakan parameter konfigurasi tipikal jaringan privat/konsorsium EVM (misal genesis Hyperledger Besu), bukan
+angka absolut universal seluruh jaringan blockchain.
+• 7. Pembulatan Calldata: Efek Pembulatan Rata-Rata Calldata (83 vs 84 gas): Selisih rata-rata biaya calldata antara
+N=1000 (2.046,4 gas) dan N=6 (1.962,8 gas) menghasilkan selisih rata-rata sebesar ~83,6 gas, sedangkan selisih
+nominal eksak transaksi individual adalah 84 gas. Perbedaan 1 gas ini murni efek pembulatan rata-rata statistik
+akibat variasi 1 digit vs 2 digit nomor iterasi batchId.
+Pertimbangan Etika, Regulasi, & Roadmap: Implementasi sistem ini menegakkan prinsip keadilan sosial dan non-diskriminasi.
+Biaya verifikasi yang ditetapkan 0 gas menjamin bahwa lulusan dari keluarga prasejahtera dan instansi UMKM/pemberi kerja
+lokal dapat memverifikasi keabsahan dokumen tanpa hambatan finansial [2]. Secara regulasi, sistem mematuhi Peraturan
+Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi No. 6 Tahun 2022 tentang Ijazah, Sertifikat Kompetensi, dan Sertifikat
+Profesi Jenjang Pendidikan Tinggi, serta menjamin hak privasi alumni terlindungi sepenuhnya di bawah naungan UU No. 27
+Tahun 2022 (UU PDP) [10]. Roadmap pengembangan masa depan mencakup integrasi skema W3C Bitstring Status List v1.0
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+[8] untuk kompresi pencabutan tingkat lanjut dan penerapan Zero-Knowledge Proofs (BBS+ Signatures) untuk Selective
+Disclosure (misal membuktikan 'IPK >= 3.50' tanpa membuka angka IPK eksak).
+Refleksi Individual Penulis (Fajar Geran Arifin / 237006079): Sebagai mahasiswa penyusun, proses pengerjaan mini-project
+ini memberikan pemahaman mendalam bahwa teknologi blockchain bukanlah obat mujarab (panacea) untuk segala masalah
+pencatatan data. Keputusan rekayasa perangkat lunak yang matang justru terletak pada ketajaman membedakan kapan
+blockchain mutlak dibutuhkan (penjangkaran integritas antar-entitas, ketahanan terhadap insider threat) dan kapan basis
+data konvensional tetap lebih unggul (transaksional harian bervolume tinggi). Pelajaran paling berharga diperoleh saat
+menelusuri selisih gas eksekusi issueBatch: kesadaran bahwa gas eksekusi murni smart contract benar-benar konstan O(1)
+(164.911 gas) dan selisih 84 gas sepenuhnya berasal dari biaya intrinsik calldata EIP-2028 [11] memperkuat pemahaman
+penulis mengenai arsitektur internal Ethereum Virtual Machine secara mendalam dan berbasis bukti nyata.
+
+5 Kesimpulan dan Saran
+5.1 Kesimpulan
+Berdasarkan hasil perancangan arsitektur, implementasi smart contract, pengujian fungsional, dan evaluasi performa
+pada proyek ini, diperoleh kesimpulan formal sebagai berikut:
+• 1. Kelayakan Arsitektur: Sistem verifikasi kredensial akademik berbasis blockchain konsorsium permissioned
+(Hyperledger Besu / EVM) dan pohon Merkle terbukti layak (feasible), aman, dan sangat terukur untuk
+menyelesaikan masalah pemalsuan dokumen dan ketergantungan server terpusat.
+• 2. Perlindungan Privasi: Arsitektur Zero-PII On-Chain yang memisahkan dokumen lengkap off-chain bergaram (256-bit
+salt) dari Merkle root on-chain [4] berhasil menjamin kepatuhan penuh terhadap hak penghapusan data pribadi (Right to
+Erasure, Pasal 8 dan Pasal 43 UU PDP No. 27/2022) [10] sekaligus mengeliminasi ancaman serangan kamus terhadap
+atribut bernilai rendah.
+• 3. Skalabilitas O(1): Efisiensi gas eksekusi penjangkaran batch wisuda terbukti konstan secara eksak sebesar 164.911
+gas (deviasi 0,0000%, true O(1)) untuk N=6, 100, hingga 1.000 lulusan. Selisih 84 gas pada tanda terima transaksi
+(receipt) terbukti 100% bersumber dari penambahan panjang parameter calldata ABI transaksi sesuai aturan EIP-2028
+[11].
+• 4. Akses Verifikasi Gratis: Layanan verifikasi dokumen oleh masyarakat dan dunia industri dapat diakses secara instan
+(< 1 ms latensi kueri) dan bebas biaya (0 gas) melalui antarmuka JSON-RPC eth_call [2], dengan ukuran bukti pembuktian
+logaritmik O(log N) [4] yang sangat hemat bandwidth.
+
+• 5. Keamanan & Mitigasi: Keamanan sistem terbukti tangguh melalui penolakan seketika atas manipulasi klaim
+data (tamper-evident), perlindungan hak akses berbasis peran (RBAC), serta keandalan sirkuit pemutus darurat
+(circuit breaker) dalam merespons insiden keamanan dalam 24 jam pertama.
+
+5.2 Saran Tindak Lanjut
+• 1. Implementasi Konsorsium: Mendorong pembentukan konsorsium resmi tingkat universitas atau LLDIKTI untuk
+melakukan uji coba rintisan (pilot project) multi-node nyata menggunakan Hyperledger Besu multi-validator di
+lingkungan jaringan fisik antar-kampus.
+• 2. Pengembangan Antarmuka: Mengembangkan aplikasi antarmuka dompet kredensial (credential wallet)
+mobile yang ramah pengguna bagi mahasiswa berbasis standar W3C VC dan Open Badges v3.0.
+• 3. Riset Lanjutan ZKP: Mengintegrasikan teknologi Selective Disclosure berbasis Zero-Knowledge Proofs (ZKP)
+agar mahasiswa dapat membuktikan kualifikasi tertentu (misal syarat akreditasi prodi atau batas minimum IPK)
+tanpa harus memperlihatkan seluruh riwayat transkrip nilai.
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Daftar Pustaka
+[1] W3C, "Verifiable Credentials Data Model v2.0," W3C Recommendation, 15 Mei 2025. [Daring]. Tersedia: https://www.w3.org/TR/vcdata-model-2.0/. [Diakses: 4 Oktober 2026].
+[2] Ethereum Foundation, "Ethereum Developer Documentation: JSON-RPC API (eth_call Method)," 2024. [Daring]. Tersedia:
+https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call. [Diakses: 4 Oktober 2026].
+[3] OpenZeppelin, "OpenZeppelin Contracts v5.x Documentation: AccessControl and Pausable Architecture," 2024. [Daring]. Tersedia:
+https://docs.openzeppelin.com/contracts/5.x/. [Diakses: 4 Oktober 2026].
+[4] R. C. Merkle, "Method of providing digital signatures," U.S. Patent 4,309,569, 5 Jan. 1982. Pemegang: The Board of Trustees of the
+Leland Stanford Junior University.
+[5] J. H. Saltzer dan M. D. Schroeder, "The Protection of Information in Computer Systems," Proceedings of the IEEE, vol. 63, no. 9, hal.
+1278–1308, Sep. 1975. Salinan daring resmi: https://web.mit.edu/Saltzer/www/publications/protection/. [Diakses: 4 Oktober 2026].
+[6] G. Bertoni, J. Daemen, M. Peeters, dan G. Van Assche, "The Keccak reference," Versi 3.0, Jan. 2011. [Daring]. Tersedia:
+https://keccak.team/files/Keccak-reference-3.0.pdf. [Diakses: 4 Oktober 2026].
+[7]
+
+J. Nielsen, "Response Times: The 3 Important Limits," Nielsen Norman Group, Jan.
+https://www.nngroup.com/articles/response-times-3-important-limits/. [Diakses: 4 Oktober 2026].
+
+1993.
+
+[Daring].
+
+Tersedia:
+
+[8] W3C, "Bitstring Status List v1.0: Privacy-preserving status information for Verifiable Credentials," W3C Recommendation, 15 Mei 2025.
+[Daring]. Tersedia: https://www.w3.org/TR/vc-bitstring-status-list/. [Diakses: 4 Oktober 2026].
+[9] A. Rundgren, B. Jordan, dan S. Erdtman, "JSON Canonicalization Scheme (JCS)," RFC 8785, Internet Engineering Task Force (IETF), Jun.
+2020. [Daring]. Tersedia: https://www.rfc-editor.org/rfc/rfc8785.pdf. [Diakses: 4 Oktober 2026].
+[10] Republik Indonesia, Undang-Undang Republik Indonesia Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP), Lembaran
+Negara Republik Indonesia Tahun 2022 Nomor 196, Tambahan Lembaran Negara Nomor 6820, Jakarta, Okt. 2022. [Daring]. Tersedia:
+https://peraturan.bpk.go.id/Details/229798/uu-no-27-tahun-2022. [Diakses: 4 Oktober 2026].
+[11] A. Akhunov, E. B. Sasson, T. Brand, L. Guthmann, dan A. Levy, "EIP-2028: Transaction data gas cost reduction," Ethereum Improvement
+Proposals, Mei 2019. [Daring]. Tersedia: https://eips.ethereum.org/EIPS/eip-2028. [Diakses: 4 Oktober 2026].
+[12] National Institute of Standards and Technology (NIST), "SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions,"
+Federal Information Processing Standards (FIPS) Publication 202, Agu. 2015. [Daring]. Tersedia:
+https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf. [Diakses: 4 Oktober 2026].
+
+Lampiran A: Pengungkapan Penggunaan Alat Bantu AI Transparan
+Sesuai panduan etika akademik perguruan tinggi dan ketentuan naskah ujian OBE, penggunaan asisten kecerdasan
+artifisial (AI) dalam penyusunan tugas ini diungkapkan secara transparan sebagai berikut:
+• 1. Claude (Anthropic): Digunakan pada Fase Eksplorasi & Desain Arsitektur (Fase 1) untuk melakukan brainstorming
+perbandingan arsitektur konsorsium versus public blockchain, serta perumusan awal model ancaman STRIDE.
+• 2. Google Antigravity Agent: Digunakan pada Fase Rekayasa Prototipe & Verifikasi Eksperimental (Fase 2, 2b, dan
+3) untuk otomatisasi eksekusi unit test Hardhat, komputasi biaya calldata EIP-2028, eksekusi benchmark performa 30
+run, penyusunan model regresi linier, pembangkitan diagram Graphviz, serta formatting berkas laporan akhir.
+• 3. Tanggung Jawab Penulis: Seluruh logika smart contract, angka konsumsi gas, hasil verifikasi tamper-evident, serta
+analisis kritis pada dokumen ini telah divalidasi, dieksekusi secara nyata di lingkungan komputasi lokal, dan diverifikasi
+kebenarannya oleh penulis.
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Lampiran B: Keluaran Eksekusi Prototipe (Bukti B-05: Pengujian Anti-Tampering dan
+Kontrol Akses RBAC)
+Kutipan teks log mentah keluaran eksekusi terminal Hardhat secara langsung dari berkas results/demo-output.txt
+(skenario B-05 baris 47–57) yang memvalidasi penolakan manipulasi klaim data IPK dan pencegatan eksekusi oleh
+pihak tanpa peran ISSUER_ROLE (dengan penandaan pemotongan string [dipotong] pada argumen eksepsi kontrol
+akses konsol):
+[B-05 Uji Ketahanan Manipulasi Data dan Kontrol Akses RBAC]
+Skenario 5A: Pelamar mengubah IPK 3.82 menjadi 4.00 pada berkas lokal
+Leaf Asli
+: 0x7b5f7365dffd18a87fb7b5471e7843da27e53b4ec53e8e1ef064b78ab3b0645c
+Leaf Hasil Manipulasi: 0x0b097c59bcd2b3d0b5cba350b03cea87b34b4294eba79c5d5cf2f0a548d04f97
+Hasil Verifikasi
+: DITOLAK / INVALID (FALSE)
+Pesan Status Kontrak : INVALID_PROOF_OR_TAMPERED
+Skenario 5B: Upaya penerbitan batch oleh penyerang tanpa hak (Attacker)
+Hasil Pencegatan RBAC: Transaksi Dibatalkan (Reverted)
+Eksepsi Kontrak
+: VM Exception while processing transaction: reverted with custom error
+'AccessControlUnauthorizedAccount("0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
+"0x5824905f...")' [dipotong]
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Lampiran C: Pernyataan Orisinalitas
+Saya menyatakan bahwa jawaban ujian dan mini-project ini merupakan hasil kerja saya sendiri. Seluruh sumber dan
+penggunaan alat bantu telah saya ungkapkan secara jujur sesuai ketentuan mata kuliah.
+Nama
+
+NIM
+
+Tanggal
+
+Fajar Geran Arifin
+
+237006079
+
+4 Oktober 2026
+
+Template Laporan Kegiatan Blockchain | TA 2026/2027
+
+Tanda Tangan
+
+

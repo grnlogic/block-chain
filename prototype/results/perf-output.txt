@@ -1,0 +1,64 @@
+[Pengujian Performa dan Skalabilitas: Benchmark Bukti B-08]
+Lingkungan      : Hardhat Local EVM (In-Process, Chain ID: 31337)
+Waktu Pengujian : 2026-10-04T12:17:06.272Z
+Spesifikasi     : 30 iterasi terukur + 2 iterasi warm-up per nilai N
+
+Menjalankan benchmark untuk Batch Size N = 6 Lulusan Sintetis...
+Selesai N=6: Build=1.43 ms (med: 1.31, sd: 0.43) | issueBatch gasUsed=187874 | issueBatch pureGas=164911 | verify rawEst=32242 | verify pureGas=8554
+
+Menjalankan benchmark untuk Batch Size N = 100 Lulusan Sintetis...
+Selesai N=100: Build=14.01 ms (med: 13.01, sd: 2.92) | issueBatch gasUsed=187922 | issueBatch pureGas=164911 | verify rawEst=35311 | verify pureGas=9558
+
+Menjalankan benchmark untuk Batch Size N = 1000 Lulusan Sintetis...
+Selesai N=1000: Build=129.44 ms (med: 128.35, sd: 6.49) | issueBatch gasUsed=187958 | issueBatch pureGas=164911 | verify rawEst=37611 | verify pureGas=10313
+
+[Tabel 1: Rincian Komponen Gas Transaksi On-Chain issueBatch]
+Rumus: Gas Eksekusi = gasUsed (receipt) - 21.000 (biaya dasar) - Biaya Calldata
+Biaya Calldata dihitung dari tx.data aktual sesuai EIP-2028: (zero*4) + (nonZero*16)
+
+| Komponen Gas issueBatch             | N = 6 Lulusan      | N = 100 Lulusan    | N = 1.000 Lulusan  |
+| :---------------------------------- | :----------------- | :----------------- | :----------------- |
+| Total gasUsed (Receipt) (mean)      | 187873.80          | 187922.20          | 187957.80          |
+| - Biaya Dasar Transaksi (Intrinsic) | 21000              | 21000              | 21000              |
+| - Biaya Calldata tx.data (EIP-2028) | 1962.80            | 2011.20            | 2046.80            |
+|   * Rata-rata Byte Nol (zero bytes) | 140.4              | 136.4              | 133.4              |
+|   * Rata-rata Byte Non-Nol          | 87.6               | 91.6               | 94.6               |
+| = Gas Eksekusi Kontrak Murni        | 164911.00          | 164911.00          | 164911.00          |
+| Deviasi Relatif Gas Eksekusi (vs N6)| 0.00% (Baseline)   | 0.0000%            | 0.0000%            |
+
+[Tabel 2: Rekapitulasi Metrik Performa 30 Run Terukur]
+Format Data: Mean | Median | Standar Deviasi (SD) | [Min - Max]
+
+| Parameter Pengujian (30 Run)        | N = 6 Lulusan                    | N = 100 Lulusan                  | N = 1.000 Lulusan                |
+| :---------------------------------- | :------------------------------- | :------------------------------- | :------------------------------- |
+| Waktu Build Tree Off-Chain (ms)     | 1.43 | 1.31 | 0.43 | [0.87 - 2.48] | 14.01 | 13.01 | 2.92 | [11.29 - 26.39] | 129.44 | 128.35 | 6.49 | [121.10 - 146.35] |
+| Panjang Merkle Proof (Siblings)     | 3 | 3 | 0 | [3 - 3]              | 7 | 7 | 0 | [7 - 7]              | 10 | 10 | 0 | [10 - 10]          |
+| Gas Transaksi issueBatch (Total)    | 187874 | 187879 | 8 | [187855 - 187879] | 187922 | 187927 | 6 | [187915 - 187927] | 187958 | 187963 | 6 | [187951 - 187963] |
+| Gas Eksekusi Murni issueBatch       | 164911 | 164911 | 0 | [164911 - 164911] | 164911 | 164911 | 0 | [164911 - 164911] | 164911 | 164911 | 0 | [164911 - 164911] |
+| Gas Transaksi revokeCredential      | 55303 | 55309 | 7 | [55285 - 55309] | 55328 | 55333 | 6 | [55321 - 55333] | 55340 | 55345 | 7 | [55321 - 55345] |
+| Raw estimateGas verifyCredential    | 32242 | 32245 | 13 | [32211 - 32267] | 35311 | 35315 | 20 | [35269 - 35347] | 37611 | 37612 | 25 | [37566 - 37666] |
+| Biaya Intrinsik Calldata verify     | 2687 | 2688 | 11 | [2664 - 2700] | 4753 | 4760 | 14 | [4724 - 4772] | 6298 | 6296 | 16 | [6260 - 6320] |
+| Estimasi Gas Eksekusi Murni verify  | 8554 | 8557 | 8 | [8537 - 8567]  | 9558 | 9555 | 13 | [9535 - 9585] | 10313 | 10316 | 17 | [10266 - 10346] |
+| Latensi View Call Off-Chain (ms)    | 0.89 | 0.71 | 0.58 | [0.48 - 3.24] | 0.87 | 0.62 | 0.77 | [0.38 - 3.72] | 0.82 | 0.74 | 0.26 | [0.55 - 1.46] |
+
+[Pembuktian dan Rincian Sumber Selisih Gas issueBatch (84 Gas)]
+| Parameter / Calldata Word           | Biaya Calldata N=6 | Biaya Calldata N=1000 | Selisih Gas (Delta) | Penjelasan Penyebab Byte |
+| :---------------------------------- | :----------------- | :-------------------- | :------------------ | :----------------------- |
+| Word 0: batchId (bytes32)           | 296                | 332                   | +36                 | 3 karakter string tambahan ('000') mengubah 3 zero byte -> non-zero (3*12) |
+| Word 1: merkleRoot (bytes32)        | 512                | 512                   | +0                  | Identik (tidak ada perubahan byte) |
+| Word 2: graduateCount (uint256)     | 140                | 152                   | +12                 | Angka 1000 (0x03e8) memiliki 2 non-zero byte vs angka 6 (0x06) 1 non-zero byte (1*12) |
+| Word 3: metadataURI offset (uint256) | 140                | 140                   | +0                  | Identik (tidak ada perubahan byte) |
+| Word 4: metadataURI length (uint256) | 140                | 140                   | +0                  | Identik (tidak ada perubahan byte) |
+| Word 5: metadataURI data chunk 1 (bytes32) | 512                | 512                   | +0                  | Identik (tidak ada perubahan byte) |
+| Word 6: metadataURI data chunk 2 (bytes32) | 152                | 188                   | +36                 | String metadataURI memuat '1000.json' vs '6.json' (3 zero byte -> non-zero) (3*12) |
+
+Total Akumulasi Selisih Biaya Calldata Antar-Parameter: +84 gas.
+Kesimpulan: Selisih 84 gas tidak berasal dari eksekusi smart contract, melainkan akumulasi parameter calldata EIP-2028: batchId (+36 gas) + graduateCount (+12 gas) + metadataURI (+36 gas).
+Gas eksekusi murni internal kontrak pada seluruh skala N adalah konstan 164.911 gas (true O(1)).
+
+[Model Regresi Linear Komputasi Verifikasi Kredensial]
+Ambang Anggaran (Budget) : pureVerifyGas(k) <= 10.000 + (k * 350) gas
+Persamaan Model Terukur  : pureVerifyGas(k) = 7800.04 + 251.26 * k (di mana k = jumlah sibling hash)
+Kesesuaian Pertumbuhan   : Biaya per sibling terukur rata-rata 251.3 gas/sibling, konsisten dengan batas O(log N).
+Koefisien Determinasi    : R^2 = 1.0000
+Biaya bagi Verifikator   : 0 gas (eksekusi via eth_call JSON-RPC, bebas biaya bagi publik).

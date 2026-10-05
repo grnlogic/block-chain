@@ -1,0 +1,523 @@
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+UJIAN TENGAH SEMESTER
+
+MATA KULIAH BLOCKCHAIN
+
+ASESMEN BERBASIS KASUS DAN PROYEK SELARAS OBE
+
+NASKAH PESERTA
+TAHUN AKADEMIK 2026 2027 SEMESTER GANJIL
+
+Dosen Pengampu
+Dr. Ir. Nur Widiyasono, M.Kom.
+
+PROGRAM STUDI INFORMATIKA
+FAKULTAS TEKNIK
+UNIVERSITAS SILIWANGI
+TASIKMALAYA
+2026
+
+Halaman 1
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+Identitas Ujian
+
+Komponen
+
+Mata Kuliah
+Kode
+Program Studi
+Semester
+Tahun Akademik
+Cakupan
+Model Asesmen
+Komposisi
+Durasi
+Sifat
+
+Keterangan
+
+Blockchain
+KP70067008
+S1 Informatika
+7
+2026 2027 Semester Ganjil
+Bab 1 sampai Bab 8
+Case-Based Learning dan Project-Based Learning
+Ujian kasus 60 poin dan mini-project 40 poin
+Kasus 120 menit; mini-project 7 hari
+Individual
+
+Identitas Peserta
+
+Nama
+
+NIM
+
+Kelas
+
+Tanda Tangan
+
+Pemetaan Capaian Pembelajaran
+
+CPMK
+
+Rumusan
+
+Bobot
+
+CPMK 1
+
+Menjelaskan prinsip, komponen, dan cara kerja
+blockchain sebagai sistem terdistribusi.
+
+10 poin
+
+CPMK 2
+
+CPMK 3
+
+Menganalisis kebutuhan untuk memilih
+arsitektur jaringan dan mekanisme konsensus
+yang tepat.
+Menerapkan konsep kriptografi, pengelolaan
+kunci, wallet, dan smart contract dalam
+rancangan solusi.
+
+20 poin
+
+25 poin
+
+CPMK 4
+
+Mengevaluasi risiko keamanan dan melakukan
+analisis forensik berbasis artefak blockchain.
+
+30 poin
+
+CPMK 5
+
+Merancang dan mengomunikasikan solusi
+blockchain yang layak, aman, etis, dan dapat
+diuji.
+
+15 poin
+
+Level
+
+C4
+sampai
+C6
+C4
+sampai
+C6
+C4
+sampai
+C6
+C4
+sampai
+C6
+C4
+sampai
+C6
+
+Kriteria ketercapaian: mahasiswa dinyatakan mencapai CPMK jika memperoleh
+
+sekurang-kurangnya 70 persen dari skor maksimum CPMK terkait. Hasil kelas dianggap
+memenuhi target bila sekurang-kurangnya 75 persen mahasiswa mencapai ambang
+tersebut.
+
+Halaman 2
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+Petunjuk Pelaksanaan
+●​ Bagian A dikerjakan secara individual di kelas selama 120 menit dan bernilai 60 poin.
+●​ Bagian B merupakan mini-project individual yang dikumpulkan paling lambat tujuh hari
+setelah ujian dan bernilai 40 poin.
+●​ Jawaban harus menunjukkan asumsi, alasan teknis, keputusan desain, serta
+konsekuensi atau trade-off.
+●​ Diagram boleh dibuat dengan tangan secara jelas atau menggunakan aplikasi pada
+dokumen proyek.
+●​ Mahasiswa boleh menggunakan kalkulator nonkomunikasi pada ujian kasus. Sumber
+ilmiah dan dokumentasi resmi boleh digunakan untuk mini-project dan wajib
+dicantumkan.
+●​ Dilarang menyalin karya orang lain. Setiap penggunaan kode, gambar, data, atau
+gagasan eksternal harus diberi atribusi.
+●​ Jawaban dinilai berdasarkan kualitas penalaran dan bukti, bukan panjang tulisan.
+
+Bagian A Ujian Berbasis Kasus
+
+Bobot 60 poin. Bacalah konteks setiap kasus, kemudian jawab seluruh pertanyaan secara
+argumentatif.
+
+Kasus 1 Sistem Ketertelusuran Produk Pangan
+Sebuah konsorsium terdiri atas koperasi petani, pabrik pengolahan, perusahaan logistik,
+laboratorium mutu, dan jaringan ritel. Saat ini data lot produksi tersimpan pada basis data
+masing-masing organisasi. Ketika terjadi penarikan produk, pencocokan nomor lot
+memerlukan dua hingga tiga hari. Konsorsium ingin memperoleh jejak audit bersama,
+tetapi harga pemasok dan identitas petani tertentu tidak boleh terlihat oleh semua pihak.
+Volume transaksi diperkirakan 25 transaksi per detik dan peserta jaringan telah diketahui
+identitasnya.
+
+1.1 Identifikasi tiga kebutuhan bisnis dan dua kendala teknis yang menentukan desain
+sistem. [4 poin | CPMK 1 dan CPMK 2 | C4]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+1.2 Pilih jenis blockchain dan mekanisme konsensus yang paling sesuai. Bandingkan
+pilihan Anda dengan sekurang-kurangnya satu alternatif. [5 poin | CPMK 2 | C5]
+________________________________________________________________________
+____________________________________
+
+Halaman 3
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+1.3 Gambarkan arsitektur logis yang menunjukkan aktor, node, data on-chain, data
+off-chain, serta mekanisme kontrol akses. [4 poin | CPMK 2 | C6]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+1.4 Tetapkan dua indikator keberhasilan pilot project yang dapat diukur. [2 poin | CPMK 1 |
+C4]
+
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+Halaman 4
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+Kasus 2 Insiden Wallet Organisasi
+Wallet treasury sebuah organisasi blockchain kehilangan aset setelah seorang staf
+menyetujui transaksi yang tampil sebagai pembaruan kontrak. Log menunjukkan login dari
+perangkat staf yang sah, tetapi domain antarmuka berbeda satu karakter dari domain
+resmi. Private key disimpan pada browser wallet; tidak ada multisignature, allowlist alamat,
+maupun prosedur respons insiden. Organisasi meminta analisis akar masalah dan
+rencana pemulihan.
+
+2.1 Susun urutan kejadian yang paling mungkin dan bedakan fakta, hipotesis, serta bukti
+yang masih perlu dikumpulkan. [4 poin | CPMK 4 | C4]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+2.2 Jelaskan bagaimana tanda tangan digital tetap valid meskipun transaksi terjadi akibat
+rekayasa sosial. [3 poin | CPMK 3 | C4]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+2.3 Rancang pengamanan berlapis yang mencakup manusia, proses, wallet, dan kontrol
+transaksi. [5 poin | CPMK 3 dan CPMK 4 | C6]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+2.4 Tentukan tindakan pada 24 jam pertama dengan tetap menjaga integritas bukti digital.
+[3 poin | CPMK 4 | C5]
+
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+Halaman 5
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+Kasus 3 Audit Smart Contract Vault
+Sebuah vault menerima setoran token dan memungkinkan pengguna menarik saldo.
+Pengembang menuliskan alur penarikan secara sederhana: kontrak memeriksa saldo,
+mengirim token atau aset kepada pemanggil melalui external call, lalu mengurangi saldo
+pengguna. Kontrak juga menggunakan oracle harga tunggal dan fungsi admin untuk
+mengganti alamat oracle tanpa time-lock. Deployment direncanakan langsung ke mainnet
+tanpa pengujian invariant.
+
+3.1 Identifikasi sekurang-kurangnya tiga kerentanan atau kelemahan desain beserta
+dampaknya. [4 poin | CPMK 3 dan CPMK 4 | C4]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+3.2 Usulkan perbaikan urutan logika penarikan dan kontrol akses admin. Jelaskan alasan
+setiap kontrol. [5 poin | CPMK 3 | C6]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+3.3 Rancang strategi pengujian yang memuat unit test, fuzzing atau property-based test,
+serta invariant utama. [4 poin | CPMK 3 dan CPMK 4 | C6]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+3.4 Putuskan apakah deployment harus dilanjutkan atau ditunda dan nyatakan kriteria go
+atau no-go. [2 poin | CPMK 4 | C5]
+________________________________________________________________________
+____________________________________
+
+Halaman 6
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+________________________________________________________________________
+____________________________________
+
+Halaman 7
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+Kasus 4 Investigasi Aliran Dana Lintas Jaringan
+Sebuah alamat A menerima aset hasil eksploitasi protokol DeFi. Dana kemudian dipecah
+ke enam alamat, sebagian ditukar melalui decentralized exchange, lalu dipindahkan
+melalui bridge ke jaringan lain. Salah satu alamat tujuan mengirim dana ke alamat deposit
+yang diduga milik exchange terpusat. Tim investigasi memiliki transaction hash,
+timestamp, alamat kontrak, dan log event, tetapi belum memiliki informasi identitas pemilik
+alamat.
+
+4.1 Jelaskan metode rekonstruksi aliran dana dan artefak on-chain yang harus
+dikumpulkan. [4 poin | CPMK 4 | C4]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+4.2 Nilai kekuatan dan keterbatasan heuristik common-input, clustering waktu, dan
+hubungan alamat deposit. [4 poin | CPMK 4 | C5]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+4.3 Susun chain of custody untuk menjaga bukti hasil ekstraksi blockchain dan data
+pendukung off-chain. [4 poin | CPMK 4 | C6]
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+________________________________________________________________________
+____________________________________
+
+4.4 Tuliskan kesimpulan investigatif yang membedakan atribusi alamat, atribusi layanan,
+dan atribusi individu. [3 poin | CPMK 4 | C5]
+________________________________________________________________________
+____________________________________
+
+Halaman 8
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+________________________________________________________________________
+____________________________________
+
+Halaman 9
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+Bagian B Mini Project Individual
+Rancangan Sistem Verifikasi Kredensial Akademik
+Sebuah perguruan tinggi ingin menyediakan layanan verifikasi ijazah, sertifikat
+kompetensi, dan transkrip yang cepat, dapat diaudit, serta tetap melindungi data pribadi.
+Rancang solusi blockchain yang memungkinkan institusi menerbitkan kredensial, lulusan
+membuktikan kepemilikan, dan pihak ketiga memverifikasi keaslian tanpa memperoleh
+data melebihi kebutuhannya. Rancangan harus memperhitungkan pencabutan, pemulihan
+kunci, interoperabilitas, dan governance.
+
+Kod Komponen
+e
+P1
+
+Rumusan
+masalah dan
+pemangku
+kepentingan
+
+P2
+
+Arsitektur dan
+tata
+kelola
+jaringan
+
+P3
+
+Model
+data
+dan
+alur
+transaksi
+
+P4
+
+Keamanan
+dan privasi
+
+P5
+
+Prototipe dan
+pengujian
+
+P6
+
+Komunikasi
+dan refleksi
+
+Luaran yang Diminta
+Jelaskan
+masalah,
+pengguna,
+proses saat ini, manfaat terukur,
+serta alasan blockchain diperlukan.
+Sertakan analisis kapan basis data
+konvensional lebih tepat.
+Pilih jenis jaringan, peran node,
+mekanisme konsensus, kebijakan
+onboarding, hak akses, dan model
+governance. Sajikan satu diagram
+arsitektur.
+Definisikan aset, identitas, transaksi
+utama, state transition, pembagian
+data on-chain dan off-chain, serta
+contoh satu alur end-to-end.
+Susun threat model minimal lima
+ancaman,
+kontrol
+mitigasi,
+pengelolaan kunci, audit logging,
+dan rencana respons insiden.
+Buat wireframe, pseudocode, atau
+prototipe sederhana; tetapkan test
+case
+fungsional,
+keamanan,
+performa, dan kriteria penerimaan.
+Sajikan
+keputusan
+desain,
+keterbatasan, risiko etika, rencana
+pengembangan,
+serta
+refleksi
+individual atas proses pengambilan
+keputusan.
+
+Halaman 10
+
+Sko CPMK
+r
+
+Leve
+l
+
+5
+
+CPMK 1
+
+C5
+
+10
+
+CPMK 2
+
+C6
+
+7
+
+CPMK 3
+
+C6
+
+8
+
+CPMK 3
+dan
+CPMK 4
+
+C6
+
+6
+
+CPMK 5
+
+C6
+
+4
+
+CPMK 5
+
+C5
+
+UTS BLOCKCHAIN OBE | NASKAH PESERTA
+
+Format Luaran
+●​ Laporan 8 sampai 12 halaman A4 di luar lampiran dan daftar pustaka.
+●​ Satu diagram arsitektur, satu diagram alur transaksi, dan satu matriks ancaman dan
+mitigasi.
+●​ Artefak prototipe berupa wireframe, pseudocode, smart contract sederhana, atau
+simulasi proses.
+●​ Daftar pengujian dan bukti hasil uji; bila prototipe belum berjalan, jelaskan batasan
+secara jujur.
+●​ Daftar pustaka minimal lima sumber, mengutamakan dokumentasi resmi, standar,
+buku, atau artikel ilmiah.
+●​ Lampiran pernyataan orisinalitas dan penggunaan alat bantu digital atau AI secara
+transparan.
+Ketentuan Penamaan dan Pengumpulan
+Nama file: NIM_Nama_UTS_Blockchain_OBE.pdf. Berkas pendukung dikemas dalam
+satu folder atau repository yang dapat diakses dosen. Keterlambatan mengikuti kebijakan
+mata kuliah.
+
+Pernyataan Orisinalitas
+Saya menyatakan bahwa jawaban ujian dan mini-project ini merupakan hasil kerja saya
+sendiri. Seluruh sumber dan penggunaan alat bantu telah saya ungkapkan secara jujur
+sesuai ketentuan mata kuliah.
+
+Nama
+
+NIM
+
+Halaman 11
+
+Tanggal
+
+Tanda Tangan
+
+

@@ -1,0 +1,131 @@
+digraph G {
+    graph [
+        rankdir=LR,
+        bgcolor="#ffffff",
+        fontname="Liberation Sans,Arial",
+        fontsize=12,
+        pad="0.3",
+        nodesep="0.25",
+        ranksep="0.45",
+        splines=spline
+    ];
+
+    node [
+        fontname="Liberation Sans,Arial",
+        fontsize=11,
+        shape=box,
+        style="filled,rounded",
+        color="#000000",
+        fillcolor="#f2f2f2",
+        penwidth=1.2,
+        margin="0.15,0.12"
+    ];
+
+    edge [
+        fontname="Liberation Sans,Arial",
+        fontsize=10,
+        color="#000000",
+        penwidth=1.2
+    ];
+
+    // Source Node
+    node_A [
+        label=<<b>Alamat A</b><br/><font point-size="10">Hasil eksploitasi protokol <i>DeFi</i></font>>,
+        fillcolor="#e0e0e0",
+        width=2.0
+    ];
+
+    // Cluster for B1 - B6
+    subgraph cluster_pemecahan {
+        label=<<font point-size="11"><b>Enam Alamat Pemecahan Dana</b></font>>;
+        labeljust="l";
+        style="dashed,rounded";
+        color="#666666";
+        fillcolor="#fafafa";
+        penwidth=1.0;
+        margin="15";
+
+        node_B1 [label=<<b>Alamat B1</b>>];
+        node_B2 [label=<<b>Alamat B2</b>>];
+        node_B3 [label=<<b>Alamat B3</b>>];
+        node_B4 [label=<<b>Alamat B4</b>>];
+        node_B5 [label=<<b>Alamat B5</b>>];
+        node_B6 [label=<<b>Alamat B6</b>>];
+    }
+
+    node_DEX [
+        label=<<b>Kontrak DEX</b><br/><font point-size="10">Penukaran aset (<i>swap</i>)</font>>,
+        fillcolor="#ffffff",
+        width=1.8
+    ];
+
+    node_Bridge_asal [
+        label=<<b><i>Bridge</i> (Jaringan Asal)</b><br/><font point-size="10">Penguncian atau pembakaran aset</font>>,
+        fillcolor="#f2f2f2",
+        width=2.2
+    ];
+
+    node_Bridge_tujuan [
+        label=<<b><i>Bridge</i> (Jaringan Tujuan)</b><br/><font point-size="10">Penerbitan atau pelepasan aset</font>>,
+        fillcolor="#f2f2f2",
+        width=2.2
+    ];
+
+    node_tujuan [
+        label=<<b>Alamat Tujuan</b><br/><font point-size="10">Penerima di rantai tujuan</font>>,
+        fillcolor="#ffffff",
+        width=1.9
+    ];
+
+    node_deposit [
+        label=<<b>Alamat Deposit</b><br/><font point-size="10">Diduga milik <i>exchange</i> terpusat</font>>,
+        fillcolor="#e0e0e0",
+        width=2.2
+    ];
+
+    // Connections from A to B1 - B6
+    node_A -> node_B1 [style=solid];
+    node_A -> node_B2 [style=solid];
+    node_A -> node_B3 [style=solid];
+    node_A -> node_B4 [style=solid];
+    node_A -> node_B5 [style=solid];
+    node_A -> node_B6 [style=solid];
+
+    // B1 and B2 exchange via DEX (sebagian ditukar)
+    node_B1 -> node_DEX [style=solid, label=<Sebagian>];
+    node_B2 -> node_DEX [style=solid, label=<Sebagian>];
+
+    // Output of DEX to Bridge Asal
+    node_DEX -> node_Bridge_asal [style=solid, label=<Aset baru>];
+
+    // Direct transfers from remaining addresses to Bridge Asal
+    node_B3 -> node_Bridge_asal [style=solid];
+    node_B4 -> node_Bridge_asal [style=solid];
+    node_B5 -> node_Bridge_asal [style=solid];
+    node_B6 -> node_Bridge_asal [style=solid];
+
+    // Cross chain transfer between bridges
+    node_Bridge_asal -> node_Bridge_tujuan [style=solid, label=<Lintas rantai<br/>(<i>event log</i>)>];
+
+    // Bridge Tujuan to Destination Address
+    node_Bridge_tujuan -> node_tujuan [style=solid];
+
+    // Destination Address to Centralized Exchange Deposit Address (dashed / heuristic)
+    node_tujuan -> node_deposit [style=dashed, label=<Dugaan / heuristik>];
+
+    // Legend node placed at bottom
+    node_legend [
+        shape=none,
+        margin="0",
+        fillcolor="#ffffff",
+        label=<<table border="1" cellborder="0" cellspacing="3" cellpadding="4" style="rounded" bgcolor="#f9f9f9" color="#888888">
+        <tr><td colspan="2" align="left"><b>Legenda Hubungan Graf:</b></td></tr>
+        <tr><td align="left"><font color="#000000"><b>Garis Solid</b></font></td><td align="left">: Hubungan terbukti <i>on-chain</i> (<i>transaction hash</i> dan <i>event log</i>)</td></tr>
+        <tr><td align="left"><font color="#555555"><b>Garis Putus-Putus</b></font></td><td align="left">: Hubungan dugaan atau analisis heuristik <i>off-chain</i></td></tr>
+        </table>>
+    ];
+
+    // Invisible positioning edge to keep legend neatly placed under A and B
+    node_A -> node_legend [style=invis];
+    { rank=same; node_B6; node_legend; }
+}

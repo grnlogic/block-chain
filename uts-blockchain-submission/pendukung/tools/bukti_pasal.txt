@@ -1,0 +1,51 @@
+BUKTI VERIFIKASI RESMI TEKS PERATURAN PERUNDANG-UNDANGAN
+
+1. UNDANG-UNDANG REPUBLIK INDONESIA NOMOR 27 TAHUN 2022 TENTANG PELINDUNGAN DATA PRIBADI (UU PDP)
+Sumber Dokumen:
+- Halaman Web Resmi (JDIH BPK RI): https://peraturan.bpk.go.id/Details/229798/uu-no-27-tahun-2022 (Diakses: 5 Oktober 2026)
+  * Catatan akses web: Halaman web memuat metadata dan Abstrak Peraturan (termasuk klasifikasi data pribadi spesifik dan umum), namun teks lengkap pasal per pasal tidak tercantum dalam HTML halaman detail melainkan tersedia melalui tautan unduhan dokumen resmi.
+- Berkas Dokumen Resmi (PDF Lembaran Negara): Unduhan dari https://peraturan.bpk.go.id/Download/224884/UU%20Nomor%2027%20Tahun%202022.pdf tersimpan pada berkas lokal:
+  uts-blockchain-submission/referensi/10_RI_2022_UU_Nomor_27_Tahun_2022_PDP.pdf
+  (SHA-256: ed952dea04b87d14ecf037f9f324a65d50b396ddd34fc28ddf9ff014391971f6)
+
+Kutipan Pasal Resmi (Dikutip Langsung dari Dokumen Lembaran Negara PDF):
+- Pasal 4 ayat (3) [Jenis Data Pribadi Umum, Hal. 4]:
+  "Data Pribadi yang bersifat umum sebagaimana dimaksud pada ayat (1) huruf b meliputi:
+   a. nama lengkap;
+   b. jenis kelamin;
+   c. kewarganegaraan;
+   d. agama;
+   e. status perkawinan; dan/atau
+   f. Data Pribadi yang dikombinasikan untuk mengidentifikasi seseorang."
+
+- Pasal 8 [Hak Subjek Data - Penghentian, Penghapusan, Pemusnahan, Hal. 6]:
+  "Subjek Data Pribadi berhak untuk mengakhiri pemrosesan, menghapus, dan/ atau memusnahkan Data Pribadi tentang dirinya sesuai dengan ketentuan peraturan perundang-undangan."
+
+- Pasal 9 [Hak Subjek Data - Penarikan Persetujuan, Hal. 6]:
+  "Subjek Data Pribadi berhak menarik kembali persetujuan pemrosesan Data Pribadi tentang dirinya yang telah diberikan kepada Pengendali Data Pribadi."
+
+- Pasal 43 ayat (1) [Kewajiban Pengendali Data - Penghapusan Data Pribadi, Hal. 18]:
+  "(1) Pengendali Data Pribadi wajib menghapus Data Pribadi dalam hal:
+       a. Data Pribadi tidak lagi diperlukan untuk pencapaian tujuan pemrosesan Data Pribadi;
+       b. Subjek Data Pribadi telah melakukan penarikan kembali persetujuan pemrosesan Data Pribadi;
+       c. terdapat permintaan dari Subjek Data Pribadi; atau
+       d. Data Pribadi diperoleh dan/ atau diproses dengan cara melawan hukum."
+
+- Pasal 44 ayat (1) [Kewajiban Pengendali Data - Pemusnahan Data Pribadi, Hal. 18]:
+  "(1) Pengendali Data Pribadi wajib memusnahkan Data Pribadi dalam hal:
+       a. telah habis masa retensinya dan berketerangan dimusnahkan berdasarkan jadwal retensi arsip;
+       b. terdapat permintaan dari Subjek Data Pribadi;
+       c. tidak berkaitan dengan penyelesaian proses hukum suatu perkara; dan/atau
+       d. Data Pribadi diperoleh dan/atau diproses dengan cara melawan hukum."
+
+---------------------------------------------------------------------------------------------------
+
+2. PERATURAN MENTERI PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI NOMOR 6 TAHUN 2022
+Tentang: Ijazah, Sertifikat Kompetensi, Sertifikat Profesi, Gelar, dan Kesetaraan Ijazah Perguruan Tinggi Negara Lain
+Sumber Dokumen: Database Peraturan Perundang-undangan Kementerian Hukum dan HAM / JDIH Kemendikbudristek
+URL Peraturan: https://peraturan.go.id/id/permendikbudristek-no-6-tahun-2022
+URL Berkas Resmi: https://peraturan.go.id/files/bn167-2022.pdf
+Pengundangan: Berita Negara Republik Indonesia Tahun 2022 Nomor 167 (Ditetapkan 8 Feb 2022, Diundangkan 10 Feb 2022).
+Klausul Terkait:
+- Mengatur penerbitan dan legalitas Ijazah, Sertifikat Kompetensi, dan Sertifikat Profesi sebagai dokumen resmi negara.
+- Mewajibkan sistem verifikasi ijazah elektronik dan penomoran ijazah nasional (PIN) untuk memastikan keabsahan dan keterverifikasian dokumen akademik di perguruan tinggi.

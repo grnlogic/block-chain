@@ -1,0 +1,66 @@
+digraph ArsitekturKonsorsium {
+    graph [rankdir=TB, bgcolor="white", fontname="Times-Roman", fontsize=11, compound=true, nodesep=0.45, ranksep=0.55];
+    node [shape=box, style="filled,rounded", fontname="Times-Roman", fontsize=10, margin="0.2,0.1", color="#000000", fontcolor="#000000"];
+    edge [fontname="Times-Roman", fontsize=9, color="#000000", fontcolor="#000000", arrowsize=0.8];
+
+    // Layer 1: Pengguna & Antarmuka
+    subgraph cluster_layer1 {
+        label = "Layer 1: Aplikasi dan Pemangku Kepentingan (Off-Chain)";
+        style = "filled,rounded";
+        fillcolor = "#f9f9f9";
+        color = "#000000";
+        penwidth = 1.0;
+
+        app_univ [label="SIAKAD Universitas\n(Penerbit / Issuer)\n[Biro Akademik]", fillcolor="#ffffff"];
+        app_holder [label="Dompet Kredensial\n(Pemegang / Holder)\n[Mahasiswa / Alumni]", fillcolor="#ffffff"];
+        app_verifier [label="Portal Verifikasi Publik\n(Pemverifikasi / Verifier)\n[DUDI / Industri / HRD]", fillcolor="#ffffff"];
+    }
+
+    // Layer 2: Komputasi & Penyimpanan Off-Chain
+    subgraph cluster_layer2 {
+        label = "Layer 2: Pemrosesan Data dan Kriptografi Berbasis Privasi (Zero-PII)";
+        style = "filled,rounded";
+        fillcolor = "#f4f4f4";
+        color = "#000000";
+        penwidth = 1.0;
+
+        engine_crypto [label="Engine Kriptografi Off-Chain\n- Kanonikalisasi RFC 8785\n- Salt 256-bit Acak Berentropi Tinggi\n- Pembangkitan Merkle Tree", fillcolor="#ffffff"];
+        storage_offchain [label="Penyimpanan Dokumen Lengkap\n(Decentralized / Encrypted Local Vault)\nW3C Verifiable Credentials (JSON-LD)", fillcolor="#ffffff"];
+    }
+
+    // Layer 3: Konsorsium Blockchain
+    subgraph cluster_layer3 {
+        label = "Layer 3: Jaringan Blockchain Konsorsium Permissioned (Konsensus QBFT)";
+        style = "filled,rounded";
+        fillcolor = "#eeeeee";
+        color = "#000000";
+        penwidth = 1.2;
+
+        subgraph cluster_nodes {
+            label = "Node Validator dan Penjaga Konsensus (Multi-Institusi)";
+            style = "dashed,rounded";
+            fillcolor = "#ffffff";
+            color = "#555555";
+            node_kemendikbud [label="Node Regulator\n(Kemendiktisaintek / LLDIKTI)", fillcolor="#f9f9f9"];
+            node_unsil [label="Node Institusi\n(Universitas Siliwangi)", fillcolor="#f0f0f0", penwidth=1.5];
+            node_univ_lain [label="Node Institusi Mitra\n(PTN / PTS Konsorsium)", fillcolor="#f9f9f9"];
+            node_industri [label="Node Pengawas DUDI\n(Kadin / Asosiasi Profesi)", fillcolor="#f9f9f9"];
+        }
+
+        contract_registry [label="Smart Contract On-Chain: AcademicCredentialRegistry.sol\n- Merkle Root Storage (Penjangkaran Skalabilitas O(1))\n- OpenZeppelin AccessControl (Admin, Issuer, Revoker)\n- Emergency Pausable Circuit Breaker\n- Granular Revocation Registry (Mapping Hash Status)", fillcolor="#e0e0e0", shape=component, penwidth=1.5];
+    }
+
+    // Hubungan Antar Komponen
+    app_univ -> engine_crypto [label="1. Ekstraksi Data Lulusan Batch", style=solid];
+    engine_crypto -> storage_offchain [label="2. Simpan Dokumen Ber-Salt\n(Klaim Lengkap PII Off-Chain)", style=solid];
+    engine_crypto -> contract_registry [label="3. issueBatch(batchId, merkleRoot)\n(Tx On-Chain ~187k gas)", style=solid, penwidth=1.2];
+    storage_offchain -> app_holder [label="4. Distribusi Dokumen W3C VC\ndan Bukti Merkle Proof", style=dashed];
+    app_holder -> app_verifier [label="5. Presentasi Kredensial\n(Klaim Terpilih + Merkle Proof)", style=dashed, penwidth=1.2];
+    app_verifier -> contract_registry [label="6. verifyCredential(batchId, leaf, proof)\nvia eth_call (JSON-RPC) -> 0 Gas Bebas Biaya", style=solid, penwidth=1.2];
+
+    // Konsensus antar node
+    node_kemendikbud -> contract_registry [style=dotted, arrowhead=none];
+    node_unsil -> contract_registry [style=dotted, arrowhead=none];
+    node_univ_lain -> contract_registry [style=dotted, arrowhead=none];
+    node_industri -> contract_registry [style=dotted, arrowhead=none];
+}

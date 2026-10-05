@@ -1,0 +1,39 @@
+digraph MerkleTreeStructure {
+    graph [rankdir=BT, bgcolor="white", fontname="Times-Roman", fontsize=11, nodesep=0.35, ranksep=0.55];
+    node [shape=box, style="filled,rounded", fontname="Times-Roman", fontsize=9, margin="0.15,0.08", color="#000000", fontcolor="#000000"];
+    edge [fontname="Times-Roman", fontsize=8, color="#000000", fontcolor="#000000", arrowsize=0.7];
+
+    // Daun Kredensial
+    leaf1 [label="Daun L1 (Diuji: Ahmad)\nKeccak256(Doc1 || Salt1)\n0xc4d1a22493...", fillcolor="#ffffff", penwidth=2.0];
+    leaf2 [label="Daun L2 (Proof Sibling [0])\nKeccak256(Doc2 || Salt2)\n0x7f0dc81a7a...", fillcolor="#f0f0f0", penwidth=1.2];
+    leaf3 [label="Daun L3\nKeccak256(Doc3 || Salt3)\n0x067083cc81...", fillcolor="#ffffff"];
+    leaf4 [label="Daun L4\nKeccak256(Doc4 || Salt4)\n0xeed86c9812...", fillcolor="#ffffff"];
+    leaf5 [label="Daun L5\nKeccak256(Doc5 || Salt5)\n0x1d8e13d643...", fillcolor="#ffffff"];
+    leaf6 [label="Daun L6\nKeccak256(Doc6 || Salt6)\n0xffb33bd42c...", fillcolor="#ffffff"];
+
+    // Intermediate Level 1
+    node12 [label="Node H(1-2)\nKeccak256(L1 || L2)", fillcolor="#ffffff", penwidth=2.0];
+    node34 [label="Node H(3-4) (Proof Sibling [1])\n0x5f305211e7...", fillcolor="#f0f0f0", penwidth=1.2];
+    node56 [label="Node H(5-6)\nKeccak256(L5 || L6)", fillcolor="#ffffff"];
+
+    leaf1 -> node12 [penwidth=2.0];
+    leaf2 -> node12 [style=dashed, penwidth=1.2];
+    leaf3 -> node34;
+    leaf4 -> node34;
+    leaf5 -> node56;
+    leaf6 -> node56;
+
+    // Intermediate Level 2
+    node1234 [label="Node H(1-4)\nKeccak256(H1-2 || H3-4)", fillcolor="#ffffff", penwidth=2.0];
+    node56pad [label="Node H(5-6 Pad) (Proof Sibling [2])\n0x98cef33723...", fillcolor="#f0f0f0", penwidth=1.2];
+
+    node12 -> node1234 [penwidth=2.0];
+    node34 -> node1234 [style=dashed, penwidth=1.2];
+    node56 -> node56pad;
+
+    // Root
+    root [label="MERKLE ROOT ON-CHAIN\nBatch: WISUDA-2026-PERIODE-1\n0x6879c11e179813273132ad5cb23b58bd713d41c6535c41fec7f54ca4f3a70647\n[Tersimpan di Smart Contract Storage via issueBatch]", fillcolor="#e0e0e0", shape=component, penwidth=1.8];
+
+    node1234 -> root [penwidth=2.0];
+    node56pad -> root [style=dashed, penwidth=1.2];
+}

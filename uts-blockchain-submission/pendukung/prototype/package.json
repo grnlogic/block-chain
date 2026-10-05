@@ -1,0 +1,22 @@
+{
+  "name": "prototype",
+  "version": "1.0.0",
+  "description": "Prototipe Registri Kredensial Akademik Konsorsium Blockchain",
+  "main": "index.js",
+  "scripts": {
+    "test": "bash -o pipefail -c 'mkdir -p results && NO_COLOR=1 npx hardhat test | tee results/test-output.txt'",
+    "demo": "bash -o pipefail -c 'mkdir -p results && NO_COLOR=1 npx hardhat run scripts/run-demo.js | tee results/demo-output.txt'",
+    "bench": "bash -o pipefail -c 'mkdir -p results && NO_COLOR=1 npx hardhat run scripts/perf-bench.js'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "@openzeppelin/contracts": "^5.6.1",
+    "hardhat": "^2.29.1",
+    "keccak256": "^1.0.6",
+    "merkletreejs": "^0.6.0"
+  }
+}

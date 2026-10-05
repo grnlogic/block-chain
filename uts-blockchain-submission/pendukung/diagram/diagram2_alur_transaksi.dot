@@ -1,0 +1,55 @@
+digraph AlurTransaksiEndToEnd {
+    graph [rankdir=TB, bgcolor="white", fontname="Times-Roman", fontsize=11, compound=true, nodesep=0.35, ranksep=0.38];
+    node [shape=box, style="filled,rounded", fontname="Times-Roman", fontsize=9, margin="0.15,0.08", color="#000000", fontcolor="#000000"];
+    edge [fontname="Times-Roman", fontsize=8, color="#000000", fontcolor="#000000", arrowsize=0.7];
+
+    subgraph cluster_fase1 {
+        label = "FASE 1: PENERBITAN (Biro Akademik / Issuer)";
+        style = "filled,rounded";
+        fillcolor = "#f9f9f9";
+        color = "#000000";
+
+        p1_input [label="1. Ekstraksi Data SIAKAD\n(Nama, NIM, IPK, Ijazah)", fillcolor="#ffffff"];
+        p1_canon [label="2. Kanonikalisasi RFC 8785\n+ Salt 256-bit Acak", fillcolor="#ffffff"];
+        p1_leaf  [label="3. Hash Daun:\nLeaf = Keccak256(JSON||Salt)", fillcolor="#f0f0f0"];
+        p1_tree  [label="4. Build Merkle Tree\nHitung Merkle Root", fillcolor="#f0f0f0"];
+        p1_tx    [label="5. Tx On-Chain (ISSUER):\nissueBatch(batchId, root)", fillcolor="#e0e0e0", shape=component];
+        p1_event [label="6. Emisi Event On-Chain:\nBatchIssued(root, time)", fillcolor="#ffffff"];
+
+        p1_input -> p1_canon -> p1_leaf -> p1_tree -> p1_tx -> p1_event;
+    }
+
+    subgraph cluster_fase2 {
+        label = "FASE 2: PENYIMPANAN & PRESENTASI (Mahasiswa)";
+        style = "filled,rounded";
+        fillcolor = "#f4f4f4";
+        color = "#000000";
+
+        p2_wallet  [label="7. Terima Dokumen W3C VC\n+ Salt + Merkle Proof Path", fillcolor="#ffffff"];
+        p2_store   [label="8. Simpan Aman Mandiri\n(Encrypted Local Storage)", fillcolor="#ffffff"];
+        p2_present [label="9. Buat Verifiable Presentation\nke Verifikator / Industri", fillcolor="#f0f0f0"];
+
+        p2_wallet -> p2_store -> p2_present;
+    }
+
+    subgraph cluster_fase3 {
+        label = "FASE 3: VERIFIKASI (Industri / Verifier)";
+        style = "filled,rounded";
+        fillcolor = "#eeeeee";
+        color = "#000000";
+
+        p3_rehash  [label="10. Hitung Ulang Leaf:\nLeaf' = Keccak256(Data||Salt)", fillcolor="#ffffff"];
+        p3_call    [label="11. eth_call (0 Gas):\nverifyCredential(batchId, Leaf', proof)", fillcolor="#e0e0e0", shape=component];
+        p3_check   [label="12. Eksekusi Kontrak:\n- Cek batchId di storage\n- Cek status revoke\n- MerkleProof.verify()", fillcolor="#ffffff"];
+        p3_verdict [label="13. Hasil Verifikasi Instan:\nVALID (true) / INVALID / REVOKED", fillcolor="#f0f0f0", style="filled,bold"];
+
+        p3_rehash -> p3_call -> p3_check -> p3_verdict;
+    }
+
+    // Connect clusters horizontally
+    { rank=same; p1_input; p2_wallet; p3_rehash; }
+
+    p1_event -> p2_wallet [label="Kirim Kredensial", style=dashed];
+    p2_present -> p3_rehash [label="Presentasi VP", style=dashed, penwidth=1.2];
+    p3_call -> p1_tx [label="Rujukan Root On-Chain", style=dotted, constraint=false];
+}

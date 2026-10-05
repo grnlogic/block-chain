@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1750 960" width="1750" height="960">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#222222"/>
+    </marker>
+    <marker id="arrow-down" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1.5 0 L 5 8 L 8.5 0 z" fill="#555555"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1750" height="960" fill="#ffffff" />
+  <rect x="20" y="20" width="1710" height="920" rx="8" fill="#ffffff" stroke="#222222" stroke-width="1.2" />
+
+  <!-- Header -->
+  <text x="45" y="60" font-family="Liberation Sans, Arial" font-size="20" font-weight="bold" fill="#111111">LINIMASA REKONSTRUKSI INSIDEN WALLET ORGANISASI</text>
+  <text x="45" y="84" font-family="Liberation Sans, Arial" font-size="13" fill="#555555">Kronologi Tujuh Titik Kejadian: Membedakan Fakta Empiris, Hipotesis Investigatif, dan Kebutuhan Bukti Forensik</text>
+
+  <!-- Legend Box -->
+  <g transform="translate(1080, 40)">
+    <rect x="0" y="0" width="620" height="48" rx="4" fill="#f8f8f8" stroke="#888888" stroke-width="1" />
+    <rect x="15" y="14" width="28" height="20" rx="3" fill="#ffffff" stroke="#111111" stroke-width="2" />
+    <text x="50" y="28" font-family="Liberation Sans, Arial" font-size="12" fill="#111111">Kotak Garis Solid: Fakta Empiris</text>
+    <rect x="235" y="14" width="28" height="20" rx="3" fill="#ffffff" stroke="#555555" stroke-width="1.5" stroke-dasharray="4,3" />
+    <text x="270" y="28" font-family="Liberation Sans, Arial" font-size="12" fill="#333333">Garis Putus-Putus: Hipotesis</text>
+    <rect x="445" y="14" width="28" height="20" rx="3" fill="#f2f2f2" stroke="#888888" stroke-width="1" />
+    <text x="480" y="28" font-family="Liberation Sans, Arial" font-size="12" fill="#333333">Abu-Abu: Bukti Forensik</text>
+  </g>
+
+  <!-- Main Horizontal Timeline Axis -->
+  <line x1="50" y1="465" x2="1690" y2="465" stroke="#222222" stroke-width="3" marker-end="url(#arrow)" />
+
+  <!-- ==================== 7 EVENTS ==================== -->
+
+  <!-- STEP 1: HIPOTESIS -->
+  <g transform="translate(45, 115)">
+    <rect x="0" y="0" width="222" height="275" rx="5" fill="#ffffff" stroke="#555555" stroke-width="1.5" stroke-dasharray="5,4" />
+    <rect x="0" y="0" width="222" height="32" rx="5" fill="#f2f2f2" stroke="#555555" stroke-width="1.5" stroke-dasharray="5,4" />
+    <text x="10" y="21" font-family="Liberation Sans, Arial" font-size="12.5" font-weight="bold" fill="#333333" font-style="italic">1. Tautan Domain Tiruan</text>
+    
+    <text x="10" y="55" font-family="Liberation Sans, Arial" font-size="12" font-weight="bold" fill="#444444">[HIPOTESIS]</text>
+    <text x="10" y="78" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Staf menerima tautan atau</text>
+    <text x="10" y="98" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">membuka situs berdomain beda</text>
+    <text x="10" y="118" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">satu karakter dari web resmi.</text>
+    <text x="10" y="148" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Dugaan transmisi rekayasa</text>
+    <text x="10" y="168" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">sosial melalui pesan instan,</text>
+    <text x="10" y="188" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">email phishing, atau iklan</text>
+    <text x="10" y="208" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">palsu (typosquatting).</text>
+
+    <!-- Connector to Axis -->
+    <line x1="111" y1="275" x2="111" y2="350" stroke="#555555" stroke-width="1.5" stroke-dasharray="3,3" />
+    <circle cx="111" cy="350" r="14" fill="#555555" />
+    <text x="111" y="355" font-family="Liberation Sans, Arial" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
+    <line x1="111" y1="365" x2="111" y2="405" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow-down)" />
+
+    <!-- Evidence Box -->
+    <g transform="translate(0, 415)">
+      <rect x="0" y="0" width="222" height="345" rx="5" fill="#f2f2f2" stroke="#888888" stroke-width="1" />
+      <text x="10" y="24" font-family="Liberation Sans, Arial" font-size="11.5" font-weight="bold" fill="#222222">Bukti yang Dikumpulkan:</text>
+      <text x="10" y="52" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Riwayat peramban web</text>
+      <text x="18" y="70" font-family="Liberation Sans, Arial" font-size="11" fill="#333333" font-style="italic">(browser history) staf.</text>
+      <text x="10" y="96" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Rekaman cache DNS lokal.</text>
+      <text x="10" y="122" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Catatan log proxy dan</text>
+      <text x="18" y="140" font-family="Liberation Sans, Arial" font-size="11" fill="#333333" font-style="italic">gateway jaringan kantor.</text>
+      <text x="10" y="166" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Arsip pesan masuk dan</text>
+      <text x="18" y="184" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">email staf terkait.</text>
+    </g>
+  </g>
+
+  <!-- STEP 2: FAKTA -->
+  <g transform="translate(287, 115)">
+    <rect x="0" y="0" width="222" height="275" rx="5" fill="#ffffff" stroke="#111111" stroke-width="2" />
+    <rect x="0" y="0" width="222" height="32" rx="5" fill="#e5e5e5" stroke="#111111" stroke-width="2" />
+    <text x="10" y="21" font-family="Liberation Sans, Arial" font-size="12.5" font-weight="bold" fill="#111111">2. Akses Perangkat Sah</text>
+    
+    <text x="10" y="55" font-family="Liberation Sans, Arial" font-size="12" font-weight="bold" fill="#111111">[FAKTA EMPIRIS]</text>
+    <text x="10" y="78" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Log mencatat login berasal</text>
+    <text x="10" y="98" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">dari perangkat kerja sah milik</text>
+    <text x="10" y="118" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">staf organisasi.</text>
+    <text x="10" y="148" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Domain antarmuka yang dibuka</text>
+    <text x="10" y="168" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">terbukti berbeda satu karakter</text>
+    <text x="10" y="188" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">dari domain resmi.</text>
+
+    <!-- Connector to Axis -->
+    <line x1="111" y1="275" x2="111" y2="350" stroke="#111111" stroke-width="2" />
+    <circle cx="111" cy="350" r="14" fill="#111111" />
+    <text x="111" y="355" font-family="Liberation Sans, Arial" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
+    <line x1="111" y1="365" x2="111" y2="405" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow-down)" />
+
+    <!-- Evidence Box -->
+    <g transform="translate(0, 415)">
+      <rect x="0" y="0" width="222" height="345" rx="5" fill="#f2f2f2" stroke="#888888" stroke-width="1" />
+      <text x="10" y="24" font-family="Liberation Sans, Arial" font-size="11.5" font-weight="bold" fill="#222222">Bukti yang Dikumpulkan:</text>
+      <text x="10" y="52" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Log autentikasi perangkat</text>
+      <text x="18" y="70" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">dan alamat IP staf.</text>
+      <text x="10" y="96" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Data pendaftaran WHOIS</text>
+      <text x="18" y="114" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">pada domain tiruan.</text>
+      <text x="10" y="140" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Sertifikat SSL/TLS dan log</text>
+      <text x="18" y="158" font-family="Liberation Sans, Arial" font-size="11" fill="#333333" font-style="italic">hosting domain palsu.</text>
+      <text x="10" y="184" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Tanggal registrasi domain.</text>
+    </g>
+  </g>
+
+  <!-- STEP 3: FAKTA -->
+  <g transform="translate(529, 115)">
+    <rect x="0" y="0" width="222" height="275" rx="5" fill="#ffffff" stroke="#111111" stroke-width="2" />
+    <rect x="0" y="0" width="222" height="32" rx="5" fill="#e5e5e5" stroke="#111111" stroke-width="2" />
+    <text x="10" y="21" font-family="Liberation Sans, Arial" font-size="12.5" font-weight="bold" fill="#111111">3. Tampilan Kontrak Palsu</text>
+    
+    <text x="10" y="55" font-family="Liberation Sans, Arial" font-size="12" font-weight="bold" fill="#111111">[FAKTA EMPIRIS]</text>
+    <text x="10" y="78" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">Browser wallet tersambung.</text>
+    <text x="10" y="98" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Antarmuka menampilkan</text>
+    <text x="10" y="118" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">permintaan transaksi berlabel</text>
+    <text x="10" y="138" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">"pembaruan kontrak".</text>
+    <text x="10" y="168" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Antarmuka dApp memanipulasi</text>
+    <text x="10" y="188" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">tampilan (blind signing).</text>
+
+    <!-- Connector to Axis -->
+    <line x1="111" y1="275" x2="111" y2="350" stroke="#111111" stroke-width="2" />
+    <circle cx="111" cy="350" r="14" fill="#111111" />
+    <text x="111" y="355" font-family="Liberation Sans, Arial" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">3</text>
+    <line x1="111" y1="365" x2="111" y2="405" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow-down)" />
+
+    <!-- Evidence Box -->
+    <g transform="translate(0, 415)">
+      <rect x="0" y="0" width="222" height="345" rx="5" fill="#f2f2f2" stroke="#888888" stroke-width="1" />
+      <text x="10" y="24" font-family="Liberation Sans, Arial" font-size="11.5" font-weight="bold" fill="#222222">Bukti yang Dikumpulkan:</text>
+      <text x="10" y="52" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Kode sumber situs palsu</text>
+      <text x="18" y="70" font-family="Liberation Sans, Arial" font-size="11" fill="#333333" font-style="italic">(frontend source code).</text>
+      <text x="10" y="96" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Skrip injeksi web3 dan</text>
+      <text x="18" y="114" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">pustaka Javascript peretas.</text>
+      <text x="10" y="140" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Definisi fungsi ABI yang</text>
+      <text x="18" y="158" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">dikirim ke dompet staf.</text>
+      <text x="10" y="184" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Tangkapan layar antarmuka.</text>
+    </g>
+  </g>
+
+  <!-- STEP 4: FAKTA -->
+  <g transform="translate(771, 115)">
+    <rect x="0" y="0" width="222" height="275" rx="5" fill="#ffffff" stroke="#111111" stroke-width="2" />
+    <rect x="0" y="0" width="222" height="32" rx="5" fill="#e5e5e5" stroke="#111111" stroke-width="2" />
+    <text x="10" y="21" font-family="Liberation Sans, Arial" font-size="12.5" font-weight="bold" fill="#111111">4. Penandatanganan Kunci</text>
+    
+    <text x="10" y="55" font-family="Liberation Sans, Arial" font-size="12" font-weight="bold" fill="#111111">[FAKTA EMPIRIS]</text>
+    <text x="10" y="78" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Staf menyetujui transaksi.</text>
+    <text x="10" y="98" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">Private key tersimpan di</text>
+    <text x="10" y="118" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">browser wallet ekstensi.</text>
+    <text x="10" y="148" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Ketiadaan multisignature dan</text>
+    <text x="10" y="168" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">ketiadaan allowlist membuat</text>
+    <text x="10" y="188" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">transaksi sah secara matematis.</text>
+
+    <!-- Connector to Axis -->
+    <line x1="111" y1="275" x2="111" y2="350" stroke="#111111" stroke-width="2" />
+    <circle cx="111" cy="350" r="14" fill="#111111" />
+    <text x="111" y="355" font-family="Liberation Sans, Arial" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">4</text>
+    <line x1="111" y1="365" x2="111" y2="405" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow-down)" />
+
+    <!-- Evidence Box -->
+    <g transform="translate(0, 415)">
+      <rect x="0" y="0" width="222" height="345" rx="5" fill="#f2f2f2" stroke="#888888" stroke-width="1" />
+      <text x="10" y="24" font-family="Liberation Sans, Arial" font-size="11.5" font-weight="bold" fill="#222222">Bukti yang Dikumpulkan:</text>
+      <text x="10" y="52" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Berkas vault terenkripsi</text>
+      <text x="18" y="70" font-family="Liberation Sans, Arial" font-size="11" fill="#333333" font-style="italic">pada ekstensi peramban.</text>
+      <text x="10" y="96" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Log persetujuan tanda tangan</text>
+      <text x="18" y="114" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">pada browser extension.</text>
+      <text x="10" y="140" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Versi ekstensi dan riwayat</text>
+      <text x="18" y="158" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">konfigurasi wallet.</text>
+      <text x="10" y="184" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Alamat publik penandatangan.</text>
+    </g>
+  </g>
+
+  <!-- STEP 5: FAKTA & HIPOTESIS -->
+  <g transform="translate(1013, 115)">
+    <rect x="0" y="0" width="222" height="275" rx="5" fill="#ffffff" stroke="#111111" stroke-width="2" />
+    <rect x="0" y="0" width="222" height="32" rx="5" fill="#e5e5e5" stroke="#111111" stroke-width="2" />
+    <text x="10" y="21" font-family="Liberation Sans, Arial" font-size="12.5" font-weight="bold" fill="#111111">5. Eksekusi Jaringan &amp; Hilang</text>
+    
+    <text x="10" y="55" font-family="Liberation Sans, Arial" font-size="12" font-weight="bold" fill="#111111">[FAKTA &amp; HIPOTESIS]</text>
+    <text x="10" y="78" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-weight="bold">Fakta: Aset treasury hilang</text>
+    <text x="10" y="98" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">setelah transaksi terkirim.</text>
+    <text x="10" y="128" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-weight="bold">Hipotesis: Bentuk transaksi</text>
+    <text x="10" y="148" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">apakah transfer langsung atau</text>
+    <text x="10" y="168" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">izin token tak terbatas</text>
+    <text x="10" y="188" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">(infinite approval).</text>
+
+    <!-- Connector to Axis -->
+    <line x1="111" y1="275" x2="111" y2="350" stroke="#111111" stroke-width="2" />
+    <circle cx="111" cy="350" r="14" fill="#111111" />
+    <text x="111" y="355" font-family="Liberation Sans, Arial" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">5</text>
+    <line x1="111" y1="365" x2="111" y2="405" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow-down)" />
+
+    <!-- Evidence Box -->
+    <g transform="translate(0, 415)">
+      <rect x="0" y="0" width="222" height="345" rx="5" fill="#f2f2f2" stroke="#888888" stroke-width="1" />
+      <text x="10" y="24" font-family="Liberation Sans, Arial" font-size="11.5" font-weight="bold" fill="#222222">Bukti yang Dikumpulkan:</text>
+      <text x="10" y="52" font-family="Liberation Sans, Arial" font-size="11" fill="#333333" font-style="italic">- Transaction hash on-chain.</text>
+      <text x="10" y="78" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Data payload transaksi</text>
+      <text x="18" y="96" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">heksadesimal mentah.</text>
+      <text x="10" y="122" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Log mutasi saldo token</text>
+      <text x="18" y="140" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">dan receipt eksekusi.</text>
+      <text x="10" y="166" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Alamat penampung aset.</text>
+    </g>
+  </g>
+
+  <!-- STEP 6: HIPOTESIS -->
+  <g transform="translate(1255, 115)">
+    <rect x="0" y="0" width="222" height="275" rx="5" fill="#ffffff" stroke="#555555" stroke-width="1.5" stroke-dasharray="5,4" />
+    <rect x="0" y="0" width="222" height="32" rx="5" fill="#f2f2f2" stroke="#555555" stroke-width="1.5" stroke-dasharray="5,4" />
+    <text x="10" y="21" font-family="Liberation Sans, Arial" font-size="12.5" font-weight="bold" fill="#333333" font-style="italic">6. Pemindahan Lanjutan</text>
+    
+    <text x="10" y="55" font-family="Liberation Sans, Arial" font-size="12" font-weight="bold" fill="#444444">[HIPOTESIS]</text>
+    <text x="10" y="78" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Aset dipindahkan lanjut</text>
+    <text x="10" y="98" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">oleh pihak penyerang</text>
+    <text x="10" y="118" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">menuju alamat lain.</text>
+    <text x="10" y="148" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Dugaan pemecahan dana</text>
+    <text x="10" y="168" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">(layering), penukaran DEX,</text>
+    <text x="10" y="188" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">atau jembatan lintas rantai.</text>
+
+    <!-- Connector to Axis -->
+    <line x1="111" y1="275" x2="111" y2="350" stroke="#555555" stroke-width="1.5" stroke-dasharray="3,3" />
+    <circle cx="111" cy="350" r="14" fill="#555555" />
+    <text x="111" y="355" font-family="Liberation Sans, Arial" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">6</text>
+    <line x1="111" y1="365" x2="111" y2="405" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow-down)" />
+
+    <!-- Evidence Box -->
+    <g transform="translate(0, 415)">
+      <rect x="0" y="0" width="222" height="345" rx="5" fill="#f2f2f2" stroke="#888888" stroke-width="1" />
+      <text x="10" y="24" font-family="Liberation Sans, Arial" font-size="11.5" font-weight="bold" fill="#222222">Bukti yang Dikumpulkan:</text>
+      <text x="10" y="52" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Alamat-alamat penerima</text>
+      <text x="18" y="70" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">aliran dana lanjutan.</text>
+      <text x="10" y="96" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Log interaksi kontrak DEX</text>
+      <text x="18" y="114" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">dan gateway bridge.</text>
+      <text x="10" y="140" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Waktu dan nomor blok</text>
+      <text x="18" y="158" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">pada rantai tujuan.</text>
+      <text x="10" y="184" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Pola pemecahan transaksi.</text>
+    </g>
+  </g>
+
+  <!-- STEP 7: KEBUTUHAN BUKTI -->
+  <g transform="translate(1497, 115)">
+    <rect x="0" y="0" width="222" height="275" rx="5" fill="#ffffff" stroke="#555555" stroke-width="1.5" stroke-dasharray="5,4" />
+    <rect x="0" y="0" width="222" height="32" rx="5" fill="#f2f2f2" stroke="#555555" stroke-width="1.5" stroke-dasharray="5,4" />
+    <text x="10" y="21" font-family="Liberation Sans, Arial" font-size="12.5" font-weight="bold" fill="#333333" font-style="italic">7. Deteksi Kehilangan</text>
+    
+    <text x="10" y="55" font-family="Liberation Sans, Arial" font-size="12" font-weight="bold" fill="#444444">[PERLU BUKTI]</text>
+    <text x="10" y="78" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Organisasi menyadari</text>
+    <text x="10" y="98" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">kehilangan aset perbendaharaan</text>
+    <text x="10" y="118" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222" font-style="italic">(treasury).</text>
+    <text x="10" y="148" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">Waktu pasti dan pemicu</text>
+    <text x="10" y="168" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">deteksi belum diketahui</text>
+    <text x="10" y="188" font-family="Liberation Sans, Arial" font-size="11.5" fill="#222222">secara empiris pada kasus.</text>
+
+    <!-- Connector to Axis -->
+    <line x1="111" y1="275" x2="111" y2="350" stroke="#555555" stroke-width="1.5" stroke-dasharray="3,3" />
+    <circle cx="111" cy="350" r="14" fill="#555555" />
+    <text x="111" y="355" font-family="Liberation Sans, Arial" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">7</text>
+    <line x1="111" y1="365" x2="111" y2="405" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow-down)" />
+
+    <!-- Evidence Box -->
+    <g transform="translate(0, 415)">
+      <rect x="0" y="0" width="222" height="345" rx="5" fill="#f2f2f2" stroke="#888888" stroke-width="1" />
+      <text x="10" y="24" font-family="Liberation Sans, Arial" font-size="11.5" font-weight="bold" fill="#222222">Bukti yang Dikumpulkan:</text>
+      <text x="10" y="52" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Image forensik bit-stream</text>
+      <text x="18" y="70" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">perangkat kerja staf.</text>
+      <text x="10" y="96" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Log rekonsiliasi kas dan</text>
+      <text x="18" y="114" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">pembukuan internal.</text>
+      <text x="10" y="140" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Waktu pertama kali staf</text>
+      <text x="18" y="158" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">atau sistem melapor.</text>
+      <text x="10" y="184" font-family="Liberation Sans, Arial" font-size="11" fill="#333333">- Catatan laporan insiden.</text>
+    </g>
+  </g>
+
+</svg>

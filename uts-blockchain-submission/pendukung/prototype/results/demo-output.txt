@@ -1,0 +1,74 @@
+Lingkungan: Hardhat Local Network | Chain ID: 31337
+Waktu Eksekusi: 2026-10-04T12:16:58.573Z
+
+Admin (Governance) : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Issuer (Akademik)  : 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+Revoker (Komite)   : 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
+Pemegang (Holder)  : 0x90F79bf6EB2c4f870365E785982E1f101E93b906
+Verifikator        : 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65
+Pihak Tak Berwenang: 0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc
+
+[B-01 Deployment Kontrak AcademicCredentialRegistry]
+Alamat Kontrak       : 0x5FbDB2315678afecb367f032d93F642f64180aa3
+Tx Hash Deployment   : 0x145b5523b5eeb4fd842f56a495a3e9bf17267ea22d4c48a416d08a142f384498
+Block Number         : 1
+Gas Terpakai (Deploy): 1039368 unit
+
+[B-02 Pembangkitan Kredensial Salted Hash dan Merkle Tree]
+Jumlah Kredensial    : 6 lulusan
+  [G-01] NIM: 237006801 | Nama: Ahmad Dahlan Al-Faruq      | IPK: 3.82 | Leaf: 0x7b5f7365dffd18a8...
+  [G-02] NIM: 237006802 | Nama: Bunga Citra Lestari Fiktif | IPK: 3.65 | Leaf: 0xf3695a1ce4a97902...
+  [G-03] NIM: 237006803 | Nama: Cahyo Rizki Pratama        | IPK: 3.91 | Leaf: 0xca7c3acd32fa82a2...
+  [G-04] NIM: 237006804 | Nama: Dewi Sekar Ayu             | IPK: 3.45 | Leaf: 0x5c97927280c16ef9...
+  [G-05] NIM: 237006805 | Nama: Eko Prasetyo Fiktif        | IPK: 3.55 | Leaf: 0xcc0d8357be021242...
+  [G-06] NIM: 237006806 | Nama: Farhan Maulana             | IPK: 3.78 | Leaf: 0x108e53ac2b7a5439...
+Merkle Root Terhitung: 0x46ca2e8399d6be8a489c375dcd355319d7eaa4a92a132afdc3a00220c1faccd3
+
+[B-03 Penjangkaran Root Batch On-Chain]
+Batch ID             : WISUDA-2026-PERIODE-1
+Tx Hash Penerbitan   : 0x1737c3595a7ffab660d99cb81bd14dc04b8c21f9fb399ad5b2aa454998a88321
+Block Number         : 2
+Gas Terpakai (Batch) : 211084 unit
+Root Tersimpan State : 0x46ca2e8399d6be8a489c375dcd355319d7eaa4a92a132afdc3a00220c1faccd3
+
+[B-04 Verifikasi Keabsahan Dokumen dan Bukti Merkle]
+Mahasiswa Diuji      : Ahmad Dahlan Al-Faruq (237006801)
+Leaf Hash Diajukan   : 0x7b5f7365dffd18a87fb7b5471e7843da27e53b4ec53e8e1ef064b78ab3b0645c
+Panjang Merkle Proof : 3 siblings
+  Proof[0]: 0xf3695a1ce4a97902b58bf9bb868bac471c484bcedec9edfbb1a8290fa86a1575
+  Proof[1]: 0xd2bc01ff4eefdaff6cba1ed6a72c8231886d48ca21c8384e6c3936162ef7266e
+  Proof[2]: 0xe6274f091be1ce99866742e739f0e71c3c9f95ce48412f59b6d9eae8388f66f6
+Hasil Verifikasi     : SAH / VALID (TRUE)
+Pesan Status Kontrak : VALID
+Biaya Gas Verifikator: 0 gas (Dipanggil via eth_call view query, bebas biaya)
+Raw estimateGas      : 32309 unit (Simulasi EVM termasuk 21.000 gas transaksi)
+Biaya Calldata       : 2772 gas (EIP-2028: 16 gas non-zero, 4 gas zero byte)
+Estimasi Gas Murni   : 8537 unit (Opcode murni eksekusi loop MerkleProof.verify)
+
+[B-05 Uji Ketahanan Manipulasi Data dan Kontrol Akses RBAC]
+Skenario 5A: Pelamar mengubah IPK 3.82 menjadi 4.00 pada berkas lokal
+Leaf Asli            : 0x7b5f7365dffd18a87fb7b5471e7843da27e53b4ec53e8e1ef064b78ab3b0645c
+Leaf Hasil Manipulasi: 0x0b097c59bcd2b3d0b5cba350b03cea87b34b4294eba79c5d5cf2f0a548d04f97
+Hasil Verifikasi     : DITOLAK / INVALID (FALSE)
+Pesan Status Kontrak : INVALID_PROOF_OR_TAMPERED
+
+Skenario 5B: Upaya penerbitan batch oleh penyerang tanpa hak (Attacker)
+Hasil Pencegatan RBAC: Transaksi Dibatalkan (Reverted)
+Eksepsi Kontrak      : VM Exception while processing transaction: reverted with custom error 'AccessControlUnauthorizedAccount
+
+[B-06 Pencabutan Kredensial Akademik oleh REVOKER_ROLE]
+Status Sebelum Cabut : VALID
+Mahasiswa Dicabut    : Bunga Citra Lestari Fiktif (237006802)
+Tx Hash Pencabutan   : 0xb46a5c18e00d340e376fe0188895f25610daa04eb1f1d72f3ed05cc6b5642ab4
+Gas Terpakai (Revoke): 56359 unit
+Status Setelah Cabut : TIDAK SAH / DIBATALKAN (FALSE)
+Pesan Status Kontrak : CREDENTIAL_REVOKED
+
+[B-07 Mekanisme Jeda Darurat Circuit Breaker]
+Admin Mengaktifkan Pause. Tx: 0xd254074356083b2825edb43243c001de2430bf82be45f8757c40ecc8b5965648 | Gas: 48214
+Status Kontrak Paused: true
+Hasil Pencegatan Pause: Transaksi Reverted (EnforcedPause)
+Pesan Error           : VM Exception while processing transaction: reverted with custom error 'EnforcedPause
+Admin Mengaktifkan Unpause. Status Kontrak Paused: false
+
+Seluruh tahapan pengujian selesai.

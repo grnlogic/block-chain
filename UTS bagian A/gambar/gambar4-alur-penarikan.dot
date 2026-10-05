@@ -1,0 +1,132 @@
+digraph G {
+    graph [
+        fontname="Liberation Sans, Arial"
+        fontsize=14
+        compound=true
+        rankdir=TB
+        nodesep=0.5
+        ranksep=0.5
+        bgcolor="#ffffff"
+        pad=0.3
+    ];
+    node [
+        fontname="Liberation Sans, Arial"
+        fontsize=11.5
+        shape=box
+        style="rounded,filled"
+        fillcolor="#ffffff"
+        color="#222222"
+        penwidth=1.2
+        margin="0.15,0.1"
+    ];
+    edge [
+        fontname="Liberation Sans, Arial"
+        fontsize=10.5
+        color="#222222"
+        penwidth=1.2
+    ];
+
+    // TOP SECTION: TWO COMPARATIVE FLOWCHARTS
+    subgraph cluster_top {
+        label=""
+        color="#ffffff"
+        style="invis"
+
+        // LEFT: ALUR RENTAN
+        subgraph cluster_rentan {
+            label="Alur Rentan (Rancangan Awal)"
+            fontname="Liberation Sans, Arial"
+            fontsize=13
+            fontcolor="#111111"
+            style="rounded,filled"
+            fillcolor="#f8f8f8"
+            color="#333333"
+            penwidth=1.5
+            margin=18
+
+            v_start [label="Panggilan withdraw(amount)\noleh Pengguna", fillcolor="#ffffff"]
+            v_check [label="1. Periksa Saldo Pengguna\n(require balances[msg.sender] >= amount)", fillcolor="#ffffff"]
+            v_call  [label="2. Kirim Aset / Token\n(External Call: msg.sender.call)", fillcolor="#ffffff", penwidth=1.8]
+            v_sub   [label="3. Kurangi Saldo Pengguna\n(balances[msg.sender] -= amount)", fillcolor="#ffffff"]
+            v_end   [label="Penarikan Selesai", shape=oval, fillcolor="#e0e0e0"]
+
+            v_attacker [label="Kontrak Penerima\n(Penyerang)", style="rounded,filled,dashed", fillcolor="#ffffff", color="#444444", penwidth=1.5]
+
+            v_start -> v_check;
+            v_check -> v_call [label=" Saldo Cukup"];
+            v_call -> v_attacker [label=" Transfer Dana"];
+            v_attacker -> v_sub [label=" Lanjut Normal"];
+            v_sub -> v_end;
+
+            // Exploitation Loop
+            v_attacker -> v_check [style="dashed", color="#333333", penwidth=1.6, label=" reentrancy: panggilan ulang\n sebelum saldo berkurang"];
+        }
+
+        // RIGHT: ALUR AMAN
+        subgraph cluster_aman {
+            label="Alur Aman (Pola Checks-Effects-Interactions)"
+            fontname="Liberation Sans, Arial"
+            fontsize=13
+            fontcolor="#111111"
+            style="rounded,filled"
+            fillcolor="#f8f8f8"
+            color="#333333"
+            penwidth=1.5
+            margin=18
+
+            s_start [label="Panggilan withdraw(amount)\noleh Pengguna", fillcolor="#ffffff"]
+
+            subgraph cluster_guard {
+                label="nonReentrant Guard Modifier"
+                fontname="Liberation Sans, Arial"
+                fontsize=11.5
+                fontcolor="#333333"
+                style="rounded,dashed"
+                color="#555555"
+                penwidth=1.4
+                fillcolor="#ffffff"
+                margin=12
+
+                s_check [label="1. Checks: Validasi Saldo\n(require balances[msg.sender] >= amount)", fillcolor="#f2f2f2"]
+                s_eff   [label="2. Effects: Mutasi Saldo Internal\n(balances[msg.sender] -= amount)", fillcolor="#e0e0e0", penwidth=1.8]
+                s_int   [label="3. Interactions: Kirim Aset Eksternal\n(SafeERC20 / safeTransfer)", fillcolor="#f2f2f2"]
+            }
+
+            s_end [label="Penarikan Berhasil & Aman", shape=oval, fillcolor="#e0e0e0"]
+
+            s_start -> s_check;
+            s_check -> s_eff [label=" Saldo Valid"];
+            s_eff -> s_int;
+            s_int -> s_end;
+        }
+    }
+
+    // BOTTOM SECTION: KONTROL AKSES ADMIN
+    subgraph cluster_admin {
+        label="Kontrol Akses Admin dan Tata Kelola Pembaruan Parameter Kontrak"
+        fontname="Liberation Sans, Arial"
+        fontsize=13
+        fontcolor="#111111"
+        style="rounded,filled"
+        fillcolor="#f2f2f2"
+        color="#333333"
+        penwidth=1.5
+        margin=16
+
+        {
+            rank=same;
+            adm_1 [label="Admin Vault\n(Multisignature 3-dari-5)", fillcolor="#ffffff", penwidth=1.5]
+            adm_2 [label="Time-lock Controller\n(Jeda Usulan 24-48 Jam)", fillcolor="#ffffff", penwidth=1.5]
+            adm_3 [label="Penggantian Alamat Oracle\n(Redundansi Multi-Oracle)", fillcolor="#ffffff", penwidth=1.5]
+            adm_4 [label="Event Emitted on-chain\n(Catatan Transparan di Ledger)", fillcolor="#ffffff", shape=oval, penwidth=1.5]
+
+            adm_1 -> adm_2 [label=" Usulan"];
+            adm_2 -> adm_3 [label=" Pasca Jeda"];
+            adm_3 -> adm_4 [label=" Audit"];
+        }
+    }
+
+    // Connect top to bottom invisibly to enforce layout order
+    v_end -> adm_1 [style="invis"];
+    s_end -> adm_3 [style="invis"];
+}

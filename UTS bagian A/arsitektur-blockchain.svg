@@ -1,0 +1,787 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1020" width="1600" height="1020" style="background-color: #ffffff; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;">
+  <defs>
+    <!-- Arrow marker pointing right -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 Z" fill="#334155" />
+    </marker>
+    <!-- Arrow marker pointing left -->
+    <marker id="arrow-start" viewBox="0 0 10 10" refX="3" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 8 1.5 L 0 5 L 8 8.5 Z" fill="#334155" />
+    </marker>
+    <!-- Arrow marker pointing down -->
+    <marker id="arrow-down" viewBox="0 0 10 10" refX="5" refY="7" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1.5 0 L 5 8 L 8.5 0 Z" fill="#334155" />
+    </marker>
+    <!-- Arrow marker pointing up -->
+    <marker id="arrow-up" viewBox="0 0 10 10" refX="5" refY="3" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1.5 8 L 5 0 L 8.5 8 Z" fill="#334155" />
+    </marker>
+    <!-- Subtle drop shadow for cards -->
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="106%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#0f172a" flood-opacity="0.06" />
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="100%" height="100%" fill="#FFFFFF" />
+
+  <!-- ========================================== -->
+  <!-- HEADER & DIAGRAM TITLE                     -->
+  <!-- ========================================== -->
+  <g id="header-section">
+    <text x="800" y="32" text-anchor="middle" font-size="19" font-weight="700" fill="#0F172A" letter-spacing="0.5">ARSITEKTUR SISTEM KETERLACAKAN RANTAI PASOK BERBASIS BLOCKCHAIN</text>
+    <text x="800" y="52" text-anchor="middle" font-size="12" font-weight="400" fill="#64748B">Konsorsium Multi-Organisasi Berbasis Hyperledger Fabric dengan Konsensus SmartBFT, Smart Contract, dan Penyimpanan Hibrida</text>
+    <line x1="30" y1="62" x2="1570" y2="62" stroke="#E2E8F0" stroke-width="1" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 1. KOLOM KIRI: PENGGUNA & APLIKASI         -->
+  <!-- ========================================== -->
+  <g id="kolom-kiri-pengguna-aplikasi">
+    <!-- Wrapper Box -->
+    <rect x="30" y="72" width="430" height="618" rx="8" fill="#FAFAFA" stroke="#94A3B8" stroke-width="1.3" stroke-dasharray="5,4" filter="url(#shadow)" />
+    
+    <!-- Wrapper Header Pill -->
+    <rect x="30" y="72" width="195" height="26" rx="6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.3" />
+    <text x="44" y="89" font-size="11.5" font-weight="700" fill="#1E293B" letter-spacing="0.4">PENGGUNA &amp; APLIKASI</text>
+
+    <!-- 5 Kotak Kecil Bertumpuk Vertikal -->
+    <g id="pengguna-aktor">
+      <!-- 1. Koperasi -->
+      <g id="aktor-koperasi">
+        <rect x="44" y="112" width="176" height="65" rx="6" fill="#FFFFFF" stroke="#475569" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="44" y="112" width="176" height="24" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="54" y="128" font-size="12" font-weight="700" fill="#0F172A">1. Koperasi</text>
+        <circle cx="56" cy="148" r="2" fill="#475569" />
+        <text x="64" y="151" font-size="11" fill="#334155">Daftar lot panen</text>
+        <circle cx="56" cy="164" r="2" fill="#475569" />
+        <text x="64" y="167" font-size="11" fill="#334155">Kelola identitas petani</text>
+      </g>
+
+      <!-- 2. Pabrik Pengolah -->
+      <g id="aktor-pabrik">
+        <rect x="44" y="190" width="176" height="65" rx="6" fill="#FFFFFF" stroke="#475569" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="44" y="190" width="176" height="24" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="54" y="206" font-size="12" font-weight="700" fill="#0F172A">2. Pabrik Pengolah</text>
+        <circle cx="56" cy="226" r="2" fill="#475569" />
+        <text x="64" y="229" font-size="11" fill="#334155">Catat hubungan bahan</text>
+        <text x="64" y="244" font-size="11" fill="#334155">baku – lot produksi</text>
+      </g>
+
+      <!-- 3. Perusahaan Logistik -->
+      <g id="aktor-logistik">
+        <rect x="44" y="268" width="176" height="65" rx="6" fill="#FFFFFF" stroke="#475569" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="44" y="268" width="176" height="24" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="54" y="284" font-size="12" font-weight="700" fill="#0F172A">3. Perusahaan Logistik</text>
+        <circle cx="56" cy="304" r="2" fill="#475569" />
+        <text x="64" y="307" font-size="11" fill="#334155">Catat pengiriman dan</text>
+        <text x="64" y="322" font-size="11" fill="#334155">serah terima fisik</text>
+      </g>
+
+      <!-- 4. Laboratorium -->
+      <g id="aktor-laboratorium">
+        <rect x="44" y="346" width="176" height="65" rx="6" fill="#FFFFFF" stroke="#475569" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="44" y="346" width="176" height="24" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="54" y="362" font-size="12" font-weight="700" fill="#0F172A">4. Laboratorium</text>
+        <circle cx="56" cy="382" r="2" fill="#475569" />
+        <text x="64" y="385" font-size="11" fill="#334155">Masukkan hasil</text>
+        <text x="64" y="400" font-size="11" fill="#334155">pengujian mutu</text>
+      </g>
+
+      <!-- 5. Jaringan Ritel -->
+      <g id="aktor-ritel">
+        <rect x="44" y="424" width="176" height="74" rx="6" fill="#FFFFFF" stroke="#475569" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="44" y="424" width="176" height="24" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="54" y="440" font-size="12" font-weight="700" fill="#0F172A">5. Jaringan Ritel</text>
+        <circle cx="56" cy="459" r="2" fill="#475569" />
+        <text x="64" y="462" font-size="11" fill="#334155">Catat penerimaan</text>
+        <circle cx="56" cy="474" r="2" fill="#475569" />
+        <text x="64" y="477" font-size="11" fill="#334155">Distribusi ke gerai</text>
+        <circle cx="56" cy="488" r="2" fill="#475569" />
+        <text x="64" y="491" font-size="11" fill="#334155">Tarik produk</text>
+      </g>
+    </g>
+
+    <!-- Panah dari 5 Kotak ke Aplikasi Organisasi -->
+    <g id="panah-aktor-ke-aplikasi">
+      <line x1="220" y1="144" x2="258" y2="144" stroke="#334155" stroke-width="1.3" marker-end="url(#arrow)" />
+      <line x1="220" y1="222" x2="258" y2="222" stroke="#334155" stroke-width="1.3" marker-end="url(#arrow)" />
+      <line x1="220" y1="300" x2="258" y2="300" stroke="#334155" stroke-width="1.3" marker-end="url(#arrow)" />
+      <line x1="220" y1="378" x2="258" y2="378" stroke="#334155" stroke-width="1.3" marker-end="url(#arrow)" />
+      <line x1="220" y1="460" x2="258" y2="460" stroke="#334155" stroke-width="1.3" marker-end="url(#arrow)" />
+    </g>
+
+    <!-- Kotak Tinggi "Aplikasi Organisasi" -->
+    <g id="kotak-aplikasi-organisasi">
+      <rect x="264" y="112" width="182" height="386" rx="6" fill="#FFFFFF" stroke="#1E293B" stroke-width="1.4" filter="url(#shadow)" />
+      <rect x="264" y="112" width="182" height="36" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+      <text x="355" y="130" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">Aplikasi Organisasi</text>
+      <text x="355" y="143" text-anchor="middle" font-size="10" fill="#64748B">(Portal Internal &amp; ERP)</text>
+      
+      <!-- Fitur List -->
+      <g transform="translate(276, 172)">
+        <text x="0" y="0" font-size="11" font-weight="700" fill="#1E293B">Fungsi Utama:</text>
+        
+        <rect x="0" y="12" width="158" height="54" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="27" r="2.5" fill="#2563EB" />
+        <text x="18" y="30" font-size="11" font-weight="600" fill="#0F172A">Ajukan transaksi</text>
+        <text x="18" y="44" font-size="10" fill="#64748B">Submit proposal tx baru</text>
+        <text x="18" y="56" font-size="10" fill="#64748B">ke jaringan konsorsium</text>
+
+        <rect x="0" y="78" width="158" height="54" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="93" r="2.5" fill="#2563EB" />
+        <text x="18" y="96" font-size="11" font-weight="600" fill="#0F172A">Lihat riwayat lot</text>
+        <text x="18" y="110" font-size="10" fill="#64748B">Audit silsilah rantai pasok</text>
+        <text x="18" y="122" font-size="10" fill="#64748B">dari hulu ke hilir</text>
+
+        <rect x="0" y="144" width="158" height="66" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="159" r="2.5" fill="#2563EB" />
+        <text x="18" y="162" font-size="11" font-weight="600" fill="#0F172A">Lihat lokasi produk</text>
+        <text x="18" y="176" font-size="11" font-weight="600" fill="#0F172A">terdampak</text>
+        <text x="18" y="190" font-size="10" fill="#64748B">Deteksi titik sebaran</text>
+        <text x="18" y="202" font-size="10" fill="#64748B">untuk penarikan cepat</text>
+
+        <rect x="0" y="222" width="158" height="42" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <text x="8" y="238" font-size="10" font-weight="600" fill="#334155">Protokol Akses:</text>
+        <text x="8" y="252" font-size="10" fill="#64748B">Fabric Gateway / REST API</text>
+      </g>
+    </g>
+
+    <!-- Panah Putus-Putus ke Aplikasi Keterlacakan di bawah -->
+    <g id="panah-ke-aplikasi-keterlacakan">
+      <line x1="355" y1="498" x2="355" y2="540" stroke="#475569" stroke-width="1.4" stroke-dasharray="4,3" marker-end="url(#arrow-down)" />
+      <rect x="305" y="510" width="100" height="18" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.8" />
+      <text x="355" y="523" text-anchor="middle" font-size="9.5" fill="#475569">API Kueri Publik</text>
+    </g>
+
+    <!-- Kotak Terpisah "Aplikasi Keterlacakan" -->
+    <g id="kotak-aplikasi-keterlacakan">
+      <rect x="44" y="546" width="402" height="130" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.3" filter="url(#shadow)" />
+      <rect x="44" y="546" width="402" height="28" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+      <text x="56" y="564" font-size="12" font-weight="700" fill="#0F172A">Aplikasi Keterlacakan</text>
+      <text x="190" y="564" font-size="11" fill="#64748B">(Portal Publik / Konsumen)</text>
+
+      <!-- 2 Kartu Bersebelahan Rapi -->
+      <g transform="translate(54, 582)">
+        <!-- Kartu 1: Tampilkan riwayat lot -->
+        <rect x="0" y="0" width="186" height="58" rx="5" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="14" r="2.5" fill="#0F172A" />
+        <text x="18" y="17" font-size="10.5" font-weight="700" fill="#0F172A">Tampilkan riwayat lot</text>
+        <text x="18" y="32" font-size="9.5" fill="#475569">• Telusuri silsilah produk &amp; panen</text>
+        <text x="18" y="46" font-size="9.5" fill="#475569">• Pindai QR Code di kemasan</text>
+
+        <!-- Kartu 2: Tampilkan lokasi produk terdampak -->
+        <g transform="translate(196, 0)">
+          <rect x="0" y="0" width="186" height="58" rx="5" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+          <circle cx="10" cy="14" r="2.5" fill="#0F172A" />
+          <text x="18" y="15" font-size="10" font-weight="700" fill="#0F172A">Tampilkan lokasi produk</text>
+          <text x="18" y="27" font-size="10" font-weight="700" fill="#0F172A">terdampak</text>
+          <text x="18" y="41" font-size="9.5" fill="#475569">• Peringatan penarikan (recall)</text>
+          <text x="18" y="52" font-size="9.5" fill="#475569">• Daftar gerai ritel terdampak</text>
+        </g>
+
+        <!-- Catatan bawah -->
+        <rect x="0" y="64" width="382" height="18" rx="3" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="0.8" />
+        <text x="191" y="76" text-anchor="middle" font-size="9.5" fill="#64748B">Akses read-only melalui gateway publik tanpa otorisasi submit</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 2. KOLOM TENGAH: JARINGAN BLOCKCHAIN       -->
+  <!-- ========================================== -->
+  <g id="kolom-tengah-blockchain">
+    <!-- Wrapper Box -->
+    <rect x="480" y="72" width="776" height="618" rx="8" fill="#FAFAFA" stroke="#94A3B8" stroke-width="1.3" stroke-dasharray="5,4" filter="url(#shadow)" />
+    
+    <!-- Wrapper Header Pill -->
+    <rect x="480" y="72" width="320" height="26" rx="6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.3" />
+    <text x="494" y="89" font-size="11.5" font-weight="700" fill="#1E293B" letter-spacing="0.4">JARINGAN BLOCKCHAIN (HYPERLEDGER FABRIC)</text>
+
+    <!-- Panah dari Aplikasi Organisasi ke Jaringan Blockchain -->
+    <g id="panah-aplikasi-ke-blockchain">
+      <line x1="446" y1="280" x2="498" y2="280" stroke="#0F172A" stroke-width="1.6" marker-end="url(#arrow)" />
+      <rect x="444" y="258" width="56" height="18" rx="3" fill="#FFFFFF" stroke="#475569" stroke-width="0.9" />
+      <text x="472" y="271" text-anchor="middle" font-size="9" font-weight="700" fill="#0F172A">gRPC SDK</text>
+    </g>
+
+    <!-- Bar Lebar: Certificate Authority (CA) & MSP -->
+    <g id="bar-ca-msp">
+      <rect x="498" y="112" width="740" height="42" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.3" filter="url(#shadow)" />
+      <rect x="498" y="112" width="740" height="20" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+      <text x="868" y="126" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Certificate Authority (CA) &amp; Membership Service Provider (MSP)</text>
+      <text x="868" y="146" text-anchor="middle" font-size="10.5" fill="#475569">Penerbitan Sertifikat Digital X.509, Manajemen Identitas Kriptografis, &amp; Kontrol Akses Berbasis Peran (RBAC)</text>
+    </g>
+
+    <!-- Panah dari CA/MSP ke Lima Kolom Organisasi -->
+    <g id="panah-ca-ke-peer">
+      <line x1="569" y1="154" x2="569" y2="174" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-down)" />
+      <line x1="718" y1="154" x2="718" y2="174" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-down)" />
+      <line x1="868" y1="154" x2="868" y2="174" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-down)" />
+      <line x1="1018" y1="154" x2="1018" y2="174" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-down)" />
+      <line x1="1168" y1="154" x2="1168" y2="174" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-down)" />
+    </g>
+
+    <!-- 5 Kolom Organisasi Sejajar -->
+    <g id="lima-organisasi-peer">
+      <!-- 1. Koperasi -->
+      <g id="org-koperasi" transform="translate(498, 176)">
+        <rect x="0" y="0" width="142" height="186" rx="6" fill="#FFFFFF" stroke="#64748B" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="0" y="0" width="142" height="26" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="71" y="17" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Koperasi</text>
+        
+        <!-- Peer Box -->
+        <rect x="8" y="34" width="126" height="142" rx="5" fill="#F8FAFC" stroke="#334155" stroke-width="1.2" />
+        <text x="71" y="50" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Peer</text>
+        <text x="71" y="63" text-anchor="middle" font-size="9.5" fill="#64748B">(Endorser)</text>
+
+        <!-- Silinder Ikon Database -->
+        <g id="cyl-1" transform="translate(53, 72)">
+          <path d="M 0,8 L 0,26 A 18,6.5 0 0,0 36,26 L 36,8 Z" fill="#E2E8F0" stroke="#334155" stroke-width="1.1" />
+          <path d="M 0,17 A 18,6.5 0 0,0 36,17" fill="none" stroke="#94A3B8" stroke-width="0.9" />
+          <ellipse cx="18" cy="8" rx="18" ry="6.5" fill="#FFFFFF" stroke="#334155" stroke-width="1.1" />
+        </g>
+        <text x="71" y="120" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Ledger +</text>
+        <text x="71" y="133" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Chaincode</text>
+        <text x="71" y="148" text-anchor="middle" font-size="9" fill="#64748B">(Smart Contract)</text>
+        <text x="71" y="166" text-anchor="middle" font-size="8.5" fill="#475569">State DB (CouchDB)</text>
+      </g>
+
+      <!-- 2. Pabrik Pengolah -->
+      <g id="org-pabrik" transform="translate(648, 176)">
+        <rect x="0" y="0" width="142" height="186" rx="6" fill="#FFFFFF" stroke="#64748B" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="0" y="0" width="142" height="26" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="71" y="17" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Pabrik Pengolah</text>
+        
+        <!-- Peer Box -->
+        <rect x="8" y="34" width="126" height="142" rx="5" fill="#F8FAFC" stroke="#334155" stroke-width="1.2" />
+        <text x="71" y="50" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Peer</text>
+        <text x="71" y="63" text-anchor="middle" font-size="9.5" fill="#64748B">(Endorser)</text>
+
+        <!-- Silinder Ikon Database -->
+        <g id="cyl-2" transform="translate(53, 72)">
+          <path d="M 0,8 L 0,26 A 18,6.5 0 0,0 36,26 L 36,8 Z" fill="#E2E8F0" stroke="#334155" stroke-width="1.1" />
+          <path d="M 0,17 A 18,6.5 0 0,0 36,17" fill="none" stroke="#94A3B8" stroke-width="0.9" />
+          <ellipse cx="18" cy="8" rx="18" ry="6.5" fill="#FFFFFF" stroke="#334155" stroke-width="1.1" />
+        </g>
+        <text x="71" y="120" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Ledger +</text>
+        <text x="71" y="133" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Chaincode</text>
+        <text x="71" y="148" text-anchor="middle" font-size="9" fill="#64748B">(Smart Contract)</text>
+        <text x="71" y="166" text-anchor="middle" font-size="8.5" fill="#475569">State DB (CouchDB)</text>
+      </g>
+
+      <!-- 3. Perusahaan Logistik -->
+      <g id="org-logistik" transform="translate(798, 176)">
+        <rect x="0" y="0" width="142" height="186" rx="6" fill="#FFFFFF" stroke="#64748B" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="0" y="0" width="142" height="26" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="71" y="12" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Perusahaan</text>
+        <text x="71" y="23" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Logistik</text>
+        
+        <!-- Peer Box -->
+        <rect x="8" y="34" width="126" height="142" rx="5" fill="#F8FAFC" stroke="#334155" stroke-width="1.2" />
+        <text x="71" y="50" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Peer</text>
+        <text x="71" y="63" text-anchor="middle" font-size="9.5" fill="#64748B">(Endorser)</text>
+
+        <!-- Silinder Ikon Database -->
+        <g id="cyl-3" transform="translate(53, 72)">
+          <path d="M 0,8 L 0,26 A 18,6.5 0 0,0 36,26 L 36,8 Z" fill="#E2E8F0" stroke="#334155" stroke-width="1.1" />
+          <path d="M 0,17 A 18,6.5 0 0,0 36,17" fill="none" stroke="#94A3B8" stroke-width="0.9" />
+          <ellipse cx="18" cy="8" rx="18" ry="6.5" fill="#FFFFFF" stroke="#334155" stroke-width="1.1" />
+        </g>
+        <text x="71" y="120" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Ledger +</text>
+        <text x="71" y="133" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Chaincode</text>
+        <text x="71" y="148" text-anchor="middle" font-size="9" fill="#64748B">(Smart Contract)</text>
+        <text x="71" y="166" text-anchor="middle" font-size="8.5" fill="#475569">State DB (CouchDB)</text>
+      </g>
+
+      <!-- 4. Laboratorium -->
+      <g id="org-lab" transform="translate(948, 176)">
+        <rect x="0" y="0" width="142" height="186" rx="6" fill="#FFFFFF" stroke="#64748B" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="0" y="0" width="142" height="26" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="71" y="17" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Laboratorium</text>
+        
+        <!-- Peer Box -->
+        <rect x="8" y="34" width="126" height="142" rx="5" fill="#F8FAFC" stroke="#334155" stroke-width="1.2" />
+        <text x="71" y="50" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Peer</text>
+        <text x="71" y="63" text-anchor="middle" font-size="9.5" fill="#64748B">(Endorser)</text>
+
+        <!-- Silinder Ikon Database -->
+        <g id="cyl-4" transform="translate(53, 72)">
+          <path d="M 0,8 L 0,26 A 18,6.5 0 0,0 36,26 L 36,8 Z" fill="#E2E8F0" stroke="#334155" stroke-width="1.1" />
+          <path d="M 0,17 A 18,6.5 0 0,0 36,17" fill="none" stroke="#94A3B8" stroke-width="0.9" />
+          <ellipse cx="18" cy="8" rx="18" ry="6.5" fill="#FFFFFF" stroke="#334155" stroke-width="1.1" />
+        </g>
+        <text x="71" y="120" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Ledger +</text>
+        <text x="71" y="133" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Chaincode</text>
+        <text x="71" y="148" text-anchor="middle" font-size="9" fill="#64748B">(Smart Contract)</text>
+        <text x="71" y="166" text-anchor="middle" font-size="8.5" fill="#475569">State DB (CouchDB)</text>
+      </g>
+
+      <!-- 5. Jaringan Ritel -->
+      <g id="org-ritel" transform="translate(1098, 176)">
+        <rect x="0" y="0" width="140" height="186" rx="6" fill="#FFFFFF" stroke="#64748B" stroke-width="1.2" filter="url(#shadow)" />
+        <rect x="0" y="0" width="140" height="26" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+        <text x="70" y="17" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Jaringan Ritel</text>
+        
+        <!-- Peer Box -->
+        <rect x="8" y="34" width="124" height="142" rx="5" fill="#F8FAFC" stroke="#334155" stroke-width="1.2" />
+        <text x="70" y="50" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Peer</text>
+        <text x="70" y="63" text-anchor="middle" font-size="9.5" fill="#64748B">(Endorser)</text>
+
+        <!-- Silinder Ikon Database -->
+        <g id="cyl-5" transform="translate(52, 72)">
+          <path d="M 0,8 L 0,26 A 18,6.5 0 0,0 36,26 L 36,8 Z" fill="#E2E8F0" stroke="#334155" stroke-width="1.1" />
+          <path d="M 0,17 A 18,6.5 0 0,0 36,17" fill="none" stroke="#94A3B8" stroke-width="0.9" />
+          <ellipse cx="18" cy="8" rx="18" ry="6.5" fill="#FFFFFF" stroke="#334155" stroke-width="1.1" />
+        </g>
+        <text x="70" y="120" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Ledger +</text>
+        <text x="70" y="133" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Chaincode</text>
+        <text x="70" y="148" text-anchor="middle" font-size="9" fill="#64748B">(Smart Contract)</text>
+        <text x="70" y="166" text-anchor="middle" font-size="8.5" fill="#475569">State DB (CouchDB)</text>
+      </g>
+    </g>
+
+    <!-- Panah Dua Arah Antara Tiap Peer dan Orderer -->
+    <g id="panah-peer-orderer">
+      <!-- 5 Jalur Dua Arah Bebas Hambatan -->
+      <line x1="569" y1="364" x2="569" y2="430" stroke="#334155" stroke-width="1.3" marker-start="url(#arrow-up)" marker-end="url(#arrow-down)" />
+      <line x1="718" y1="364" x2="718" y2="430" stroke="#334155" stroke-width="1.3" marker-start="url(#arrow-up)" marker-end="url(#arrow-down)" />
+      <line x1="868" y1="364" x2="868" y2="430" stroke="#334155" stroke-width="1.3" marker-start="url(#arrow-up)" marker-end="url(#arrow-down)" />
+      <line x1="1018" y1="364" x2="1018" y2="430" stroke="#334155" stroke-width="1.3" marker-start="url(#arrow-up)" marker-end="url(#arrow-down)" />
+      <line x1="1168" y1="364" x2="1168" y2="430" stroke="#334155" stroke-width="1.3" marker-start="url(#arrow-up)" marker-end="url(#arrow-down)" />
+
+      <!-- Label di samping kiri garis, bersih tanpa memotong garis panah -->
+      <rect x="498" y="386" width="62" height="20" rx="3" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.8" />
+      <text x="529" y="400" text-anchor="middle" font-size="9" font-weight="600" fill="#334155">Tx ↕ Blok</text>
+    </g>
+
+    <!-- Empat Kotak Garis Putus-Putus: Orderer SmartBFT -->
+    <g id="orderer-smartbft-group">
+      <!-- Orderer 1 -->
+      <g id="orderer-1" transform="translate(528, 432)">
+        <rect x="0" y="0" width="150" height="52" rx="5" fill="#FFFFFF" stroke="#475569" stroke-width="1.3" stroke-dasharray="4,3" filter="url(#shadow)" />
+        <text x="75" y="23" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Orderer SmartBFT</text>
+        <text x="75" y="39" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">Node 1</text>
+      </g>
+
+      <!-- Orderer 2 -->
+      <g id="orderer-2" transform="translate(698, 432)">
+        <rect x="0" y="0" width="150" height="52" rx="5" fill="#FFFFFF" stroke="#475569" stroke-width="1.3" stroke-dasharray="4,3" filter="url(#shadow)" />
+        <text x="75" y="23" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Orderer SmartBFT</text>
+        <text x="75" y="39" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">Node 2</text>
+      </g>
+
+      <!-- Orderer 3 -->
+      <g id="orderer-3" transform="translate(868, 432)">
+        <rect x="0" y="0" width="150" height="52" rx="5" fill="#FFFFFF" stroke="#475569" stroke-width="1.3" stroke-dasharray="4,3" filter="url(#shadow)" />
+        <text x="75" y="23" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Orderer SmartBFT</text>
+        <text x="75" y="39" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">Node 3</text>
+      </g>
+
+      <!-- Orderer 4 -->
+      <g id="orderer-4" transform="translate(1038, 432)">
+        <rect x="0" y="0" width="150" height="52" rx="5" fill="#FFFFFF" stroke="#475569" stroke-width="1.3" stroke-dasharray="4,3" filter="url(#shadow)" />
+        <text x="75" y="23" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Orderer SmartBFT</text>
+        <text x="75" y="39" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">Node 4</text>
+      </g>
+
+      <!-- Garis inter-orderer BFT -->
+      <line x1="678" y1="458" x2="698" y2="458" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2,2" />
+      <line x1="848" y1="458" x2="868" y2="458" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2,2" />
+      <line x1="1018" y1="458" x2="1038" y2="458" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2,2" />
+
+      <!-- Label di bawah keempatnya -->
+      <text x="858" y="504" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">Ordering Service (SmartBFT)</text>
+      <text x="858" y="520" text-anchor="middle" font-size="10.5" fill="#475569">Konsensus Pengurutan Transaksi Byzantine Fault Tolerant (Toleransi Node Rusak / Jahat)</text>
+    </g>
+
+    <!-- Panah dari Orderer ke Bar Validasi (Satu garis utuh dan label di samping) -->
+    <g id="panah-orderer-ke-validasi">
+      <line x1="858" y1="524" x2="858" y2="566" stroke="#0F172A" stroke-width="1.6" marker-end="url(#arrow-down)" />
+      <rect x="870" y="534" width="138" height="20" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.8" />
+      <text x="939" y="548" text-anchor="middle" font-size="9.5" fill="#334155">Kirim Blok Baru ke Komiter</text>
+    </g>
+
+    <!-- Bar Paling Bawah: Validasi & Pencatatan Ledger -->
+    <g id="bar-validasi-ledger">
+      <rect x="498" y="568" width="740" height="48" rx="6" fill="#FFFFFF" stroke="#1E293B" stroke-width="1.5" filter="url(#shadow)" />
+      <rect x="498" y="568" width="740" height="22" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+      <text x="868" y="583" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">Validasi &amp; Pencatatan Ledger</text>
+      <text x="868" y="605" text-anchor="middle" font-size="10.5" fill="#334155">Verifikasi Kebijakan Endorsement (VSCC) ➔ Pemeriksaan Konflik Versi Baca/Tulis (MVCC) ➔ Penulisan Permanen Blok &amp; State DB</text>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 3. KOLOM KANAN: PENYIMPANAN DATA           -->
+  <!-- ========================================== -->
+  <g id="kolom-kanan-penyimpanan">
+    <!-- Wrapper Box -->
+    <rect x="1280" y="72" width="290" height="618" rx="8" fill="#FAFAFA" stroke="#94A3B8" stroke-width="1.3" stroke-dasharray="5,4" filter="url(#shadow)" />
+    
+    <!-- Wrapper Header Pill -->
+    <rect x="1280" y="72" width="180" height="26" rx="6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.3" />
+    <text x="1294" y="89" font-size="11.5" font-weight="700" fill="#1E293B" letter-spacing="0.4">PENYIMPANAN DATA</text>
+
+    <!-- Panah dari Jaringan Blockchain ke Kotak Penyimpanan Data -->
+    <g id="panah-ke-penyimpanan">
+      <!-- Ke Off-chain -->
+      <line x1="1238" y1="240" x2="1292" y2="240" stroke="#0F172A" stroke-width="1.4" marker-end="url(#arrow)" />
+      <rect x="1242" y="218" width="50" height="17" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.8" />
+      <text x="1267" y="230" text-anchor="middle" font-size="9" font-weight="600" fill="#334155">Hash Doc</text>
+
+      <!-- Ke Private Data Collection -->
+      <line x1="1238" y1="520" x2="1292" y2="520" stroke="#0F172A" stroke-width="1.4" marker-end="url(#arrow)" />
+      <rect x="1240" y="498" width="54" height="17" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.8" />
+      <text x="1267" y="510" text-anchor="middle" font-size="8.5" font-weight="600" fill="#334155">P2P Gossip</text>
+    </g>
+
+    <!-- Kotak 1: Penyimpanan Off-chain (terenkripsi) -->
+    <g id="kotak-offchain">
+      <rect x="1296" y="112" width="258" height="348" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.3" filter="url(#shadow)" />
+      <rect x="1296" y="112" width="258" height="34" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+      <text x="1425" y="127" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Penyimpanan Off-chain</text>
+      <text x="1425" y="140" text-anchor="middle" font-size="10.5" font-weight="600" fill="#475569">(Terenkripsi)</text>
+
+      <text x="1310" y="166" font-size="10.5" font-weight="700" fill="#1E293B">Data Volume Besar &amp; Dokumen:</text>
+
+      <!-- 5 Poin Identitas Off-Chain -->
+      <g transform="translate(1310, 180)">
+        <!-- 1. Identitas lengkap petani -->
+        <rect x="0" y="0" width="230" height="38" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="19" r="2.5" fill="#334155" />
+        <text x="20" y="17" font-size="11" font-weight="600" fill="#0F172A">Identitas lengkap petani</text>
+        <text x="20" y="30" font-size="9.5" fill="#64748B">NIK, kontak, lokasi &amp; peta lahan</text>
+
+        <!-- 2. Faktur -->
+        <rect x="0" y="46" width="230" height="38" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="65" r="2.5" fill="#334155" />
+        <text x="20" y="63" font-size="11" font-weight="600" fill="#0F172A">Faktur</text>
+        <text x="20" y="76" font-size="9.5" fill="#64748B">Komersial, invoice, biaya transaksi</text>
+
+        <!-- 3. Laporan laboratorium -->
+        <rect x="0" y="92" width="230" height="38" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="111" r="2.5" fill="#334155" />
+        <text x="20" y="109" font-size="11" font-weight="600" fill="#0F172A">Laporan laboratorium</text>
+        <text x="20" y="122" font-size="9.5" fill="#64748B">Hasil uji mutu, CoA, spektrum lab</text>
+
+        <!-- 4. Foto -->
+        <rect x="0" y="138" width="230" height="38" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="157" r="2.5" fill="#334155" />
+        <text x="20" y="155" font-size="11" font-weight="600" fill="#0F172A">Foto</text>
+        <text x="20" y="168" font-size="9.5" fill="#64748B">Kondisi fisik komoditas, kemasan</text>
+
+        <!-- 5. Rekaman sensor -->
+        <rect x="0" y="184" width="230" height="38" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="203" r="2.5" fill="#334155" />
+        <text x="20" y="201" font-size="11" font-weight="600" fill="#0F172A">Rekaman sensor</text>
+        <text x="20" y="214" font-size="9.5" fill="#64748B">Telemetri IoT (suhu, kelembapan, GPS)</text>
+      </g>
+
+      <!-- Catatan Proteksi -->
+      <rect x="1308" y="416" width="234" height="32" rx="4" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="0.8" />
+      <text x="1425" y="428" text-anchor="middle" font-size="9" font-weight="600" fill="#334155">Enkripsi AES-256 / IPFS / S3</text>
+      <text x="1425" y="440" text-anchor="middle" font-size="8.5" fill="#64748B">Hanya hash kriptografis disimpan di ledger</text>
+    </g>
+
+    <!-- Kotak 2: Private Data Collection (harga pemasok) -->
+    <g id="kotak-private-data">
+      <rect x="1296" y="476" width="258" height="200" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.3" filter="url(#shadow)" />
+      <rect x="1296" y="476" width="258" height="38" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+      <text x="1425" y="492" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Private Data Collection</text>
+      <text x="1425" y="506" text-anchor="middle" font-size="10.5" font-weight="600" fill="#475569">(Harga Pemasok)</text>
+
+      <g transform="translate(1310, 526)">
+        <rect x="0" y="0" width="230" height="48" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="18" r="2.5" fill="#DC2626" />
+        <text x="20" y="18" font-size="11" font-weight="700" fill="#0F172A">Hanya untuk organisasi terkait</text>
+        <text x="20" y="32" font-size="10" fill="#475569">(Koperasi &amp; Pabrik Pengolah)</text>
+
+        <rect x="0" y="56" width="230" height="82" rx="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <circle cx="10" cy="72" r="2" fill="#475569" />
+        <text x="18" y="74" font-size="10" fill="#334155">Data rahasia terisolasi dari peer lain</text>
+        <circle cx="10" cy="90" r="2" fill="#475569" />
+        <text x="18" y="92" font-size="10" fill="#334155">Didistribusikan via Fabric Gossip</text>
+        <circle cx="10" cy="108" r="2" fill="#475569" />
+        <text x="18" y="110" font-size="10" fill="#334155">Hash komitmen on-chain sebagai</text>
+        <text x="18" y="124" font-size="10" fill="#334155">bukti integritas transaksi</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 4. PANAH DARI BAR VALIDASI KE BARIS BAWAH  -->
+  <!-- ========================================== -->
+  <g id="konektor-validasi-ke-ledger">
+    <!-- Garis panah vertikal kokoh tanpa terpotong badge -->
+    <line x1="620" y1="616" x2="620" y2="706" stroke="#0F172A" stroke-width="1.8" marker-end="url(#arrow-down)" />
+    
+    <!-- Badge teks penjelas di sisi kanan garis -->
+    <rect x="632" y="650" width="224" height="24" rx="4" fill="#FFFFFF" stroke="#334155" stroke-width="1" filter="url(#shadow)" />
+    <text x="744" y="666" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Komitmen State DB &amp; Blok On-Chain</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 5. BARIS BAWAH: DATA LEDGER & AKSES        -->
+  <!-- ========================================== -->
+  <g id="baris-bawah">
+    <!-- 5A. KOTAK KIRI: DATA PADA LEDGER (ON-CHAIN) -->
+    <g id="kotak-data-ledger">
+      <!-- Wrapper Box -->
+      <rect x="30" y="712" width="970" height="286" rx="8" fill="#FAFAFA" stroke="#94A3B8" stroke-width="1.3" stroke-dasharray="5,4" filter="url(#shadow)" />
+      
+      <!-- Wrapper Header Pill -->
+      <rect x="30" y="712" width="260" height="26" rx="6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.3" />
+      <text x="44" y="729" font-size="11.5" font-weight="700" fill="#1E293B" letter-spacing="0.4">DATA PADA LEDGER (ON-CHAIN)</text>
+
+      <text x="310" y="730" font-size="11" fill="#64748B">State Database (World State) &amp; Buku Besar Transaksi Blockchain yang Abadi (Immutable)</text>
+
+      <!-- 6 Sel Sejajar dalam Satu Baris -->
+      <g id="enam-sel-ledger" transform="translate(44, 752)">
+        <!-- Sel 1: Nomor lot -->
+        <g id="sel-1" transform="translate(0, 0)">
+          <rect x="0" y="0" width="149" height="226" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.2" filter="url(#shadow)" />
+          <rect x="0" y="0" width="149" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+          <text x="74" y="20" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Nomor lot</text>
+          
+          <rect x="8" y="38" width="133" height="20" rx="3" fill="#E2E8F0" />
+          <text x="74" y="52" text-anchor="middle" font-size="9.5" font-weight="600" fill="#334155">ID Unik Global</text>
+          
+          <g transform="translate(10, 72)">
+            <circle cx="4" cy="6" r="2" fill="#475569" />
+            <text x="12" y="9" font-size="10.5" fill="#334155">Format GS1 / GTIN</text>
+            <circle cx="4" cy="24" r="2" fill="#475569" />
+            <text x="12" y="27" font-size="10.5" fill="#334155">UUID Batch Panen</text>
+            <circle cx="4" cy="42" r="2" fill="#475569" />
+            <text x="12" y="45" font-size="10.5" fill="#334155">Timestamp registrasi</text>
+            <circle cx="4" cy="60" r="2" fill="#475569" />
+            <text x="12" y="63" font-size="10.5" fill="#334155">Afiliasi asal koperasi</text>
+            <circle cx="4" cy="78" r="2" fill="#475569" />
+            <text x="12" y="81" font-size="10.5" fill="#334155">Kuantitas &amp; varietas</text>
+            <circle cx="4" cy="96" r="2" fill="#475569" />
+            <text x="12" y="99" font-size="10.5" fill="#334155">komoditas awal</text>
+          </g>
+
+          <rect x="8" y="194" width="133" height="22" rx="3" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="0.8" />
+          <text x="74" y="209" text-anchor="middle" font-size="9" fill="#64748B">Kunci Indeks Primer</text>
+        </g>
+
+        <!-- Sel 2: Hubungan antar-lot -->
+        <g id="sel-2" transform="translate(157, 0)">
+          <rect x="0" y="0" width="149" height="226" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.2" filter="url(#shadow)" />
+          <rect x="0" y="0" width="149" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+          <text x="74" y="20" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Hubungan antar-lot</text>
+
+          <rect x="8" y="38" width="133" height="20" rx="3" fill="#E2E8F0" />
+          <text x="74" y="52" text-anchor="middle" font-size="9.5" font-weight="600" fill="#334155">Genealogi Rantai</text>
+
+          <g transform="translate(10, 72)">
+            <circle cx="4" cy="6" r="2" fill="#475569" />
+            <text x="12" y="9" font-size="10.5" fill="#334155">Relasi induk-anak</text>
+            <circle cx="4" cy="24" r="2" fill="#475569" />
+            <text x="12" y="27" font-size="10.5" fill="#334155">(parent-child)</text>
+            <circle cx="4" cy="42" r="2" fill="#475569" />
+            <text x="12" y="45" font-size="10.5" fill="#334155">Penggabungan batch</text>
+            <circle cx="4" cy="60" r="2" fill="#475569" />
+            <text x="12" y="63" font-size="10.5" fill="#334155">Pemecahan lot</text>
+            <circle cx="4" cy="78" r="2" fill="#475569" />
+            <text x="12" y="81" font-size="10.5" fill="#334155">Komposisi bahan</text>
+            <circle cx="4" cy="96" r="2" fill="#475569" />
+            <text x="12" y="99" font-size="10.5" fill="#334155">baku per produk</text>
+          </g>
+
+          <rect x="8" y="194" width="133" height="22" rx="3" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="0.8" />
+          <text x="74" y="209" text-anchor="middle" font-size="9" fill="#64748B">Graf Keterlacakan DAG</text>
+        </g>
+
+        <!-- Sel 3: Peristiwa produksi dan pengiriman -->
+        <g id="sel-3" transform="translate(314, 0)">
+          <rect x="0" y="0" width="153" height="226" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.2" filter="url(#shadow)" />
+          <rect x="0" y="0" width="153" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+          <text x="76" y="14" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">Peristiwa produksi</text>
+          <text x="76" y="25" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F172A">&amp; pengiriman</text>
+
+          <rect x="8" y="38" width="137" height="20" rx="3" fill="#E2E8F0" />
+          <text x="76" y="52" text-anchor="middle" font-size="9.5" font-weight="600" fill="#334155">Jejak Operasional</text>
+
+          <g transform="translate(10, 72)">
+            <circle cx="4" cy="6" r="2" fill="#475569" />
+            <text x="12" y="9" font-size="10.5" fill="#334155">Waktu pemrosesan</text>
+            <circle cx="4" cy="24" r="2" fill="#475569" />
+            <text x="12" y="27" font-size="10.5" fill="#334155">Serah terima fisik</text>
+            <circle cx="4" cy="42" r="2" fill="#475569" />
+            <text x="12" y="45" font-size="10.5" fill="#334155">(custody transfer)</text>
+            <circle cx="4" cy="60" r="2" fill="#475569" />
+            <text x="12" y="63" font-size="10.5" fill="#334155">Titik koordinat GPS</text>
+            <circle cx="4" cy="78" r="2" fill="#475569" />
+            <text x="12" y="81" font-size="10.5" fill="#334155">Tanda tangan digital</text>
+            <circle cx="4" cy="96" r="2" fill="#475569" />
+            <text x="12" y="99" font-size="10.5" fill="#334155">kurir &amp; penerima</text>
+          </g>
+
+          <rect x="8" y="194" width="137" height="22" rx="3" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="0.8" />
+          <text x="76" y="209" text-anchor="middle" font-size="9" fill="#64748B">Bukti Serah Terima</text>
+        </g>
+
+        <!-- Sel 4: Status mutu -->
+        <g id="sel-4" transform="translate(475, 0)">
+          <rect x="0" y="0" width="149" height="226" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.2" filter="url(#shadow)" />
+          <rect x="0" y="0" width="149" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+          <text x="74" y="20" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Status mutu</text>
+
+          <rect x="8" y="38" width="133" height="20" rx="3" fill="#E2E8F0" />
+          <text x="74" y="52" text-anchor="middle" font-size="9.5" font-weight="600" fill="#334155">Kualitas &amp; Standar</text>
+
+          <g transform="translate(10, 72)">
+            <circle cx="4" cy="6" r="2" fill="#475569" />
+            <text x="12" y="9" font-size="10.5" fill="#334155">Status: Lulus / Tolak</text>
+            <circle cx="4" cy="24" r="2" fill="#475569" />
+            <text x="12" y="27" font-size="10.5" fill="#334155">Kadar air &amp; kemurnian</text>
+            <circle cx="4" cy="42" r="2" fill="#475569" />
+            <text x="12" y="45" font-size="10.5" fill="#334155">Ambang residu kimia</text>
+            <circle cx="4" cy="60" r="2" fill="#475569" />
+            <text x="12" y="63" font-size="10.5" fill="#334155">Sertifikasi organik</text>
+            <circle cx="4" cy="78" r="2" fill="#475569" />
+            <text x="12" y="81" font-size="10.5" fill="#334155">ID akreditasi lab</text>
+            <circle cx="4" cy="96" r="2" fill="#475569" />
+            <text x="12" y="99" font-size="10.5" fill="#334155">Tanda tangan inspektur</text>
+          </g>
+
+          <rect x="8" y="194" width="133" height="22" rx="3" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="0.8" />
+          <text x="74" y="209" text-anchor="middle" font-size="9" fill="#64748B">Validasi Laboratorium</text>
+        </g>
+
+        <!-- Sel 5: Status penarikan -->
+        <g id="sel-5" transform="translate(632, 0)">
+          <rect x="0" y="0" width="149" height="226" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.2" filter="url(#shadow)" />
+          <rect x="0" y="0" width="149" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+          <text x="74" y="20" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Status penarikan</text>
+
+          <rect x="8" y="38" width="133" height="20" rx="3" fill="#E2E8F0" />
+          <text x="74" y="52" text-anchor="middle" font-size="9.5" font-weight="600" fill="#334155">Keamanan Produk</text>
+
+          <g transform="translate(10, 72)">
+            <circle cx="4" cy="6" r="2" fill="#475569" />
+            <text x="12" y="9" font-size="10.5" fill="#334155">Status: Aman / Tarik</text>
+            <circle cx="4" cy="24" r="2" fill="#475569" />
+            <text x="12" y="27" font-size="10.5" fill="#334155">(Product Recall)</text>
+            <circle cx="4" cy="42" r="2" fill="#475569" />
+            <text x="12" y="45" font-size="10.5" fill="#334155">Tingkat bahaya (I/II/III)</text>
+            <circle cx="4" cy="60" r="2" fill="#475569" />
+            <text x="12" y="63" font-size="10.5" fill="#334155">Daftar gerai terisolasi</text>
+            <circle cx="4" cy="78" r="2" fill="#475569" />
+            <text x="12" y="81" font-size="10.5" fill="#334155">Tanggal rilis recall</text>
+            <circle cx="4" cy="96" r="2" fill="#475569" />
+            <text x="12" y="99" font-size="10.5" fill="#334155">Instruksi karantina</text>
+          </g>
+
+          <rect x="8" y="194" width="133" height="22" rx="3" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="0.8" />
+          <text x="74" y="209" text-anchor="middle" font-size="9" fill="#64748B">Sistem Peringatan Dini</text>
+        </g>
+
+        <!-- Sel 6: Hash dokumen pendukung (off-chain) -->
+        <g id="sel-6" transform="translate(789, 0)">
+          <rect x="0" y="0" width="153" height="226" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.2" filter="url(#shadow)" />
+          <rect x="0" y="0" width="153" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+          <text x="76" y="14" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">Hash dokumen</text>
+          <text x="76" y="25" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">pendukung (off-chain)</text>
+
+          <rect x="8" y="38" width="137" height="20" rx="3" fill="#E2E8F0" />
+          <text x="76" y="52" text-anchor="middle" font-size="9.5" font-weight="600" fill="#334155">Integritas Bukti</text>
+
+          <g transform="translate(10, 72)">
+            <circle cx="4" cy="6" r="2" fill="#475569" />
+            <text x="12" y="9" font-size="10.5" fill="#334155">Hash SHA-256 PDF Lab</text>
+            <circle cx="4" cy="24" r="2" fill="#475569" />
+            <text x="12" y="27" font-size="10.5" fill="#334155">Hash Faktur &amp; Invoice</text>
+            <circle cx="4" cy="42" r="2" fill="#475569" />
+            <text x="12" y="45" font-size="10.5" fill="#334155">IPFS CID Dokumen</text>
+            <circle cx="4" cy="60" r="2" fill="#475569" />
+            <text x="12" y="63" font-size="10.5" fill="#334155">URI / Pointer data</text>
+            <circle cx="4" cy="78" r="2" fill="#475569" />
+            <text x="12" y="81" font-size="10.5" fill="#334155">Audit anti-pemalsuan</text>
+            <circle cx="4" cy="96" r="2" fill="#475569" />
+            <text x="12" y="99" font-size="10.5" fill="#334155">dan manipulasi berkas</text>
+          </g>
+
+          <rect x="8" y="194" width="137" height="22" rx="3" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="0.8" />
+          <text x="76" y="209" text-anchor="middle" font-size="9" fill="#64748B">Verifikasi Kriptografis</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- 5B. KOTAK KANAN: PENGENDALIAN AKSES -->
+    <g id="kotak-pengendalian-akses">
+      <!-- Wrapper Box -->
+      <rect x="1016" y="712" width="554" height="286" rx="8" fill="#FAFAFA" stroke="#94A3B8" stroke-width="1.3" stroke-dasharray="5,4" filter="url(#shadow)" />
+      
+      <!-- Wrapper Header Pill -->
+      <rect x="1016" y="712" width="210" height="26" rx="6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.3" />
+      <text x="1030" y="729" font-size="11.5" font-weight="700" fill="#1E293B" letter-spacing="0.4">PENGENDALIAN AKSES</text>
+
+      <text x="1238" y="730" font-size="10.5" fill="#64748B">Tata Kelola Konsorsium &amp; Keamanan Multi-Pihak</text>
+
+      <!-- 6 Kotak Poin Pengendalian Akses (3 Baris x 2 Kolom) -->
+      <g id="poin-akses" transform="translate(1030, 752)">
+        <!-- Poin 1: Sertifikat digital -->
+        <g id="akses-1" transform="translate(0, 0)">
+          <rect x="0" y="0" width="254" height="68" rx="5" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.1" filter="url(#shadow)" />
+          <rect x="8" y="8" width="18" height="18" rx="3" fill="#E2E8F0" />
+          <text x="17" y="21" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">1</text>
+          <text x="32" y="22" font-size="11.5" font-weight="700" fill="#0F172A">Sertifikat digital</text>
+          <text x="10" y="42" font-size="10.5" fill="#475569">Autentikasi berbasis PKI &amp; X.509</text>
+          <text x="10" y="56" font-size="10.5" fill="#475569">untuk seluruh organisasi dan node.</text>
+        </g>
+
+        <!-- Poin 2: Peran pengguna -->
+        <g id="akses-2" transform="translate(268, 0)">
+          <rect x="0" y="0" width="258" height="68" rx="5" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.1" filter="url(#shadow)" />
+          <rect x="8" y="8" width="18" height="18" rx="3" fill="#E2E8F0" />
+          <text x="17" y="21" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">2</text>
+          <text x="32" y="22" font-size="11.5" font-weight="700" fill="#0F172A">Peran pengguna</text>
+          <text x="10" y="42" font-size="10.5" fill="#475569">Pemisahan hak akses &amp; wewenang aksi</text>
+          <text x="10" y="56" font-size="10.5" fill="#475569">pada tingkat aplikasi dan chaincode.</text>
+        </g>
+
+        <!-- Poin 3: Pemeriksaan dalam chaincode -->
+        <g id="akses-3" transform="translate(0, 78)">
+          <rect x="0" y="0" width="254" height="68" rx="5" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.1" filter="url(#shadow)" />
+          <rect x="8" y="8" width="18" height="18" rx="3" fill="#E2E8F0" />
+          <text x="17" y="21" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">3</text>
+          <text x="32" y="22" font-size="11.5" font-weight="700" fill="#0F172A">Pemeriksaan dalam chaincode</text>
+          <text x="10" y="42" font-size="10.5" fill="#475569">Logika pintar smart contract memverifikasi</text>
+          <text x="10" y="56" font-size="10.5" fill="#475569">izin sebelum mengubah state ledger.</text>
+        </g>
+
+        <!-- Poin 4: Penerbitan hasil uji hanya oleh laboratorium -->
+        <g id="akses-4" transform="translate(268, 78)">
+          <rect x="0" y="0" width="258" height="68" rx="5" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.1" filter="url(#shadow)" />
+          <rect x="8" y="8" width="18" height="18" rx="3" fill="#E2E8F0" />
+          <text x="17" y="21" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">4</text>
+          <text x="32" y="22" font-size="11" font-weight="700" fill="#0F172A">Penerbitan hasil uji laboratorium</text>
+          <text x="10" y="42" font-size="10.5" fill="#475569">Penerbitan hasil uji hanya dapat dilakukan</text>
+          <text x="10" y="56" font-size="10.5" fill="#475569">oleh MSP node laboratorium resmi.</text>
+        </g>
+
+        <!-- Poin 5: Serah terima memerlukan endorsement pengirim dan penerima -->
+        <g id="akses-5" transform="translate(0, 156)">
+          <rect x="0" y="0" width="254" height="70" rx="5" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.1" filter="url(#shadow)" />
+          <rect x="8" y="8" width="18" height="18" rx="3" fill="#E2E8F0" />
+          <text x="17" y="21" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">5</text>
+          <text x="32" y="22" font-size="11.5" font-weight="700" fill="#0F172A">Endorsement serah terima</text>
+          <text x="10" y="42" font-size="10.5" fill="#475569">Serah terima memerlukan endorsement</text>
+          <text x="10" y="56" font-size="10.5" fill="#475569">bersama dari pihak pengirim dan penerima.</text>
+        </g>
+
+        <!-- Poin 6: Akses data privat dan dokumen off-chain sesuai kewenangan konsorsium -->
+        <g id="akses-6" transform="translate(268, 156)">
+          <rect x="0" y="0" width="258" height="70" rx="5" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.1" filter="url(#shadow)" />
+          <rect x="8" y="8" width="18" height="18" rx="3" fill="#E2E8F0" />
+          <text x="17" y="21" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">6</text>
+          <text x="32" y="22" font-size="11.5" font-weight="700" fill="#0F172A">Akses data privat &amp; off-chain</text>
+          <text x="10" y="42" font-size="10.5" fill="#475569">Akses data privat dan dokumen off-chain</text>
+          <text x="10" y="56" font-size="10.5" fill="#475569">sesuai kewenangan konsorsium.</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

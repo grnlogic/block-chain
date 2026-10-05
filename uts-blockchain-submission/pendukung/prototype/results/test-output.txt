@@ -1,0 +1,15 @@
+
+
+  AcademicCredentialRegistry Test Suite
+    ✔ T-01: menerbitkan batch ijazah oleh akun berwenang ISSUER_ROLE
+    ✔ T-02: memverifikasi kredensial sah menggunakan valid Merkle proof
+    ✔ T-03: menolak manipulasi klaim data IPK dan salt palsu
+    ✔ T-04: membatalkan upaya penerbitan batch oleh pihak tanpa peran ISSUER_ROLE
+    ✔ T-05: mencabut status keabsahan ijazah oleh REVOKER_ROLE secara spesifik
+    ✔ T-06: membatalkan upaya pencabutan ijazah oleh pihak tanpa peran REVOKER_ROLE
+    ✔ T-07: menghentikan mutasi state saat jeda darurat pause aktif dan pulih pasca-unpause
+    ✔ T-08: mengevaluasi efisiensi gas konstan O(1) dan panjang proof logaritmik O(log N) (191ms)
+
+
+  8 passing (597ms)
+

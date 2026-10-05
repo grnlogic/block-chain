@@ -1,0 +1,84 @@
+digraph G {
+    graph [
+        rankdir=TB,
+        bgcolor="#ffffff",
+        fontname="Liberation Sans,Arial",
+        fontsize=12,
+        pad="0.3",
+        nodesep="0.3",
+        ranksep="0.35",
+        splines=ortho
+    ];
+
+    node [
+        fontname="Liberation Sans,Arial",
+        fontsize=11,
+        shape=box,
+        style="filled,rounded",
+        color="#000000",
+        fillcolor="#ffffff",
+        penwidth=1.2,
+        width=4.5,
+        height=0.6,
+        margin="0.15,0.1"
+    ];
+
+    edge [
+        fontname="Liberation Sans,Arial",
+        fontsize=10,
+        color="#000000",
+        penwidth=1.2
+    ];
+
+    s1 [
+        label=<<b>1. Identifikasi Sumber Bukti</b><br/><font point-size="10">Identifikasi <i>node RPC</i>, basis data transaksi, berkas log, dan memori sistem</font>>,
+        fillcolor="#e0e0e0"
+    ];
+
+    s2 [
+        label=<<b>2. Pengumpulan Bukti Forensik</b><br/><font point-size="10">Catat perkakas forensik, versi klien/<i>node</i>, stempel waktu, dan parameter kueri</font>>
+    ];
+
+    s3 [
+        label=<<b>3. Hitung Hash Kriptografis</b><br/><font point-size="10">Hitung nilai <i>digest</i> SHA-256 untuk setiap berkas bukti digital mentah</font>>
+    ];
+
+    s4 [
+        label=<<b>4. Pemisahan Master dan Salinan Kerja</b><br/><font point-size="10">Simpan salinan <i>master</i> berstatus <i>read-only</i> dan buat salinan kerja untuk analisis</font>>
+    ];
+
+    s5 [
+        label=<<b>5. Penyimpanan Brankas dengan Kontrol Akses</b><br/><font point-size="10">Simpan pada media terenkripsi dengan pengamanan fisik dan pembatasan hak akses</font>>,
+        fillcolor="#e0e0e0"
+    ];
+
+    s6 [
+        label=<<b>6. Pencatatan Log Serah Terima</b><br/><font point-size="10">Dokumentasikan identitas personel: siapa, kapan, dan tujuan peminjaman bukti</font>>
+    ];
+
+    s7 [
+        label=<<b>7. Analisis Forensik Khusus Salinan Kerja</b><br/><font point-size="10">Semua pengujian dan rekonstruksi hanya dilakukan pada berkas salinan kerja</font>>
+    ];
+
+    s8 [
+        label=<<b>8. Verifikasi Ulang Hash SHA-256</b><br/><font point-size="10">Pencocokan ulang nilai hash sebelum bukti diajukan ke persidangan atau laporan</font>>,
+        fillcolor="#e0e0e0"
+    ];
+
+    // Flow
+    s1 -> s2;
+    s2 -> s3;
+    s3 -> s4;
+    s4 -> s5;
+    s5 -> s6;
+    s6 -> s7;
+    s7 -> s8;
+
+    // Loopback feedback edge
+    s8 -> s5 [
+        style=dashed,
+        color="#555555",
+        penwidth=1.3,
+        xlabel=<Jika hash tidak cocok: tandai dan telusuri>
+    ];
+}

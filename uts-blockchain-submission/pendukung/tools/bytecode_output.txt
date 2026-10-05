@@ -1,0 +1,8 @@
+=== PENGUKURAN UKURAN BYTECODE KONTRAK HARRIER/HARDHAT ===
+Nama Kontrak             : AcademicCredentialRegistry.sol
+Creation Bytecode (hex)  : 9734 karakter
+Creation Bytecode (byte) : 4866 byte
+Deployed Bytecode (hex)  : 8338 karakter
+Deployed Bytecode (byte) : 4168 byte
+Batas Maksimal EIP-170   : 24576 byte (24.576 byte)
+Rasio terhadap Batas     : 16.96%
