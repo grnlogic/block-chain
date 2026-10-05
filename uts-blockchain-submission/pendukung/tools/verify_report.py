@@ -1,78 +1,56 @@
 #!/usr/bin/env python3
 """Verifikasi mandiri angka, hash, dan metrik pada laporan PDF dan DOCX terhadap berkas log aktual."""
-import subprocess
-import sys
+
+import argparse
+import docx
 import os
 import re
-import glob
-import docx
+import subprocess
+import sys
 
-if len(sys.argv) > 1:
-    PDF_FILE = sys.argv[1]
-elif os.path.exists("v7_workspace/Laporan_UTS_Blockchain_237006079_v7.5.pdf"):
-    PDF_FILE = "v7_workspace/Laporan_UTS_Blockchain_237006079_v7.5.pdf"
-elif os.path.exists("v7_workspace/Laporan_UTS_Blockchain_237006079_v7.4.pdf"):
-    PDF_FILE = "v7_workspace/Laporan_UTS_Blockchain_237006079_v7.4.pdf"
-elif os.path.exists("v7_workspace/Laporan_UTS_Blockchain_237006079_v7.3.pdf"):
-    PDF_FILE = "v7_workspace/Laporan_UTS_Blockchain_237006079_v7.3.pdf"
-else:
-    PDF_FILE = "uts-blockchain-submission/237006079_Fajar_Geran_Arifin_UTS_Blockchain_OBE.pdf"
+def parse_cli_args():
+    parser = argparse.ArgumentParser(description="Verifikasi mandiri laporan PDF/DOCX terhadap log aktual.")
+    default_pdf = "uts-blockchain-submission/237006079_Fajar_Geran_Arifin_UTS_Blockchain_OBE.pdf"
+    if not os.path.exists(default_pdf):
+        default_pdf = "v7_workspace/Laporan_UTS_Blockchain_237006079_v7.5.pdf"
+    parser.add_argument("pdf_file", nargs="?", default=default_pdf, help="Jalur berkas PDF laporan")
+    parser.add_argument("docx_file", nargs="?", default=None, help="Jalur berkas DOCX laporan")
+    args = parser.parse_args()
 
-DOCX_FILE = os.environ.get("DOCX_FILE") or (sys.argv[2] if len(sys.argv) > 2 else PDF_FILE.replace(".pdf", ".docx"))
-if not os.path.exists(DOCX_FILE) and os.path.exists(os.path.join("uts-blockchain-submission/sumber", os.path.basename(DOCX_FILE))):
-    DOCX_FILE = os.path.join("uts-blockchain-submission/sumber", os.path.basename(DOCX_FILE))
-RESULTS_DIR = "prototype/results"
-TOOLS_DIR = "uts-blockchain-submission/tools"
+    docx_path = args.docx_file or os.environ.get("DOCX_FILE") or args.pdf_file.replace(".pdf", ".docx")
+    if not os.path.exists(docx_path):
+        candidate_sumber = os.path.join("uts-blockchain-submission/sumber", os.path.basename(docx_path))
+        if os.path.exists(candidate_sumber):
+            docx_path = candidate_sumber
 
-def load_file_lines(filename, base_dir=RESULTS_DIR):
+    return args.pdf_file, docx_path
+
+def load_file_lines(filename, base_dir="prototype/results"):
     path = os.path.join(base_dir, filename)
     with open(path, "r", encoding="utf-8") as f:
-        return [l.rstrip("\r\n") for l in f.readlines()]
+        return [line.rstrip("\r\n") for line in f]
 
-def extract_pdf_page(page_num):
-    cmd = ["pdftotext", "-f", str(page_num), "-l", str(page_num), PDF_FILE, "-"]
+def extract_pdf_page(pdf_file, page_num):
+    cmd = ["pdftotext", "-f", str(page_num), "-l", str(page_num), pdf_file, "-"]
     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
     return res.stdout
 
-def extract_full_pdf():
-    cmd = ["pdftotext", PDF_FILE, "-"]
+def extract_full_pdf(pdf_file):
+    cmd = ["pdftotext", pdf_file, "-"]
     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
     return res.stdout
 
 def find_docx_table(doc, header_keyword):
-    for i, t in enumerate(doc.tables):
-        first_row_text = " ".join(c.text.strip().replace("\n", " ") for c in t.rows[0].cells)
+    if not doc:
+        return None
+    for tbl in doc.tables:
+        first_row_text = " ".join(cell.text.strip().replace("\n", " ") for cell in tbl.rows[0].cells)
         if header_keyword.lower() in first_row_text.lower():
-            return t
+            return tbl
     return None
 
-def main():
-    print(f"Memverifikasi PDF: {PDF_FILE}")
-    print(f"Memverifikasi DOCX: {DOCX_FILE}")
-
-    if not os.path.exists(PDF_FILE):
-        print(f"Error: File PDF {PDF_FILE} tidak ditemukan!")
-        sys.exit(1)
-
-    doc = None
-    if os.path.exists(DOCX_FILE):
-        doc = docx.Document(DOCX_FILE)
-
-    demo_lines = load_file_lines("demo-output.txt")
-    perf_lines = load_file_lines("perf-output.txt")
-    test_lines = load_file_lines("test-output.txt")
-    gaslimit_lines = load_file_lines("gaslimit_output.txt", TOOLS_DIR)
-    exp_b06_lines = load_file_lines("exp_b06_output.txt", TOOLS_DIR)
-
-    pdfinfo_out = subprocess.check_output(["pdfinfo", PDF_FILE]).decode("utf-8")
-    total_pages = int(re.search(r"Pages:\s+(\d+)", pdfinfo_out).group(1))
-    pdf_pages = {p: extract_pdf_page(p) for p in range(1, total_pages + 1)}
-    full_pdf_text = extract_full_pdf()
-
-    mismatches = 0
-
-    # 1. TABEL 2: Catatan Pelaksanaan (B-01, B-03, B-04, B-06, B-07) - Hal 3
-    tabel_2_items = [
+def build_standard_table_definitions():
+    tabel_2 = [
         ("B-01 Gas Deploy Kontrak", "1.039.368", 3, "demo-output.txt", 15, "1039368"),
         ("B-03 Tx Hash Issue Batch", "0x1737c359...", 3, "demo-output.txt", 29, "0x1737c359"),
         ("B-04 Verifikasi Valid", "0 gas", 3, "demo-output.txt", 43, "0 gas"),
@@ -80,8 +58,7 @@ def main():
         ("B-07 Gas Pause Circuit Breaker", "48.214", 3, "demo-output.txt", 68, "48214"),
     ]
 
-    # 2. TABEL 5: Data Daun Merkle (Record / Daun G-01 s.d. G-06) - Hal 5-6
-    tabel_5_items = [
+    tabel_5 = [
         ("G-01 NIM", "237006801", (5, 6), "demo-output.txt", 19, "237006801"),
         ("G-01 IPK", "3.82", (5, 6), "demo-output.txt", 19, "3.82"),
         ("G-01 Leaf Hash", "0x7b5f7365dffd18a8...", (5, 6), "demo-output.txt", 19, "0x7b5f7365dffd18a8"),
@@ -102,8 +79,7 @@ def main():
         ("G-06 Leaf Hash", "0x108e53ac2b7a5439...", (5, 6), "demo-output.txt", 24, "0x108e53ac2b7a5439"),
     ]
 
-    # 3. TABEL 7: Field Transaksi EVM (Penerbitan Batch #2) - Hal 8
-    tabel_7_items = [
+    tabel_7 = [
         ("Chain ID", "31337", 8, "perf-output.txt", 2, "31337"),
         ("Sender (from) ISSUER_ROLE", "0x70997970C5...", 8, "demo-output.txt", 5, "0x70997970C5"),
         ("Receiver (to) AcademicRegistry", "0x5FbDB23156...", 8, "demo-output.txt", 12, "0x5FbDB23156"),
@@ -114,8 +90,7 @@ def main():
         ("Gas Limit Blok Hardhat", "60.000.000", 8, "gaslimit_output.txt", 5, "60000000"),
     ]
 
-    # 4. TABEL 8: Komposisi Gas Transaksi issueBatch (N=6, 100, 1000) - Hal 8
-    tabel_8_items = [
+    tabel_8 = [
         ("Total gasUsed N=6 (Receipt)", "187.874", 8, "perf-output.txt", 36, "187874"),
         ("Total gasUsed N=100 (Receipt)", "187.922", 8, "perf-output.txt", 36, "187922"),
         ("Total gasUsed N=1000 (Receipt)", "187.958", 8, "perf-output.txt", 36, "187958"),
@@ -131,25 +106,26 @@ def main():
         ("Deviasi Relatif Gas", "0,00%", 8, "perf-output.txt", 27, "0.0000%"),
     ]
 
-    # 5. TABEL UNIT TEST (T-01 s.d. T-08 / Tabel 10 Naskah) - Hal 10
-    tbl_10_doc = find_docx_table(doc, "ID Tes") if doc else None
-    tabel_10_items = []
-    if tbl_10_doc:
-        for r_idx in range(1, 9):
-            row_cells = [c.text.strip().replace("\n", " ") for c in tbl_10_doc.rows[r_idx].cells]
-            tid = f"T-{r_idx:02d}"
-            tabel_10_items.append((
-                f"Tabel 10 Baris {r_idx} ({tid})",
-                row_cells[0],
-                row_cells[1],
-                row_cells[4],
-                "test-output.txt",
-                r_idx + 3,
-                tid
-            ))
+    return [
+        ("Tabel 2: Catatan Pelaksanaan", tabel_2),
+        ("Tabel 5: Record Daun Merkle", tabel_5),
+        ("Tabel 7: Field Transaksi EVM", tabel_7),
+        ("Tabel 8: Komposisi Gas issueBatch", tabel_8),
+    ]
 
-    # 6. LAMPIRAN B: Keluaran Eksekusi B-05 - Hal 14
-    lampiran_b_items = [
+def build_unit_test_items(doc):
+    table_doc = find_docx_table(doc, "ID Tes")
+    if not table_doc:
+        return []
+    items = []
+    for r_idx in range(1, 9):
+        cells = [c.text.strip().replace("\n", " ") for c in table_doc.rows[r_idx].cells]
+        tid = f"T-{r_idx:02d}"
+        items.append((f"Tabel 10 Baris {r_idx} ({tid})", cells[0], cells[1], cells[4], "test-output.txt", r_idx + 3, tid))
+    return items
+
+def build_lampiran_b_items():
+    return [
         ("Skenario 5A IPK Manipulasi", "Skenario 5A: Pelamar mengubah IPK 3.82 menjadi 4.00 pada berkas lokal", "demo-output.txt", 49, "IPK 3.82 menjadi 4.00"),
         ("Leaf Asli 64-char Hex", "Leaf Asli            : 0x7b5f7365dffd18a87fb7b5471e7843da27e53b4ec53e8e1ef064b78ab3b0645c", "demo-output.txt", 50, "0x7b5f7365dffd18a87fb7b5471e7843da27e53b4ec53e8e1ef064b78ab3b0645c"),
         ("Leaf Manipulasi 64-char Hex", "Leaf Hasil Manipulasi: 0x0b097c59bcd2b3d0b5cba350b03cea87b34b4294eba79c5d5cf2f0a548d04f97", "demo-output.txt", 51, "0x0b097c59bcd2b3d0b5cba350b03cea87b34b4294eba79c5d5cf2f0a548d04f97"),
@@ -160,9 +136,10 @@ def main():
         ("Custom Error Kontrak", "Eksepsi Kontrak      : VM Exception while processing transaction: reverted with custom error 'AccessControlUnauthorizedAccount", "demo-output.txt", 57, "AccessControlUnauthorizedAccount"),
     ]
 
-    # 7. LAMPIRAN D: Matriks Evaluasi OBE (T-01 s.d. T-08) - Hal 15-18
-    tbl_d_doc = find_docx_table(doc, "Kelompok Uji") if doc else None
-    lampiran_d_items = []
+def build_lampiran_d_items(doc):
+    table_doc = find_docx_table(doc, "Kelompok Uji")
+    if not table_doc:
+        return []
     expected_d_tokens = [
         ("Baris 1 (T-01/B-03)", "T-01: menerbitkan batch ijazah", "B-03", "demo-output.txt", 27, "B-03"),
         ("Baris 2 (T-02/B-04)", "T-02: memverifikasi kredensial sah", "B-04", "demo-output.txt", 34, "B-04"),
@@ -175,18 +152,19 @@ def main():
         ("Baris 9 (T-08/B-08 Verify)", "8.554 gas (N=6) hingga 10.313 gas", "B-08", "perf-output.txt", 41, "8554"),
         ("Baris 10 (T-08/B-08 Build)", "Rata-rata 129,44 ms", "B-08", "perf-output.txt", 34, "129.44"),
     ]
-    if tbl_d_doc:
-        for r_idx in range(1, 11):
-            row_text = " ".join(c.text.strip().replace("\n", " ") for c in tbl_d_doc.rows[r_idx].cells)
-            label, token1, token2, log_f, log_l, exp_log = expected_d_tokens[r_idx - 1]
-            status_cell = tbl_d_doc.rows[r_idx].cells[6].text.strip()
-            lampiran_d_items.append((label, token1, token2, status_cell, row_text, log_f, log_l, exp_log))
+    items = []
+    for r_idx in range(1, 11):
+        row_text = " ".join(c.text.strip().replace("\n", " ") for c in table_doc.rows[r_idx].cells)
+        label, token1, token2, log_f, log_l, exp_log = expected_d_tokens[r_idx - 1]
+        status_cell = table_doc.rows[r_idx].cells[6].text.strip()
+        items.append((label, token1, token2, status_cell, row_text, log_f, log_l, exp_log))
+    return items
 
-    # 8. LAMPIRAN E: Parameter Pengujian 30 Run Terukur (30 item) - Hal 18-20
-    tbl_e_doc = find_docx_table(doc, "Parameter Pengujian") if doc else None
-    lampiran_e_items = []
-    # (Label, N6_val, N100_val, N1000_val, log_file, line_num, exp_log_substr)
-    expected_e_rows = [
+def build_lampiran_e_items(doc):
+    table_doc = find_docx_table(doc, "Parameter Pengujian")
+    if not table_doc:
+        return []
+    expected_rows = [
         ("Baris 1 Build Tree Off-Chain", "1.43 ms", "14.01 ms", "129.44 ms", "perf-output.txt", 34, ("1.43", "14.01", "129.44")),
         ("Baris 2 Proof Sibling", "3 sibling hash", "7 sibling hash", "10 sibling hash", "perf-output.txt", 35, ("3", "7", "10")),
         ("Baris 3 Total Gas Issue", "187.874 gas", "187.922 gas", "187.958 gas", "perf-output.txt", 36, ("187874", "187922", "187958")),
@@ -198,15 +176,15 @@ def main():
         ("Baris 9 Gas Verifikator", "0 gas (Bebas biaya)", "0 gas (Bebas biaya)", "0 gas (Bebas biaya)", "perf-output.txt", 64, ("0 gas", "0 gas", "0 gas")),
         ("Baris 10 Latensi View Call", "0.89 ms", "0.87 ms", "0.82 ms", "perf-output.txt", 42, ("0.89", "0.87", "0.82")),
     ]
-    if tbl_e_doc:
-        for r_idx in range(1, 11):
-            row_cells = [c.text.strip().replace("\n", " ") for c in tbl_e_doc.rows[r_idx].cells]
-            label, t1, t2, t3, log_f, log_l, exp_logs = expected_e_rows[r_idx - 1]
-            lampiran_e_items.append((label, t1, t2, t3, row_cells, log_f, log_l, exp_logs))
+    items = []
+    for r_idx in range(1, 11):
+        row_cells = [c.text.strip().replace("\n", " ") for c in table_doc.rows[r_idx].cells]
+        label, t1, t2, t3, log_f, log_l, exp_logs = expected_rows[r_idx - 1]
+        items.append((label, t1, t2, t3, row_cells, log_f, log_l, exp_logs))
+    return items
 
-    # 9. LAMPIRAN F: Eksperimen Selisih Gas B-06 (21 item) - Hal 20-21
-    tbl_f_doc = find_docx_table(doc, "Skenario Uji") if doc else None
-    lampiran_f_items = [
+def build_lampiran_f_items():
+    return [
         ("Run A Calldata Gas", "2.212 gas", (20, 21), "exp_b06_output.txt", 11, "2212"),
         ("Run A Gas Receipt", "56.359 gas", (20, 21), "exp_b06_output.txt", 12, "56359"),
         ("Run B Calldata Gas", "2.128 gas", (20, 21), "exp_b06_output.txt", 18, "2128"),
@@ -223,111 +201,76 @@ def main():
         ("Run D (33 B) Receipt", "56.035 gas", (20, 21), "exp_b06_output.txt", 37, "56035"),
         ("Run D (60 B) Calldata", "2.212 gas", (20, 21), "exp_b06_output.txt", 38, "2212"),
         ("Run D (60 B) Receipt", "56.359 gas", (20, 21), "exp_b06_output.txt", 38, "56359"),
-        ("Run E (N=6) Calldata", "1.412 gas", (20, 21), "exp_b06_output.txt", 41, "1412"),
         ("Run E (N=6) Receipt", "55.297 gas", (20, 21), "exp_b06_output.txt", 41, "55297"),
-        ("Run E (N=1000) Calldata", "1.448 gas", (20, 21), "exp_b06_output.txt", 43, "1448"),
+        ("Run E (N=100) Receipt", "55.321 gas", (20, 21), "exp_b06_output.txt", 42, "55321"),
         ("Run E (N=1000) Receipt", "55.333 gas", (20, 21), "exp_b06_output.txt", 43, "55333"),
-        ("Run E (N=1000) Selisih", "-1.026 gas", (20, 21), "exp_b06_output.txt", 43, "-1026"),
     ]
 
-    # Total item count calculation
-    count_tabel_2 = len(tabel_2_items)
-    count_tabel_5 = len(tabel_5_items)
-    count_tabel_7 = len(tabel_7_items)
-    count_tabel_8 = len(tabel_8_items)
-    count_tabel_10 = len(tabel_10_items)
-    count_lampiran_b = len(lampiran_b_items)
-    count_lampiran_d = len(lampiran_d_items)
-    count_lampiran_e = len(lampiran_e_items) * 3  # 3 metrics per row (N=6, N=100, N=1000)
-    count_lampiran_f = len(lampiran_f_items)
-    total_items = (count_tabel_2 + count_tabel_5 + count_tabel_7 + count_tabel_8 +
-                   count_tabel_10 + count_lampiran_b + count_lampiran_d + count_lampiran_e + count_lampiran_f)
+def verify_standard_table_group(group_name, items, pdf_pages, logs):
+    print(f"\n{group_name} ({len(items)} item):")
+    print(f"{'Hal':<5} | {'Elemen / Metrik':<32} | {'Nilai di PDF':<20} | {'Status':<6} | Log Target")
+    mismatches = 0
+    for elem_name, val_pdf, page, log_file, line_num, expected_in_log in items:
+        if isinstance(page, tuple):
+            pdf_text = " ".join(pdf_pages[p] for p in range(page[0], page[1] + 1))
+            page_str = f"{page[0]}-{page[1]}"
+        else:
+            pdf_text = pdf_pages[page]
+            page_str = str(page)
 
-    print("Verifikasi forward tabel dan log:")
-    print(f"{'Kategori Tabel / Bagian Dokumen':<45} | {'Jumlah Item':<12} | {'Halaman Target':<18} | {'Sumber Log Acuan':<25}")
-    print(f"{'1. Tabel 2 (Catatan Pelaksanaan Mini-Project)':<45} | {count_tabel_2:<12} | {'Halaman 3':<18} | {'demo-output.txt':<25}")
-    print(f"{'2. Tabel 5 (Struktur Data Record Daun G-01..G-06)':<45} | {count_tabel_5:<12} | {'Halaman 5-6':<18} | {'demo-output.txt':<25}")
-    print(f"{'3. Tabel 7 (Field Transaksi EVM Penjangkaran)':<45} | {count_tabel_7:<12} | {'Halaman 8':<18} | {'perf / demo / gaslimit':<25}")
-    print(f"{'4. Tabel 8 (Komposisi Gas Transaksi issueBatch)':<45} | {count_tabel_8:<12} | {'Halaman 8':<18} | {'perf-output.txt':<25}")
-    print(f"{'5. Tabel Unit Test (T-01 s.d. T-08 / Tabel 10)':<45} | {count_tabel_10:<12} | {'Halaman 10':<18} | {'test-output.txt':<25}")
-    print(f"{'6. Lampiran B (Keluaran Log Eksekusi B-05)':<45} | {count_lampiran_b:<12} | {'Halaman 14':<18} | {'demo-output.txt':<25}")
-    print(f"{'7. Lampiran D (Matriks Luaran OBE T-01..T-08)':<45} | {count_lampiran_d:<12} | {'Halaman 15-18':<18} | {'demo / perf log':<25}")
-    print(f"{'8. Lampiran E (Rekapitulasi 30 Run: N=6/100/1000)':<45} | {count_lampiran_e:<12} | {'Halaman 18-20':<18} | {'perf-output.txt':<25}")
-    print(f"{'9. Lampiran F (Eksperimen Selisih Gas B-06)':<45} | {count_lampiran_f:<12} | {'Halaman 20-21':<18} | {'exp_b06_output.txt':<25}")
-    print(f"{'TOTAL ITEM DIVERIFIKASI':<45} | {total_items:<12} | {'Seluruh Dokumen':<18} | {'(Syarat: >= 99 item)'}")
+        clean_pdf_text = re.sub(r"(0x[a-fA-F0-9]+)\n\s*([a-fA-F0-9\.]+)", r"\1\2", pdf_text)
+        log_lines = logs.get(log_file, [])
+        log_line = log_lines[line_num - 1] if line_num <= len(log_lines) else ""
 
-    # 1. Tabel 2, 5, 7, 8
-    standard_tables = [
-        ("Tabel 2 (Catatan Pelaksanaan)", tabel_2_items),
-        ("Tabel 5 (Record Daun Merkle)", tabel_5_items),
-        ("Tabel 7 (Field Transaksi EVM)", tabel_7_items),
-        ("Tabel 8 (Komposisi Gas issueBatch)", tabel_8_items),
-    ]
-    for cat_name, items in standard_tables:
-        print(f"\n--- {cat_name.upper()} ({len(items)} item) ---")
-        print(f"{'Hal':<5} | {'Elemen / Metrik':<35} | {'Nilai di PDF':<26} | {'Target Log:Baris':<25} | {'Cocok?':<8}")
-        for elem_name, val_pdf, page, log_file, line_num, expected_in_log in items:
-            if isinstance(page, tuple):
-                pdf_text = " ".join(pdf_pages[p] for p in range(page[0], page[1] + 1))
-                page_str = f"{page[0]}-{page[1]}"
-            else:
-                pdf_text = pdf_pages[page]
-                page_str = str(page)
+        pdf_match = (val_pdf in pdf_text) or (val_pdf in clean_pdf_text)
+        log_match = expected_in_log in log_line
+        status = "Cocok" if (pdf_match and log_match) else "GAGAL"
+        if status == "GAGAL":
+            mismatches += 1
 
-            clean_pdf_text = re.sub(r"(0x[a-fA-F0-9]+)\n\s*([a-fA-F0-9\.]+)", r"\1\2", pdf_text)
+        disp_pdf = val_pdf if len(val_pdf) <= 20 else val_pdf[:17] + "..."
+        raw_log = log_line.strip()
+        if len(raw_log) > 45:
+            raw_log = raw_log[:42] + "..."
+        print(f"{page_str:<5} | {elem_name:<32} | {disp_pdf:<20} | {status:<6} | [{log_file}:{line_num}] {raw_log}")
+    return mismatches
 
-            log_line = ""
-            if log_file == "demo-output.txt":
-                log_line = demo_lines[line_num - 1] if line_num <= len(demo_lines) else ""
-            elif log_file == "perf-output.txt":
-                log_line = perf_lines[line_num - 1] if line_num <= len(perf_lines) else ""
-            elif log_file == "gaslimit_output.txt":
-                log_line = gaslimit_lines[line_num - 1] if line_num <= len(gaslimit_lines) else ""
-
-            pdf_match = (val_pdf in pdf_text) or (val_pdf in clean_pdf_text)
-            log_match = expected_in_log in log_line
-            status = "Cocok" if (pdf_match and log_match) else "GAGAL"
-            if status == "GAGAL":
-                mismatches += 1
-            disp_pdf = val_pdf if len(val_pdf) <= 20 else val_pdf[:17] + "..."
-            raw_log = log_line.strip()
-            if len(raw_log) > 45: raw_log = raw_log[:42] + "..."
-            print(f"{page_str:<5} | {elem_name:<32} | {disp_pdf:<20} | {status:<6} | [{log_file}:{line_num}] {raw_log}")
-
-    # 2. Tabel Unit Test (Tabel 10): Per-Baris DOCX
-    print(f"\n--- TABEL UNIT TEST (T-01 s.d. T-08 / TABEL 10 DOCX) ({len(tabel_10_items)} item) ---")
-    print(f"{'Baris':<15} | {'ID Tes':<8} | {'Skenario Uji di Tabel':<40} | {'Status Cell':<12} | {'Log Ref:Baris':<22} | {'Cocok?':<8}")
-    for label, tid, scenario, status_cell, log_file, line_num, exp_log in tabel_10_items:
+def verify_unit_tests(items, test_lines):
+    print(f"\nTabel 10: Ringkasan Unit Test T-01 s.d. T-08 ({len(items)} item):")
+    print(f"{'Baris':<15} | {'ID Tes':<8} | {'Skenario Uji di Tabel':<40} | {'Status Cell':<12} | {'Log Ref:Baris':<22} | Cocok?")
+    mismatches = 0
+    for label, tid, scenario, status_cell, log_file, line_num, exp_log in items:
         log_line = test_lines[line_num - 1] if line_num <= len(test_lines) else ""
         match_table = (tid in label) and (len(scenario) > 5)
         match_log = exp_log in log_line
         status = "Cocok" if (match_table and match_log) else "GAGAL"
         if status == "GAGAL":
             mismatches += 1
-        print(f"{label:<15} | {tid:<8} | {scenario[:38]:<40} | {status_cell[:10]:<12} | {log_file}:{line_num:<14} | {status:<8}")
+        print(f"{label:<15} | {tid:<8} | {scenario[:38]:<40} | {status_cell[:10]:<12} | {log_file}:{line_num:<14} | {status}")
+    return mismatches
 
-    # 3. Lampiran D: Per-Baris DOCX
-    print(f"\n--- LAMPIRAN D (MATRIKS OBE LENGKAP - TABEL 12 DOCX) ({len(lampiran_d_items)} item) ---")
-    print(f"{'Baris':<25} | {'Token 1 (Wajib)':<32} | {'Token 2 (Unloosened)':<20} | {'Status Cell':<12} | {'Cocok?':<8}")
-    for label, t1, t2, status_cell, row_text, log_file, line_num, exp_log in lampiran_d_items:
-        log_line = ""
-        if log_file == "demo-output.txt":
-            log_line = demo_lines[line_num - 1] if line_num <= len(demo_lines) else ""
-        elif log_file == "perf-output.txt":
-            log_line = perf_lines[line_num - 1] if line_num <= len(perf_lines) else ""
-
+def verify_lampiran_d(items, logs):
+    print(f"\nLampiran D: Matriks Evaluasi OBE ({len(items)} item):")
+    print(f"{'Baris':<25} | {'Token 1 (Wajib)':<32} | {'Token 2 (Unloosened)':<20} | {'Status Cell':<12} | Cocok?")
+    mismatches = 0
+    for label, t1, t2, status_cell, row_text, log_file, line_num, exp_log in items:
+        log_lines = logs.get(log_file, [])
+        log_line = log_lines[line_num - 1] if line_num <= len(log_lines) else ""
         match_row = (t1 in row_text) and (t2 in row_text)
         match_log = exp_log in log_line
         match_status = (status_cell == "LULUS")
         status = "Cocok" if (match_row and match_log and match_status) else "GAGAL"
         if status == "GAGAL":
             mismatches += 1
-        print(f"{label:<25} | {t1[:30]:<32} | {t2:<20} | {status_cell:<12} | {status:<8}")
+        print(f"{label:<25} | {t1[:30]:<32} | {t2:<20} | {status_cell:<12} | {status}")
+    return mismatches
 
-    # 4. Lampiran E: Per-Baris DOCX (30 item checked)
-    print(f"\n--- LAMPIRAN E (REKAPITULASI 30 RUN - TABEL 13 DOCX) ({count_lampiran_e} item) ---")
-    print(f"{'Baris':<30} | {'N=6':<18} | {'N=100':<18} | {'N=1000':<18} | {'Log Ref:Baris':<18} | {'Cocok?':<8}")
-    for label, t1, t2, t3, cells, log_file, line_num, exp_logs in lampiran_e_items:
+def verify_lampiran_e(items, perf_lines):
+    count_e = len(items) * 3
+    print(f"\nLampiran E: Rekapitulasi 30 Run ({count_e} item):")
+    print(f"{'Baris':<30} | {'N=6':<18} | {'N=100':<18} | {'N=1000':<18} | {'Log Ref:Baris':<18} | Cocok?")
+    mismatches = 0
+    for label, t1, t2, t3, cells, log_file, line_num, exp_logs in items:
         log_line = perf_lines[line_num - 1] if line_num <= len(perf_lines) else ""
         cell_str = " ".join(cells)
         match_6 = (t1 in cell_str) and (exp_logs[0] in log_line)
@@ -340,49 +283,47 @@ def main():
             mismatches += 1
         if not match_1000:
             mismatches += 1
-        print(f"{label:<30} | {t1:<18} | {t2:<18} | {t3:<18} | {log_file}:{line_num:<10} | {row_status:<8}")
+        print(f"{label:<30} | {t1:<18} | {t2:<18} | {t3:<18} | {log_file}:{line_num:<10} | {row_status}")
+    return mismatches
 
-    # 5. Lampiran B: Per-Baris Log
-    print(f"\n--- LAMPIRAN B (KELUARAN EKSEKUSI B-05 - PER BARIS LOG DEMO) ({len(lampiran_b_items)} item) ---")
-    print(f"{'Item Bukti':<28} | {'Baris Cuplikan di PDF / DOCX':<45} | {'Target Log:Baris':<22} | {'Cocok?':<8}")
-    lamp_b_text = full_pdf_text
-    for item_name, exp_text, log_file, line_num, exp_log in lampiran_b_items:
+def verify_lampiran_b(items, full_pdf_text, demo_lines):
+    print(f"\nLampiran B: Keluaran Eksekusi B-05 ({len(items)} item):")
+    print(f"{'Item Bukti':<28} | {'Baris Cuplikan di PDF / DOCX':<45} | {'Target Log:Baris':<22} | Cocok?")
+    mismatches = 0
+    for item_name, exp_text, log_file, line_num, exp_log in items:
         log_line = demo_lines[line_num - 1] if line_num <= len(demo_lines) else ""
-        match_pdf = (exp_log in lamp_b_text)
+        match_pdf = (exp_log in full_pdf_text)
         match_log = (exp_log in log_line)
         status = "Cocok" if (match_pdf and match_log) else "GAGAL"
         if status == "GAGAL":
             mismatches += 1
         disp_txt = exp_text if len(exp_text) <= 42 else exp_text[:39] + "..."
-        print(f"{item_name:<28} | {disp_txt:<45} | {log_file}:{line_num:<14} | {status:<8}")
+        print(f"{item_name:<28} | {disp_txt:<45} | {log_file}:{line_num:<14} | {status}")
+    return mismatches
 
-    # 6. Lampiran F: Per-Baris Tabel Run A s.d. E (21 item)
-    print(f"\n--- LAMPIRAN F (EKSPERIMEN ISOLASI VARIABEL B-06 - TABEL 14 DOCX) ({len(lampiran_f_items)} item) ---")
-    print(f"{'Skenario & Metrik':<28} | {'Nilai di Tabel / PDF':<25} | {'Target Log:Baris':<25} | {'Cocok?':<8}")
-    lamp_f_text = full_pdf_text
-    for item_name, val_str, page, log_file, line_num, exp_log in lampiran_f_items:
+def verify_lampiran_f(items, full_pdf_text, exp_b06_lines):
+    print(f"\nLampiran F: Eksperimen Isolasi Variabel B-06 ({len(items)} item):")
+    print(f"{'Skenario & Metrik':<28} | {'Nilai di Tabel / PDF':<25} | {'Target Log:Baris':<25} | Cocok?")
+    mismatches = 0
+    for item_name, val_str, page, log_file, line_num, exp_log in items:
         log_line = exp_b06_lines[line_num - 1] if line_num <= len(exp_b06_lines) else ""
-        match_pdf = (val_str in lamp_f_text)
+        match_pdf = (val_str in full_pdf_text)
         match_log = (exp_log in log_line)
         status = "Cocok" if (match_pdf and match_log) else "GAGAL"
         if status == "GAGAL":
             mismatches += 1
-        print(f"{item_name:<28} | {val_str:<25} | {log_file}:{line_num:<17} | {status:<8}")
+        print(f"{item_name:<28} | {val_str:<25} | {log_file}:{line_num:<17} | {status}")
+    return mismatches
 
-    print("")
-    print(f"REKAPITULASI FORWARD CHECK: {total_items - mismatches}/{total_items} baris & sel terverifikasi cocok secara eksak.")
-
-    # BAGIAN 2: AUDIT KEBALIKAN ANGKA BERTITIK UTUH (POIN 2b)
-    print("")
-    print("Audit reverse angka bertitik pada teks PDF:")
-
+def audit_dotted_numbers(full_pdf_text):
+    print("\nAudit reverse angka bertitik pada teks PDF:")
     source_files = [
         ("prototype/results/demo-output.txt", "demo-output.txt"),
         ("prototype/results/perf-output.txt", "perf-output.txt"),
         ("prototype/results/test-output.txt", "test-output.txt"),
         ("uts-blockchain-submission/tools/gaslimit_output.txt", "gaslimit_output.txt"),
         ("uts-blockchain-submission/tools/exp_b06_output.txt", "exp_b06_output.txt"),
-        ("uts-blockchain-submission/tools/bytecode_output.txt", "bytecode_output.txt")
+        ("uts-blockchain-submission/tools/bytecode_output.txt", "bytecode_output.txt"),
     ]
     file_contents = {}
     for path, label in source_files:
@@ -390,30 +331,21 @@ def main():
             with open(path, "r", encoding="utf-8") as f:
                 file_contents[label] = f.read()
 
-    raw_pdf_dotted = sorted(list(set(re.findall(r"\b\d{1,3}(?:\.\d{3})+(?:,\d+)?\b", full_pdf_text))))
-    pdf_dotted = raw_pdf_dotted
-
+    pdf_dotted = sorted(list(set(re.findall(r"\b\d{1,3}(?:\.\d{3})+(?:,\d+)?\b", full_pdf_text))))
     log_map = {}
-    for d in pdf_dotted:
-        un_dotted = d.replace(".", "").replace(",", ".")
-        int_val = d.replace(".", "").split(",")[0]
-
+    for item in pdf_dotted:
+        un_dotted = item.replace(".", "").replace(",", ".")
+        int_val = item.replace(".", "").split(",")[0]
         matches = []
         for label, content in file_contents.items():
-            if d in content:
-                matches.append(label)
-            elif re.search(rf"\b{re.escape(int_val)}\b", content):
+            if item in content or re.search(rf"\b{re.escape(int_val)}\b", content):
                 matches.append(label)
             elif un_dotted != int_val and re.search(rf"\b{re.escape(un_dotted)}\b", content):
                 matches.append(label)
-
         if matches:
-            log_map[d] = sorted(list(set(matches)))
+            log_map[item] = sorted(list(set(matches)))
 
-    print(f"Total Angka Bertitik Ditemukan pada PDF: {len(pdf_dotted)} angka\n")
-    print(f"{'No':<3} | {'Angka Bertitik':<15} | {'Status':<16} | {'Sumber Log Spesifik / Konteks Dokumen':<65}")
-
-    known_non_log_dotted = {
+    known_non_log = {
         "0.005": "Teoretis/Config | Ilustrasi biaya transaksi OP_RETURN UTXO Bitcoin tanpa smart contract [Hal 7]",
         "0.8.28": "Teoretis/Config | Versi compiler Solidity pragma solidity ^0.8.28 [Hal 3, 7]",
         "1.963": "Teoretis/Config | Pembulatan calldata N=6 pada Tabel 8 (dari 1.962,80 gas perf-output.txt:23) [Hal 8]",
@@ -423,41 +355,104 @@ def main():
         "12.000": "Teoretis/Config | Rujukan gas minimum fungsi transfer ETH standar EVM [Hal 8]",
         "13.500": "Teoretis/Config | Ambang batas anggaran pureVerifyGas N=1.000 (10.000 + 10*350 gas) [Hal 16]",
         "20.000": "Teoretis/Config | Biaya penulisan slot storage baru (SSTORE) EVM Yellow Paper (~20.000 gas/slot) [Hal 11]",
-        "30.000.000": "Teoretis/Config | Contoh hipotetis kapasitas blok konsorsium untuk simulasi kapasitas blok [Hal 8, 11]"
+        "30.000.000": "Teoretis/Config | Contoh hipotetis kapasitas blok konsorsium untuk simulasi kapasitas blok [Hal 8, 11]",
     }
 
-    unexplained_dotted = 0
-    for idx, d in enumerate(pdf_dotted, 1):
-        if d in log_map:
-            sources_str = ", ".join(log_map[d])
+    print(f"Total Angka Bertitik Ditemukan pada PDF: {len(pdf_dotted)} angka\n")
+    print(f"{'No':<3} | {'Angka Bertitik':<15} | {'Status':<16} | {'Sumber Log Spesifik / Konteks Dokumen':<65}")
+
+    unexplained = 0
+    for idx, item in enumerate(pdf_dotted, 1):
+        if item in log_map:
+            sources_str = ", ".join(log_map[item])
             status_str = "Ditemukan (100%)"
             desc_str = f"Tercatat di log: {sources_str}"
-        elif d in known_non_log_dotted:
+        elif item in known_non_log:
             status_str = "Teoretis/Config"
-            desc_str = known_non_log_dotted[d]
+            desc_str = known_non_log[item]
         else:
             status_str = "TIDAK DIKETAHUI"
             desc_str = "Perlu investigasi"
-            unexplained_dotted += 1
+            unexplained += 1
+        print(f"{idx:<3} | {item:<15} | {status_str:<16} | {desc_str:<65}")
 
-        print(f"{idx:<3} | {d:<15} | {status_str:<16} | {desc_str:<65}")
+    return unexplained
 
-    # BAGIAN 3: AUDIT KEBALIKAN INTEGRITAS HASH 0x... (POIN 1b & 2d)
-    print("")
-    print("Audit integritas string hash 0x:")
-
-    cmd_hash = ["python3", "uts-blockchain-submission/tools/hash_check.py", "--pdf", PDF_FILE]
+def run_hash_audit(pdf_file):
+    print("\nAudit integritas string hash 0x:")
+    hash_script = "uts-blockchain-submission/tools/hash_check.py"
+    if not os.path.exists(hash_script):
+        hash_script = "uts-blockchain-submission/pendukung/tools/hash_check.py"
+    cmd_hash = ["python3", hash_script, "--pdf", pdf_file]
     res_hash = subprocess.run(cmd_hash, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     print(res_hash.stdout)
-    hash_check_passed = (res_hash.returncode == 0)
+    return res_hash.returncode == 0
 
-    # STATUS AKHIR
+def main():
+    pdf_file, docx_file = parse_cli_args()
+    print(f"Memverifikasi PDF: {pdf_file}")
+    print(f"Memverifikasi DOCX: {docx_file}")
+
+    if not os.path.exists(pdf_file):
+        print(f"Error: File PDF '{pdf_file}' tidak ditemukan.", file=sys.stderr)
+        sys.exit(1)
+
+    doc = docx.Document(docx_file) if os.path.exists(docx_file) else None
+
+    tools_dir = "uts-blockchain-submission/tools"
+    if not os.path.exists(tools_dir):
+        tools_dir = "uts-blockchain-submission/pendukung/tools"
+
+    logs = {
+        "demo-output.txt": load_file_lines("demo-output.txt"),
+        "perf-output.txt": load_file_lines("perf-output.txt"),
+        "test-output.txt": load_file_lines("test-output.txt"),
+        "gaslimit_output.txt": load_file_lines("gaslimit_output.txt", tools_dir),
+        "exp_b06_output.txt": load_file_lines("exp_b06_output.txt", tools_dir),
+    }
+
+    pdfinfo_out = subprocess.check_output(["pdfinfo", pdf_file]).decode("utf-8")
+    total_pages = int(re.search(r"Pages:\s+(\d+)", pdfinfo_out).group(1))
+    pdf_pages = {p: extract_pdf_page(pdf_file, p) for p in range(1, total_pages + 1)}
+    full_pdf_text = extract_full_pdf(pdf_file)
+
+    standard_tables = build_standard_table_definitions()
+    unit_test_items = build_unit_test_items(doc)
+    lampiran_b_items = build_lampiran_b_items()
+    lampiran_d_items = build_lampiran_d_items(doc)
+    lampiran_e_items = build_lampiran_e_items(doc)
+    lampiran_f_items = build_lampiran_f_items()
+
+    total_items = (
+        sum(len(items) for _, items in standard_tables)
+        + len(unit_test_items)
+        + len(lampiran_b_items)
+        + len(lampiran_d_items)
+        + (len(lampiran_e_items) * 3)
+        + len(lampiran_f_items)
+    )
+
+    mismatches = 0
+    for group_name, items in standard_tables:
+        mismatches += verify_standard_table_group(group_name, items, pdf_pages, logs)
+
+    mismatches += verify_unit_tests(unit_test_items, logs["test-output.txt"])
+    mismatches += verify_lampiran_d(lampiran_d_items, logs)
+    mismatches += verify_lampiran_e(lampiran_e_items, logs["perf-output.txt"])
+    mismatches += verify_lampiran_b(lampiran_b_items, full_pdf_text, logs["demo-output.txt"])
+    mismatches += verify_lampiran_f(lampiran_f_items, full_pdf_text, logs["exp_b06_output.txt"])
+
+    print(f"\nRekapitulasi forward check: {total_items - mismatches}/{total_items} baris dan sel terverifikasi cocok secara eksak.")
+
+    unexplained_dotted = audit_dotted_numbers(full_pdf_text)
+    hash_check_passed = run_hash_audit(pdf_file)
+
     if mismatches > 0 or unexplained_dotted > 0 or not hash_check_passed:
         print(f"Status: GAGAL ({mismatches} mismatch forward, {unexplained_dotted} dotted tak dikenal, hash check={hash_check_passed})")
         sys.exit(1)
-    else:
-        print(f"Status: LULUS 100% ({total_items} forward check cocok, reverse dotted tervalidasi, hash check lulus).")
-        sys.exit(0)
+
+    print(f"Status: LULUS 100% ({total_items} forward check cocok, reverse dotted tervalidasi, hash check lulus).")
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,4 @@
-=== PENGUKURAN UKURAN BYTECODE KONTRAK HARRIER/HARDHAT ===
+Pengukuran ukuran bytecode kontrak Hardhat
 Nama Kontrak             : AcademicCredentialRegistry.sol
 Creation Bytecode (hex)  : 9734 karakter
 Creation Bytecode (byte) : 4866 byte

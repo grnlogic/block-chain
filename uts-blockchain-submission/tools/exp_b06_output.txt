@@ -1,18 +1,18 @@
-=== EKSPERIMEN UJI VARIABEL GAS REVOKECREDENTIAL (exp_b06_v2) ===
+Eksperimen uji variabel gas revokeCredential (exp_b06_v2)
 Pemeriksaan Panjang String Reason Demo:
 - String : "Putusan Sidang Komite Etik: Terbukti Plagiarisme Tugas Akhir"
 - reason.length (karakter UTF-16) : 60
 - Buffer.byteLength (byte UTF-8)  : 60
 (Perbedaan 60 vs 61 terselesaikan: panjang sebenarnya adalah 60 karakter/byte; penyebutan 61 sebelumnya merupakan salah hitung manual).
 
---- RUN A (Identik Demo) ---
+Run A (Identik Demo)
 Batch ID          : "WISUDA-2026-PERIODE-1" (Bytes: 32, Non-zero: 21)
 Reason            : "Putusan Sidang Komite Etik: Terbukti Plagiarisme Tugas Akhir" (Bytes: 60)
 Calldata Gas      : 2212 (Non-zero: 119, Zero: 77)
 Gas Receipt       : 56359 unit
 Status Nilai Demo : COCOK 56.359
 
---- RUN B (Hanya BatchId Berubah ke BATCH-6-ITER-1) ---
+Run B (Hanya BatchId Berubah ke BATCH-6-ITER-1)
 Batch ID          : "BATCH-6-ITER-1" (Bytes: 32, Non-zero: 14)
 Reason            : "Putusan Sidang Komite Etik: Terbukti Plagiarisme Tugas Akhir" (Bytes: 60)
 Calldata Gas      : 2128 (Non-zero: 112, Zero: 84)
@@ -21,7 +21,7 @@ Selisih vs Run A  : -84 gas
 Prediksi Calldata : -84 gas
 SISA (Terukur-Cd) : 0 gas
 
---- RUN C (Hanya Reason Berubah ke 'Sidang Etik') ---
+Run C (Hanya Reason Berubah ke 'Sidang Etik')
 Batch ID          : "WISUDA-2026-PERIODE-1" (Bytes: 32, Non-zero: 21)
 Reason            : "Sidang Etik" (Bytes: 11)
 Calldata Gas      : 1496 (Non-zero: 70, Zero: 94)
@@ -30,14 +30,14 @@ Selisih vs Run A  : -978 gas
 Prediksi Calldata : -716 gas
 SISA (Terukur-Cd) : -262 gas
 
-=== RUN D: UJI LOMPATAN BATAS WORD 32 BYTE EVENT LOG DATA ===
+Run D: Uji lompatan batas word 32 byte event log data
 Reason (11 byte) : Gas=55381 | Calldata=1496 | Selisih Gas=-978 | Selisih Cd=-716 | SISA=-262
 Reason (31 byte) : Gas=55621 | Calldata=1736 | Selisih Gas=-738 | Selisih Cd=-476 | SISA=-262
 Reason (32 byte) : Gas=55633 | Calldata=1748 | Selisih Gas=-726 | Selisih Cd=-464 | SISA=-262
 Reason (33 byte) : Gas=56035 | Calldata=1888 | Selisih Gas=-324 | Selisih Cd=-324 | SISA=0
 Reason (60 byte) : Gas=56359 | Calldata=2212 | Selisih Gas=0 | Selisih Cd=0 | SISA=0
 
-=== RUN E: BENCHMARK BATCH-ID (N=6, 100, 1000) DENGAN REASON 'Sidang Etik' ===
+Run E: Benchmark batch-id (N=6, 100, 1000) dengan reason 'Sidang Etik'
 Batch "BATCH-6-ITER-1" (14 non-zero) : Gas=55297 | Calldata=1412 | Selisih Gas=-1062 | Selisih Cd=-800 | SISA=-262
 Batch "BATCH-100-ITER-1" (16 non-zero) : Gas=55321 | Calldata=1436 | Selisih Gas=-1038 | Selisih Cd=-776 | SISA=-262
 Batch "BATCH-1000-ITER-1" (17 non-zero) : Gas=55333 | Calldata=1448 | Selisih Gas=-1026 | Selisih Cd=-764 | SISA=-262

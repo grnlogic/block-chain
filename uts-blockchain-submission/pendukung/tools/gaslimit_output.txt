@@ -1,4 +1,4 @@
-=== HARDHAT eth_getBlockByNumber (latest) ===
+Hardhat eth_getBlockByNumber (latest)
 Block Number (hex) : 0x0
 Block Number (dec) : 0
 Gas Limit (hex)    : 0x3938700
